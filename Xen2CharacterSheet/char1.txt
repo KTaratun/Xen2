@@ -1,0 +1,17 @@
+dfd,12,20,0,0
+1,2,2,2,1,4
+4,5,4,10,2,7
+2,2,0,0,0,0
+[19, 25, 25, 25, 31, 20, 26, 26, 26, 32, 21, 27, 27, 27, 33, 22, 22, 28, 28, 34, 34, 23, 23, 29, 29, 35, 35, 24, 30, 36]
+11
+Shield,Melee,2,1,6,1,6-6,A melee weapon of questionable ability.
+Heavy Armor,Armor,1,1,Adds 1 to your Heavy Armor
+Heavy Armor,Armor,1,1,Adds 1 to your Heavy Armor
+Heavy Armor,Armor,1,1,Adds 1 to your Heavy Armor
+Heavy Armor,Armor,1,1,Adds 1 to your Heavy Armor
+Light Armor,Armor,1,2,Adds 2 to your Light Armor
+Light Armor,Armor,1,2,Adds 2 to your Light Armor
+Light Armor,Armor,1,2,Adds 2 to your Light Armor
+First Aid,Healing,1,3,Heals health equal to its quality to one adjacent target
+First Aid,Healing,1,7,Heals health equal to its quality to one adjacent target
+Purifier,Healing,1,0,Removes one status effect

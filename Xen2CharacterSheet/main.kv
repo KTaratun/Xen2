@@ -1,0 +1,1295 @@
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import isfile os.path.isfile
+
+ScreenManagement:
+	id: sManager
+	transition: FadeTransition()
+	TitleScreen:
+		id: title
+		name: "title"
+		manager: sManager
+	CharacterSelectScreen:
+		id: charSelect
+		name: "charSelect"
+		manager: sManager
+	ClassSelectScreen:
+		id: class
+		name: "class"
+		manager: sManager
+	CardInfoScreen:
+		id: cards
+		name: "cards"
+		manager: sManager
+	CharacterStatsScreen:
+		id: stats
+		name: "stats"
+		manager: sManager
+	ElementSelectScreen:
+		id: elements
+		name: "elements"
+		manager: sManager
+	LoadoutScreen:
+		id: loadout
+		name: "loadout"
+		manager: sManager
+	CharacterScreen:
+		id: character
+		name: "character"
+		manager: sManager
+	
+<Label>:
+	pos_hint: {"center_x": .5, "center_y": .85}
+	font_size: 40
+	
+<Button>:
+	font_size: 20
+	size_hint: 0.35, 0.15
+
+<Screen>:
+	canvas:
+		Color:
+			rgba: .8, .8, .8, 1
+		Rectangle:
+			pos: self.pos
+			size: self.size
+	Button:
+		id: back
+		text: "Back"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .1, "center_y": .08}
+		on_release: app.root.current = root.parent.backStack.pop()
+
+<TitleScreen>:
+	Label:
+		text: "Xen2 Alpha"
+	Button:
+		on_release: 
+			app.root.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char1.txt", "r")
+			app.root.LoadData()
+			app.root.CharScreenUpdate(app.root.ids.character)
+			app.root.DeckAndGearInit()
+			root.parent.nextscreen(last="title", next="character")
+		text: "Player"
+		pos_hint: {"center_x": .5, "center_y": .55}
+		size_hint: 0.5, 0.2
+	Button:
+		on_release: print(self.parent.children[3].text)
+		text: "Game Master"
+		pos_hint: {"center_x": .5, "center_y": .25}
+		size_hint: 0.5, 0.2
+		
+<CharacterSelectScreen>
+	Label:
+		text: "Character Select"
+	Button:
+		text: "char1" if isfile('char1.txt') else "NEW CHAR"
+		pos_hint: {"center_x": .25, "center_y": .65}
+		on_release: 
+			root.parent.backStack.append(root.name)
+			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char1.txt", "w")
+			app.root.current = "class" #if self.text == "NEW CHAR" else "game"
+	Button:
+		text: "char3" if isfile('char3.txt') else "NEW CHAR"
+		pos_hint: {"center_x": .25, "center_y": .45}
+		on_release: 
+			root.parent.backStack.append(root.name)
+			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char3.txt", "w")
+			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+	Button:
+		text: "char5" if isfile('char5.txt') else "NEW CHAR"
+		pos_hint: {"center_x": .25, "center_y": .25}
+		on_release: 
+			root.parent.backStack.append(root.name)
+			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char5.txt", "w")
+			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+	Button:
+		text: "char2" if isfile('char2.txt') else "NEW CHAR"
+		pos_hint: {"center_x": .75, "center_y": .65}
+		on_release: 
+			root.parent.backStack.append(root.name)
+			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char2.txt", "w")
+			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+	Button:
+		text: "char4" if isfile('char4.txt') else "NEW CHAR"
+		pos_hint: {"center_x": .75, "center_y": .45}
+		on_release: 
+			root.parent.backStack.append(root.name)
+			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char4.txt", "w")
+			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+	Button:
+		text: "char6" if isfile('char6.txt') else "NEW CHAR"
+		pos_hint: {"center_x": .75, "center_y": .25}
+		on_release: 
+			root.parent.backStack.append(root.name)
+			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char6.txt", "w")
+			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+
+<ClassSelectScreen>:
+	Label:
+		text: "Character Creation: Class"
+	Label:
+		id: desc
+		font_size: 24
+		pos_hint: {"left": 1, "center_y": .335}
+	Button:
+		id: one
+		name: "Scout"
+		text: "Scout"
+		pos_hint: {"center_x": .2, "center_y": .7}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			root.ids.desc.text = "Scout characters favor Speed, Board Control and Non-Leathal\nCombat. Their Speed allows them to receive action bonues to\nensure success in combat. They can manipulate players\npositions on the battlefield for greater strategy. Scouts can\nknock players out by removing cards from their decks."
+	Button:
+		id: two
+		name: "Technician"
+		text: "Technician"
+		pos_hint: {"center_x": .5, "center_y": .7}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			root.ids.desc.text = "Technicians are proficient with Items, Weapons and Tech\nactions. They can create a variety of items on the spot and\nuse them more effectively. Their prowess with weapons\nallows them to push their weapons to the limits. Technicians\nTech abilities grant them the power to alter the stats of players."
+	Button:
+		id: three
+		name: "Assault"
+		text: "Assault"
+		pos_hint: {"center_x": .8, "center_y": .7}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			root.ids.desc.text = "Assault characters slay opponents with disabling effects,\npriority and raw power. Their power can be focused to target\ntheir opponents weak spots. Their attacks have increased\npriority which can grant bonuses in battle. They can down\nenemies faster than other classes with large damage buffs. "
+	Button:
+		id: four
+		name: "Guard"
+		text: "Guard"
+		pos_hint: {"center_x": .2, "center_y": .55}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			root.ids.desc.text = "Guards have the most defense, life gain and prevent abilities\nfrom triggering. They can carry the most armor and repair\nit when it starts breaking. They can heal fallen allies, amplify\nhealing abilities and leach life from opponents. They can\nalso cancel abilities and remove status effects from players. "
+	Button:
+		id: five
+		name: "PSI"
+		text: "PSI"
+		pos_hint: {"center_x": .5, "center_y": .55}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			root.ids.desc.text = "PSI characters have greater control over artificial magic. They\ncan create additional elements, charge them faster and\nalter currently charged elements in various ways. By sacrificing\naddtional elements, they can boost the effects of their charges. "
+	Button:
+		id: six
+		name: "Arbiter"
+		text: "Arbiter"
+		pos_hint: {"center_x": .8, "center_y": .55}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			root.ids.desc.text = "Arbiters dictate the flow of battle through speech. They\nreceive major bonuses while negotiating and can affect\nmultiple targets. Their greater intellect allows them to draw\ncards and force opponents to discard. They can trick\nopponents into moving and attack specific targets. "
+	Button:		
+		id: cardList
+		text: "Deck Info"
+		pos_hint: {"center_x": .5, "center_y": .08}
+		size_hint: 0.25, .1
+		disabled: True
+		on_release:
+			app.root.num = 0
+			app.root.deckStuff(cards=app.root.ids.cards)
+			root.parent.nextscreen(last="class", next="cards")
+	Button:
+		id: next
+		text: "Next"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .9, "center_y": .08}
+		disabled: True
+		on_release:
+			root.parent.nextscreen(last="class", next="stats")
+			
+<CardInfoScreen>
+	Label: 
+		pos_hint: {"center_x": .5, "center_y": .95}
+		text: "Character Creation: Deck"
+	Button:
+		id: previous
+		text: "<-"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .4, "center_y": .08}
+		on_release:
+			app.root.num -= 1
+			app.root.deckStuff(cards=app.root.ids.cards)
+	Button:
+		id: next
+		text: "->"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .6, "center_y": .08}
+		on_release:
+			app.root.num += 1
+			app.root.deckStuff(cards=app.root.ids.cards)
+	FloatLayout:
+		id: fL
+		pos: (280, 0)
+		size_hint: (.46, .05)
+		
+<CharacterStatsScreen>
+	Label:
+		text: "Character Creation: Stats"
+	Label:
+		text: "Instinct"
+		pos_hint: {"x": .2, "y": .7}
+		text_size: self.size
+	Label:
+		text: "Movement:"
+		pos_hint: {"x": .43, "y": .7}
+		text_size: self.size
+	Label:
+		text: "Tech"
+		pos_hint: {"x": .2, "y": .6}
+		text_size: self.size
+	Label:
+		text: "Range:"
+		pos_hint: {"x": .43, "y": .6}
+		text_size: self.size
+	Label:
+		text: "Force"
+		pos_hint: {"x": .2, "y": .5}
+		text_size: self.size
+	Label:
+		text: "Damage:"
+		pos_hint: {"x": .43, "y": .5}
+		text_size: self.size
+	Label:
+		text: "Vitality"
+		pos_hint: {"x": .2, "y": .4}
+		text_size: self.size
+	Label:
+		text: "Inventory:"
+		pos_hint: {"x": .43, "y": .4}
+		text_size: self.size
+	Label:
+		text: "Psyche"
+		pos_hint: {"x": .2, "y": .3}
+		text_size: self.size
+	Label:
+		text: "Mastery:"
+		pos_hint: {"x": .43, "y": .3}
+		text_size: self.size
+	Label:
+		text: "Mind"
+		pos_hint: {"x": .2, "y": .2}
+		text_size: self.size
+	Label:
+		text: "Intellect:"
+		pos_hint: {"x": .43, "y": .2}
+		text_size: self.size
+	Button:
+		id: InsMINUS
+		text: "-"
+		pos_hint: {"x": .1, "y": .715}
+		size_hint: .04, .06
+		font_size: 30
+		on_release:
+			app.root.character.Instinct = app.root.dec(stat=app.root.character.Instinct, lab=InsVal, screen=root)
+	Button:
+		name: "TecMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .615}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Tech = app.root.dec(stat=app.root.character.Tech, lab=TecVal, screen=root)
+	Button:
+		name: "ForMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .515}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Force = app.root.dec(stat=app.root.character.Force, lab=ForVal, screen=root)
+	Button:
+		name: "VitMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .415}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Vitality = app.root.dec(stat=app.root.character.Vitality, lab=VitVal, screen=root)
+	Button:
+		name: "PsyMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .315}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Psyche = app.root.dec(stat=app.root.character.Psyche, lab=PsyVal, screen=root)
+	Button:
+		name: "MinMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .215}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Mind = app.root.dec(stat=app.root.character.Mind, lab=MinVal, screen=root)
+	Button:
+		name: "InsPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .715}
+		size_hint: .04, .06
+		font_size: 30
+		on_release:
+			app.root.character.Instinct = app.root.inc(stat=app.root.character.Instinct, lab=InsVal, total=app.root.Total, screen=root)
+	Button:
+		name: "TecPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .615}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Tech = app.root.inc(stat=app.root.character.Tech, lab=TecVal, total=app.root.Total, screen=root)
+	Button:
+		name: "ForPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .515}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Force = app.root.inc(stat=app.root.character.Force, lab=ForVal, total=app.root.Total, screen=root)
+	Button:
+		name: "VitPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .415}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Vitality = app.root.inc(stat=app.root.character.Vitality, lab=VitVal, total=app.root.Total, screen=root)
+	Button:
+		name: "PsyPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .315}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Psyche = app.root.inc(stat=app.root.character.Psyche, lab=PsyVal, total=app.root.Total, screen=root)
+	Button:
+		name: "MinPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .215}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Mind = app.root.inc(stat=app.root.character.Mind, lab=MinVal, total=app.root.Total, screen=root)
+	Label:
+		name: "Ins"
+		id: InsVal
+		text: "0"
+		pos_hint: {"x": .04, "y": .7}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: MovVal
+		text: "3"
+		pos_hint: {"x": .69, "y": .69}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Evasion,\nPerception"
+		pos_hint: {"x": .76, "y": .69}
+		font_size: 22
+		text_size: self.size
+	Label:
+		name: "Tec"
+		id: TecVal
+		text: "0"
+		pos_hint: {"x": .04, "y": .6}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: RanVal
+		text: "3"
+		pos_hint: {"x": .6, "y": .59}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Suceptiblity to \nbuffs and debuffs"
+		pos_hint: {"x": .67, "y": .59}
+		font_size: 22
+		text_size: self.size
+	Label:
+		name: "For"
+		id: ForVal
+		text: "0"
+		pos_hint: {"x": .04, "y": .5}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: DamVal
+		text: "0"
+		pos_hint: {"x": .64, "y": .49}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Overpowering\nopponent"
+		pos_hint: {"x": .71, "y": .49}
+		font_size: 22
+		text_size: self.size
+	Label:
+		name: "Vit"
+		id: VitVal
+		text: "0"
+		pos_hint: {"x": .04, "y": .4}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: InvVal
+		text: "6"
+		pos_hint: {"x": .66, "y": .39}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Carrying capacity\nMaximum health"
+		pos_hint: {"x": .72, "y": .39}
+		font_size: 22
+		text_size: self.size
+	Label
+		name: "Psy"
+		id: PsyVal
+		text: "0"
+		pos_hint: {"x": .04, "y": .3}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: MasVal
+		text: "1"
+		pos_hint: {"x": .63, "y": .29}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Number of elements\nand effectiveness"
+		pos_hint: {"x": .69, "y": .29}
+		font_size: 22
+		text_size: self.size
+	Label:
+		name: "Min"
+		id: MinVal
+		text: "0"
+		pos_hint: {"x": .04, "y": .2}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: IntVal
+		text: "3"
+		pos_hint: {"x": .63, "y": .19}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Hand size,\nnegotiations"
+		pos_hint: {"x": .7, "y": .19}
+		font_size: 22
+		text_size: self.size
+	Label:
+		id: TotVal
+		text: "12"
+		pos_hint: {"center_x": .5, "center_y": .075}
+		font_size: 45
+	Button:
+		id: next
+		text: "Next"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .9, "center_y": .08}
+		disabled: True
+		on_release:
+			app.root.ElementPage()
+			app.root.nextscreen(last="stats", next="elements")
+		
+<ElementSelectScreen>
+	Label:
+		text: "Charcter Creation: Elements"
+	Label:
+		text: "Zephyr"
+		pos_hint: {"x": .2, "y": .7}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: zepMod
+		text: "x"
+		pos_hint: {"x": .42, "y": .7}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Spark"
+		pos_hint: {"x": .2, "y": .6}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: spaMod
+		text: "x"
+		pos_hint: {"x": .42, "y": .6}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Heat"
+		pos_hint: {"x": .2, "y": .5}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: heaMod
+		text: "x"
+		pos_hint: {"x": .42, "y": .5}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Mineral"
+		pos_hint: {"x": .2, "y": .4}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: minMod
+		text: "x"
+		pos_hint: {"x": .42, "y": .4}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Void"
+		pos_hint: {"x": .2, "y": .3}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: voiMod
+		text: "x"
+		pos_hint: {"x": .42, "y": .3}
+		font_size: 45
+		text_size: self.size
+	Label:
+		text: "Liquid"
+		pos_hint: {"x": .2, "y": .2}
+		font_size: 45
+		text_size: self.size
+	Label:
+		id: liqMod
+		text: "x"
+		pos_hint: {"x": .42, "y": .2}
+		font_size: 45
+		text_size: self.size
+	Button:
+		id: ZepMINUS
+		text: "-"
+		pos_hint: {"x": .1, "y": .715}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Zephyr = app.root.decEle(stat=app.root.character.Zephyr, label=root.ids.ZepVal, screen=root)
+	Button:
+		name: "SpaMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .615}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Spark = app.root.decEle(stat=app.root.character.Spark, label=root.ids.SpaVal, screen=root)
+	Button:
+		name: "HeaMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .515}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Heat = app.root.decEle(stat=app.root.character.Heat, label=root.ids.HeaVal, screen=root)
+	Button:
+		name: "MinMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .415}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Mineral = app.root.decEle(stat=app.root.character.Mineral, label=root.ids.MinVal, screen=root)
+	Button:
+		name: "VoiMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .315}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Void = app.root.decEle(stat=app.root.character.Void, label=root.ids.VoiVal, screen=root)
+	Button:
+		name: "LiqMINUS"
+		text: "-"
+		pos_hint: {"x": .1, "y": .215}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Liquid = app.root.decEle(stat=app.root.character.Liquid, label=root.ids.LiqVal, screen=root)
+	Button:
+		name: "ZepPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .715}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Zephyr = app.root.incEle(stat=app.root.character.Zephyr, total=app.root.ElTotal, mas=app.root.MasTot, label=ZepVal, screen=root)
+	Button:
+		name: "SpaPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .615}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Spark = app.root.incEle(stat=app.root.character.Spark, total=app.root.ElTotal, mas=app.root.MasTot, label=SpaVal, screen=root)
+	Button:
+		name: "HeaPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .515}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Heat = app.root.incEle(stat=app.root.character.Heat, total=app.root.ElTotal, mas=app.root.MasTot, label=HeaVal, screen=root)
+	Button:
+		name: "MinPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .415}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Mineral = app.root.incEle(stat=app.root.character.Mineral, total=app.root.ElTotal, mas=app.root.MasTot, label=MinVal, screen=root)
+	Button:
+		name: "VoiPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .315}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Void = app.root.incEle(stat=app.root.character.Void, total=app.root.ElTotal, mas=app.root.MasTot, label=VoiVal, screen=root)
+	Button:
+		name: "LiqPlus"
+		text: "+"
+		pos_hint: {"x": .15, "y": .215}
+		size_hint: .04, .06
+		font_size: 30
+		on_release: 
+			app.root.character.Liquid = app.root.incEle(stat=app.root.character.Liquid, total=app.root.ElTotal, mas=app.root.MasTot, label=LiqVal, screen=root)
+	Button:
+		text: "Roll"
+		pos_hint: {"x": .62, "y": .6}
+		size_hint: .2, .1
+		font_size: 45
+		on_release: 
+			app.root.BloodTypeGenerator(screen=root)
+	Label:
+		id: bT
+		text: "none"
+		pos_hint: {"x": .62, "y": .5}
+		size_hint: .2, .1
+		font_size: 45
+			
+	Label:
+		id: ZepVal
+		text: "0"
+		color: 1, 0, 0, 1
+		pos_hint: {"x": .04, "y": .7}
+		text_size: self.size
+	Label:
+		id: SpaVal
+		text: "0"
+		color: 1, 0, 0, 1
+		pos_hint: {"x": .04, "y": .6}
+		text_size: self.size
+	Label:
+		id: HeaVal
+		text: "0"
+		color: 1, 0, 0, 1
+		pos_hint: {"x": .04, "y": .5}
+		text_size: self.size
+	Label:
+		id: MinVal
+		text: "0"
+		color: 1, 0, 0, 1
+		pos_hint: {"x": .04, "y": .4}
+		text_size: self.size
+	Label:
+		id: VoiVal
+		text: "0"
+		color: 1, 0, 0, 1
+		pos_hint: {"x": .04, "y": .3}
+		text_size: self.size
+	Label:
+		id: LiqVal
+		text: "0"
+		color: 1, 0, 0, 1
+		pos_hint: {"x": .04, "y": .2}
+		text_size: self.size
+	Label:
+		id: ElTotVal
+		text: "2"
+		pos_hint: {"center_x": .55, "center_y": .075}
+	Label:
+		id: MasTot
+		text: "1"
+		color: 1, 0, 0, 1
+		pos_hint: {"center_x": .45, "center_y": .075}
+	Button:
+		id: next
+		text: "Next"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .9, "center_y": .08}
+		disabled: True
+		on_release:
+			root.parent.nextscreen(last="elements", next="character")
+			
+<LoadoutScreen>
+	Label:
+		text: "Character Creation: Loadout"
+	Button:
+		id: one
+		text: "Safety First"
+		pos_hint: {"center_x": .2, "center_y": .7}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			app.root.LoadoutRandomizer("sF")
+	Button:
+		id: two
+		text: "Tooth and Nail"
+		pos_hint: {"center_x": .5, "center_y": .7}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			app.root.LoadoutRandomizer("tN")
+	Button:
+		id: three
+		text: "Lock and Load"
+		pos_hint: {"center_x": .8, "center_y": .7}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			app.root.LoadoutRandomizer("lL")
+	Button:
+		id: four
+		text: "Chemist"
+		pos_hint: {"center_x": .2, "center_y": .55}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			app.root.LoadoutRandomizer("c")
+	Button:
+		id: five
+		text: "Trader"
+		pos_hint: {"center_x": .5, "center_y": .55}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			app.root.LoadoutRandomizer("t")
+	Button:
+		id: six
+		text: "Finders Keepers"
+		pos_hint: {"center_x": .8, "center_y": .55}
+		size_hint: 0.25, .1
+		on_release: 
+			app.root.colorUpdate(screen=root, curr=self)
+			app.root.LoadoutRandomizer("fK")
+	Button:
+		id: cellOne
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .05, "center_y": .38}
+	Button:
+		id: cellTwo
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .2, "center_y": .38}
+	Button:
+		id: cellThree
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .35, "center_y": .38}
+	Button:
+		id: cellFour
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .5, "center_y": .38}
+	Button:
+		id: cellFive
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .65, "center_y": .38}
+	Button:
+		id: cellSix
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .8, "center_y": .38}
+	Button:
+		id: cellSeven
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .05, "center_y": .26}
+	Button:
+		id: cellEight
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .2, "center_y": .26}
+	Button:
+		id: cellNine
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .35, "center_y": .26}
+	Button:
+		id: cellTen
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .5, "center_y": .26}
+	Button:
+		id: cellEleven
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .65, "center_y": .26}
+	Button:
+		id: cellTwelve
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .8, "center_y": .26}
+	Button:
+		id: next
+		text: "Next"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .9, "center_y": .08}
+		disabled: True
+		on_release:
+			#app.root.SaveData()
+			root.parent.nextscreen(last="loadout", next="character")
+			
+<CharacterScreen>
+	Label:
+		id: name
+		text: "Name: "
+		font_size: 25
+		pos_hint: {"x": 0, "y": .95}
+		text_size: self.size
+	Label:
+		id: nameVal
+		font_size: 25
+		pos_hint: {"x": .1, "y": .95}
+		text_size: self.size
+	Label:
+		id: lvl
+		text: "Level: "
+		font_size: 25
+		pos_hint: {"x": 0, "y": .9}
+		text_size: self.size
+	Label:
+		id: lvlVal
+		font_size: 25
+		pos_hint: {"x": .09, "y": .9}
+		text_size: self.size
+	Label:
+		id: health
+		text: "Health: "
+		font_size: 25
+		pos_hint: {"x": .38, "y": .95}
+		text_size: self.size
+	Button:
+		id: healVal
+		color: 0, 0, 0, 1
+		font_size: 25
+		pos_hint: {"x": .485, "y": .95}
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempHealth = app.root.ChangeVal(button=healVal, orig=app.root.character.health, temp=app.root.tempHealth)
+	Label:
+		id: lArmor
+		text: "L Armor: "
+		font_size: 25
+		pos_hint: {"x": .38, "y": .9}
+		text_size: self.size
+	Label:
+		id: lArmVal
+		font_size: 25
+		pos_hint: {"x": .505, "y": .9}
+		text_size: self.size
+	Label:
+		id: hArmor
+		text: "H Armor: "
+		font_size: 25
+		pos_hint: {"x": .38, "y": .85}
+		text_size: self.size
+	Label:
+		id: hArmVal
+		font_size: 25
+		pos_hint: {"x": .51, "y": .85}
+		text_size: self.size
+	Label:
+		id: inventory
+		text: "Inventory: "
+		font_size: 25
+		pos_hint: {"x": 0, "y": .85}
+		text_size: self.size
+	Label:
+		id: invVal
+		font_size: 25
+		pos_hint: {"x": .135, "y": .85}
+		text_size: self.size
+	Image:
+		id: cS
+		source: "CharStats.png"
+		size_hint: .7, .7
+	Button:
+		id: Ins
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempInstinct = app.root.ChangeVal(button=Ins, orig=app.root.character.Instinct, temp=app.root.tempInstinct)
+	Button:
+		id: Mov
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempMovement = app.root.ChangeVal(button=Mov, orig=app.root.character.Movement, temp=app.root.tempMovement)
+	Button:
+		id: Zep
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempZephyr = app.root.ChangeVal(button=Zep, orig=app.root.character.Zephyr, temp=app.root.tempZephyr)
+	Button:
+		id: Tec
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempTech = app.root.ChangeVal(button=Tec, orig=app.root.character.Tech, temp=app.root.tempTech)
+	Button:
+		id: Ran
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempRange = app.root.ChangeVal(button=Ran, orig=app.root.character.Range, temp=app.root.tempRange)
+	Button:
+		id: Spa
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempSpark = app.root.ChangeVal(button=Spa, orig=app.root.character.Spark, temp=app.root.tempSpark)
+	Button:
+		id: For
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempForce = app.root.ChangeVal(button=For, orig=app.root.character.Force, temp=app.root.tempForce)
+	Button:
+		id: Dam
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempBrutality = app.root.ChangeVal(button=Dam, orig=app.root.character.Brutality, temp=app.root.tempBrutality)
+	Button:
+		id: Hea
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempHeat = app.root.ChangeVal(button=Hea, orig=app.root.character.Heat, temp=app.root.tempHeat)
+	Button:
+		id: Vit
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempVitality = app.root.ChangeVal(button=Vit, orig=app.root.character.Vitality, temp=app.root.tempVitality)
+	Button:
+		id: Inv
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.04, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempInventory = app.root.ChangeVal(button=Inv, orig=app.root.character.Inventory, temp=app.root.tempInventory)
+	Button:
+		id: Mine
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempMineral = app.root.ChangeVal(button=Mine, orig=app.root.character.Mineral, temp=app.root.tempMineral)
+	Button:
+		id: Psy
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempPsyche = app.root.ChangeVal(button=Psy, orig=app.root.character.Psyche, temp=app.root.tempPsyche)
+	Button:
+		id: Mas
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempMastery = app.root.ChangeVal(button=Mas, orig=app.root.character.Mastery, temp=app.root.tempMastery)
+	Button:
+		id: Voi
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempVoid = app.root.ChangeVal(button=Voi, orig=app.root.character.Void, temp=app.root.tempVoid)
+	Button:
+		id: Mind
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempMind = app.root.ChangeVal(button=Mind, orig=app.root.character.Mind, temp=app.root.tempMind)
+	Button:
+		id: Int
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempIntellect = app.root.ChangeVal(button=Int, orig=app.root.character.Intellect, temp=app.root.tempIntellect)
+	Button:
+		id: Liq
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempLiquid = app.root.ChangeVal(button=Liq, orig=app.root.character.Liquid, temp=app.root.tempLiquid)
+	Button:
+		id: insInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("INS")
+	Button:
+		id: tecInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("TEC")
+	Button:
+		id: forInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("FOR")
+	Button:
+		id: vitInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("VIT")
+	Button:
+		id: psyInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("PSY")
+	Button:
+		id: minInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("MIN")
+	Button:
+		id: drawMax
+		text: "Max"
+		pos_hint: {"x": .9, "y": .46}
+		size_hint: .1, .1
+		font_size: 30
+		on_release: 
+			app.root.DrawMax()
+	Button:
+		id: draw
+		text: "Draw"
+		pos_hint: {"x": .8, "y": .46}
+		size_hint: .1, .1
+		font_size: 30
+		on_release: 
+			app.root.DrawCard()
+	Button:
+		id: discard
+		text: "Discard"
+		pos_hint: {"x": .66, "y": .46}
+		size_hint: .14, .1
+		font_size: 30
+		disabled: True
+		on_release: 
+			app.root.Discard(card=app.root.selected)
+	Button:
+		id: undo
+		text: "Undo"
+		pos_hint: {"x": .56, "y": .46}
+		size_hint: .1, .1
+		font_size: 30
+		disabled: True
+		on_release: 
+			app.root.Undo()
+	Button:
+		id: manage
+		text: "Manage"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .1, "center_y": .3}
+		#on_release: app.root.current = root.parent.backStack.pop()
+	Button:
+		id: reset
+		text: "Reset"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .1, "center_y": .19}
+		on_release: 
+			app.root.Reset()
+	Button:
+		id: elements
+		text: "Elements"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .26, "center_y": .19}
+		on_release: 
+			app.root.ElementList()
+	Button:
+		id: negotiations
+		text: "Negotiations"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .26, "center_y": .08}
+		on_release: 
+			app.root.Info("NEG")
+	Button:
+		id: cellOne
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .95}
+	Button:
+		id: cellTwo
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .95}
+	Button:
+		id: cellThree
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .95}
+	Button:
+		id: cellFour
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .85}
+	Button:
+		id: cellFive
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .85}
+	Button:
+		id: cellSix
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .85}
+	Button:
+		id: cellSeven
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .75}
+	Button:
+		id: cellEight
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .75}
+	Button:
+		id: cellNine
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .75}
+	Button:
+		id: cellTen
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .65}
+	Button:
+		id: cellEleven
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .65}
+	Button:
+		id: cellTwelve
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .65}
+	FloatLayout:
+		id: fL
+		pos: (280, 0)
+		size_hint: (.46, .05)
