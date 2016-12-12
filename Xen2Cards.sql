@@ -44,7 +44,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Mobility', 'Instinct', 'Board Control', 'Half-Round', 'Movement Mod', 'Base Class', 
-        'You can move through enemy spaces, terrain and doors unhindered. Scavenging and other actions are counted as free actions this turn.'
+        'You can move through enemy spaces, terrain and doors unhindered. Scavenging is counted as free actions this turn.'
     );
 
 	insert into cards
@@ -58,29 +58,29 @@ create table Cards(
      insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Reactive Attack', 'Instinct', 'Stamina', 'Combat', 'Defensive', 'Base Class', 
-        'Return all reactions used to your hand after combat and opponent loses 1 Stamina.'
+		'Stamina Attack', 'Instinct', 'Stamina', 'Combat', 'Defensive', 'Base Class', 
+        'Opponent loses 2 Stamina and unless you lose priority, return this card to your hand.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Stamina Attack', 'Instinct', 'Stamina', 'Combat', 'Tactical', 'Base Class', 
-        'Opponent loses 2 Stamina and unless you lose priority, return this card to your hand.'
+		'Reactive Attack', 'Instinct', 'Stamina', 'Combat', 'Tactical', 'Base Class', 
+        'Return all reactions used to your hand after combat and gain 2 stamina.'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Winding Attack', 'Instinct', 'Stamina', 'Combat', 'Aggressive', 'Base Class', 
-        'Opponent loses 3 stamina.'
+        'Opponent loses 4 stamina.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Gut Shot', 'Instinct', 'Stamina', 'Reaction', 'Hit', 'Base Class', 
-        'Opponent loses 2 additional Stamina.'
+        'Opponent loses 3 additional Stamina.'
     );
     
     insert into cards
@@ -94,7 +94,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Non-Lethal', 'Instinct', 'Stamina', 'Full-Round', 'Stance', 'Base Class', 
-        'All successful actions on opponent deal an additional 1 Stamina damage.'
+        'All successful actions on opponent deal an additional 2 Stamina damage.'
     );
     
     
@@ -130,7 +130,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Haste', 'Instinct', 'Speed', 'Half-Round', 'Standard', 'Base Class', 
-        'You can discard and use a full round card. Put this card on the bottom of your deck afterward.'
+        'You can use a full round card. Put this card on the bottom of your deck afterward.'
     );
 
 	insert into cards
@@ -144,7 +144,7 @@ create table Cards(
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Item Attack', 'Tech', 'Items', 'Combat', 'Defensive', 'Base Class', 
+		'Mod Attack', 'Tech', 'Items', 'Combat', 'Defensive', 'Base Class', 
         'You can use an item before combat.'
     );
     
@@ -158,7 +158,7 @@ create table Cards(
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Mod Attack', 'Tech', 'Items', 'Combat', 'Aggressive', 'Base Class', 
+		'Targeting Attack', 'Tech', 'Items', 'Combat', 'Aggressive', 'Base Class', 
         'You can add the effects of an item to the attack. Discard item afterward'
     );
     
@@ -173,21 +173,14 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Craft', 'Tech', 'Items', 'Half-Round', 'Standard', 'Base Class', 
-        'Construct a random item
-
-1: Deal 6 DMG
-2 Heal 6 Health
-3: +2 bonus
-4: -2 penalty
-5: Draw 2 cards, discard 1
-6: Discard 1 card.'
+        'Construct a random item. 1: Deal 6 DMG. 2: Heal 6 Health. 3: +2 Bonus. 4: -2 Penalty. 5: Draw 2. 6: Discard 2.'
     );
 
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Administer', 'Tech', 'Items', 'Full-Round', 'Standard', 'Base Class', 
-        'You can use any number of items and keep them afterward.'
+        'You can use any number of items from your inventory and any allies within range and keep them afterward.'
     );
     
     
@@ -195,21 +188,21 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Item Tech', 'Tech', 'Tech', 'Combat', 'Defensive', 'Base Class', 
-        'Target within range receives a bonus or penalty to the effectiveness of items equal to their Tech for 1 turn.'
+        'Target within range receives a bonus or penalty to the effectiveness of items equal to their Tech for 2 turns.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Range Tech', 'Tech', 'Tech', 'Combat', 'Tactical', 'Base Class', 
-        'Target within range receives a bonus or penalty to range equal to half their Tech rounded up for 1 turn.'
+        'Target within range receives a bonus or penalty to range equal to half their Tech rounded up for 2 turns.'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Weapon Tech', 'Tech', 'Tech', 'Combat', 'Aggressive', 'Base Class', 
-        'Target within range receives a bonus or penalty to Aggressive Attacks equal to their Tech for 1 turn.'
+        'Target within range receives a bonus or penalty to Aggressive Attacks equal to their Tech for 2 turns.'
     );
     
     insert into cards
@@ -223,14 +216,14 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Refactor', 'Tech', 'Tech', 'Half-Round', 'Standard', 'Base Class', 
-        'Swap the effect of a Tech effect with another Tech card in your hand by discarding it and/or invert the +-- symbol.'
+        'Swap the effect of a Tech effect with another Tech card in your hand and/or invert the +-- symbol.'
     );
 
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Overclocked', 'Tech', 'Tech', 'Full-Round', 'Stance', 'Base Class', 
-        'All Tech effects last an additional turn.'
+        'All positive Tech effects last an additional turn and all negative Tech effects last one turn less.'
     );
     
     
@@ -244,7 +237,7 @@ create table Cards(
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Targeting Attack', 'Tech', 'Weapons', 'Combat', 'Tactical', 'Base Class', 
+		'Balanced Attack', 'Tech', 'Weapons', 'Combat', 'Tactical', 'Base Class', 
         'Choose any attack speed bonus out of all attacks speeds for currently equipped weapon.'
     );
     
@@ -259,7 +252,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Versatility', 'Tech', 'Weapons', 'Reaction', 'Combat', 'Base Class', 
-        'You can use ranged weapons at point black and thrown weapons without any penalties.'
+        'All weapon penalties from point blank range, thrown and dual wielding are nullified for the attack.'
     ); 
     
     insert into cards
@@ -295,11 +288,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Dynamic Attack', 'Force', 'Priority', 'Combat', 'Aggressive', 'Base Class', 
-        'You can discard any attack cards from your hand to receive bonuses
-
-Defensive: 2 Stamina DMG
-Tactical: +2 Bonus
-Aggressive: Gain +4 DMG.'
+        'Discard any cards to receive bonuses. Light: 2 Stamina DMG. Medium: +2 Bonus. Heavy: Gain +4 DMG.'
     );
     
     insert into cards
@@ -362,8 +351,8 @@ Aggressive: Gain +4 DMG.'
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Fury', 'Force', 'Damage', 'Full-Round', 'Stance', 'Base Class', 
-        'Gain +2 Damage on all hits.'
+		'Lethal', 'Force', 'Damage', 'Full-Round', 'Stance', 'Base Class', 
+        'Gain +3 Damage on all hits.'
     );
     
     
@@ -399,18 +388,14 @@ Aggressive: Gain +4 DMG.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Cripple', 'Force', 'Disable', 'Half-Round', 'Attack Mod', 'Base Class', 
-        'Depending on which attack speed was hit on, opponent loses a different sub-parameter:
-
-Defensive: -1 Movement
-Tactical: -1 Range
-Aggressive: -2 Damage.'
+        'Opponent receives penalty depending on which speed they were hit on. Light: -1 Move. Medium: -1 Range. Heavy: -2 DMG.'
     );
 
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Grapple', 'Force', 'Disable', 'Full-Round', 'Standard', 'Base Class', 
-        'If you pass a Force Check, step into opponent''s space. Both parties can perform Force Check to deal their Force as DMG to each other on their turn or break free. You can move with target on your turn.'
+        'If you pass a Strength check, step into opponent''s space. You can move with the opponent until they break free.'
     );
     
     
@@ -439,7 +424,7 @@ Aggressive: -2 Damage.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Cancel', 'Vitality', 'Neutralize', 'Reaction', 'Opponent Defense', 'Base Class', 
-        'Cancel any action or full round card being played and target can''t use any of those types for 1 turn.'
+        'Cancel any action or full round card being played by adjacent target and they can''t use any for 1 turn.'
     ); 
     
     insert into cards
@@ -453,7 +438,7 @@ Aggressive: -2 Damage.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Purification', 'Vitality', 'Neutralize', 'Full-Round', 'Standard', 'Base Class', 
-        'Remove all status effects on you and/or any adjacent allies or opponents.'
+        'Remove all status effects and stances from all players.'
     );
     
     
@@ -461,35 +446,35 @@ Aggressive: -2 Damage.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Vigilant Attack', 'Vitality', 'Defense', 'Combat', 'Defensive', 'Base Class', 
-        'Gain +6 DR for the attack.'
+        'Gain +7 DR for the attack.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Armored Attack', 'Vitality', 'Defense', 'Combat', 'Tactical', 'Base Class', 
-        'Your armor doesn''t take damage this turn unless you lose priority.'
+		'Bolster Attack', 'Vitality', 'Defense', 'Combat', 'Tactical', 'Base Class', 
+        'Gain 1 heavy armor.'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		' Attack', 'Vitality', 'Defense', 'Combat', 'Aggressive', 'Base Class', 
-        '.'
+		'Armored Attack', 'Vitality', 'Defense', 'Combat', 'Aggressive', 'Base Class', 
+        'Your armor doesn''t take damage this turn and deal DMG to your opponent equal to DMG absorbed.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Defense', 'Vitality', 'Defense', 'Reaction', 'Combat', 'Base Class', 
-        'Gain an additional +5 DR.'
+		'Defense', 'Vitality', 'Defense', 'Reaction', 'Hit', 'Base Class', 
+        'Gain an additional +4 DR.'
     ); 
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Wall', 'Vitality', 'Defense', 'Half-Round', 'Standard', 'Base Class', 
-        'Opponents can''t move through your adjacent spaces and Critical Range is 1-4 until next turn'
+        'Opponents can''t move through your adjacent spaces and Critical Range is 1-5 until next turn'
     );
 
 	insert into cards
@@ -511,14 +496,14 @@ Aggressive: -2 Damage.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Healing Attack', 'Vitality', 'Health', 'Combat', 'Tactical', 'Base Class', 
-        'Heal health equal to half of DMG dealt if overroll is greater than 5.'
+        'Heal health equal to half of DMG dealt.'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Counter Attack', 'Vitality', 'Health', 'Combat', 'Aggressive', 'Base Class', 
-        'If you were to take health DMG this combat, deal an equal amount to opponent.'
+		'Bypass Attack', 'Vitality', 'Health', 'Combat', 'Aggressive', 'Base Class', 
+        'Deal DMG to opponents health.'
     );
     
     insert into cards
@@ -561,27 +546,20 @@ Aggressive: -2 Damage.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Enhanced Psi', 'Psyche', 'Creation', 'Combat', 'Aggressive', 'Base Class', 
-        'Sacrifice 1 element and add an effect to your attack:
-
-ZEP: 2 Stamina DMG
-SPA: +- 2 Tech mods
-HEA: Deal 4 DMG
-MIN: Gain 3 Health
-VOI: +2 Bonus
-LIQ: Draw 1 Card.'
+        'For each. ZEP: +2 Stamina DMG. SPA: -1 RNG 1 turn. HEA: +3 DMG. MIN: +4 Health. VOI: +1 Bonus. LIQ: Discard 1 Card.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Boost', 'Psyche', 'Creation', 'Reaction', 'Charge', 'Base Class', 
-        'Add an additional Charge to you or an ally.'
+        'Add an additional Charge to you or adjacent ally.'
     ); 
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Juggle', 'Psyche', 'Creation', 'Half-Round', 'Standard', 'Base Class', 
+		'Juggle', 'Psyche', 'Creation', 'Half-Round', 'Charge Mod', 'Base Class', 
         'Ready another independent charge that is not dependant on a hand.'
     );
 
@@ -589,7 +567,7 @@ LIQ: Draw 1 Card.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Super Charge', 'Psyche', 'Creation', 'Full-Round', 'Standard', 'Base Class', 
-        'Create any spell without Charging.'
+        'Create any spell that you have access to without charging it.'
     );
     
     
@@ -625,14 +603,14 @@ LIQ: Draw 1 Card.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Psi Scan', 'Psyche', 'Mastery', 'Half-Round', 'Standard', 'Base Class', 
-        'You can look at an opponents Charge within sight and receive a +1 bonus in Element combat until end of turn.'
+        'You can look at an opponents Charge within sight and receive a +2 bonus in Element combat until end of turn.'
     );
 
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Bestow', 'Psyche', 'Mastery', 'Full-Round', 'Standard', 'Base Class', 
-        'You and allies receive a +4 bonus to element combat for 1 turn.'
+		'Psionic', 'Psyche', 'Mastery', 'Full-Round', 'Stance', 'Base Class', 
+        'Receive a +2 bonus to all element attacks.'
     );
     
     
@@ -661,7 +639,7 @@ LIQ: Draw 1 Card.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Prism', 'Psyche', 'Alteration', 'Reaction', 'Charge', 'Base Class', 
-        'Change the Element being added to your or adjacent targets charge to any element even if they don''t have any in their reserves or the mastery for it.'
+        'Change the element being added to your or adjacent targets charge to any element.'
     ); 
     
     insert into cards
@@ -703,15 +681,15 @@ LIQ: Draw 1 Card.'
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Cycle', 'Mind', 'Card Draw', 'Reaction', 'Anytime', 'Base Class', 
-        'Discard 1 card then draw 3.'
+		'Inversion', 'Mind', 'Card Draw', 'Reaction', 'Draw/Discard', 'Base Class', 
+        'If a player were to draw a card, they discard 1 instead. The same is true for discard.'
     ); 
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Scan', 'Mind', 'Card Draw', 'Half-Round', 'Standard', 'Base Class', 
-        'View the Stats, Inventory and Hands of all players within sight and get a +1 bonus until end of turn.'
+        'Look at target opponents hand within sight and discard a card from it.'
     );
 
 	insert into cards
@@ -726,27 +704,27 @@ LIQ: Draw 1 Card.'
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Convincing Attack', 'Mind', 'Negotiations', 'Combat', 'Defensive', 'Base Class', 
-        'Draw 2 cards.'
+        'Gain 1 Mind regardless of who wins.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Diplomatic Attack', 'Mind', 'Negotiations', 'Combat', 'Tactical', 'Base Class', 
-        'You can negotiate after the attack and can reroll on a fail.'
+		'Persuasive Attack', 'Mind', 'Negotiations', 'Combat', 'Tactical', 'Base Class', 
+        'Make a negotiation against all opponents with no penalty for failure.'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Pressuring Attack', 'Mind', 'Negotiations', 'Combat', 'Aggressive', 'Base Class', 
-        'Opponent loses 1 Mind regardless of who wins.'
+        'Opponent loses 2 Mind.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Persuasive', 'Mind', 'Negotiations', 'Reaction', 'Negotiation', 'Base Class', 
+		'Logic', 'Mind', 'Negotiations', 'Reaction', 'Negotiation', 'Base Class', 
         'Add a +2 bonus or -2 penalty to a negotiation of any player within sight.'
     ); 
     
@@ -760,8 +738,8 @@ LIQ: Draw 1 Card.'
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Negotiations', 'Mind', 'Negotiations', 'Full-Round', 'Standard', 'Base Class', 
-        'Make a negotiation against all opponents within sight with a +1 bonus and no penalty for failure.'
+		'Diplomatic', 'Mind', 'Negotiations', 'Full-Round', 'Stance', 'Base Class', 
+        'You can reroll all negotiations with a -2 penalty.'
     );
     
     

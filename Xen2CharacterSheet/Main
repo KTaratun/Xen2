@@ -1,23 +1,21 @@
 import pymysql
 import Gear
 from random import randint
-from random import uniform
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle
 from kivy.uix.label import CoreLabel
-from functools import partial
 from kivy.uix.label import Label
 from kivy.config import Config
-from kivy.uix.pagelayout import PageLayout
 from kivy.graphics import Line
 from kivy.uix.image import Image
 from functools import partial
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
-from kivy.uix.behaviors import ButtonBehavior
+import os.path
 import csv
 from kivy.config import Config
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
@@ -199,8 +197,8 @@ class ScreenManagement(ScreenManager):
             self.deck = [73, 79, 79, 79, 85, 74, 80, 80, 80, 86, 75, 81, 81, 81, 87, 76, 76, 82, 82, 88, 88, 77, 77, 83, 83,
                          89, 89, 78, 84, 90]
         elif self.Class == "Arbiter":
-            self.deck = [91, 97, 97, 97, 103, 92, 98, 98, 98, 104, 92, 99, 99, 99, 105, 93, 93, 99, 99, 105, 105, 94, 94,
-                         100, 100, 106, 106, 95, 101, 107]
+            self.deck = [91, 97, 97, 97, 103, 92, 98, 98, 98, 104, 93, 99, 99, 99, 105, 94, 94, 100, 100, 106, 106, 95, 95,
+                         101, 101, 107, 107, 96, 102, 108]
 
         crds = self.FetchDeck()
 
@@ -254,6 +252,8 @@ class ScreenManagement(ScreenManager):
         return deck
 
     def Text(self, type, string):
+        if string == "Opponent removes 2 Elements of your choice from their Reserves and add 1 of those to yours.":
+            d = 2
         if (type == "name"):
             e = string
             siz = len(e)
@@ -272,6 +272,7 @@ class ScreenManagement(ScreenManager):
             return t.texture
         elif (type == "text"):
             e = string
+            siz = len(e)
             b = []
             c = []
             num = 30
@@ -279,7 +280,7 @@ class ScreenManagement(ScreenManager):
                 for p in range(0, num):
                     if e[num - p] == ' ':
                         b = e[:(num - p)]
-                        for i in range(0, p+4):
+                        for i in range(0, p):
                             b += ' '
                         b += '\n'
                         c = e[(num - p + 1):]
@@ -288,7 +289,7 @@ class ScreenManagement(ScreenManager):
                         break
             else:
                 b = e
-                for p in range(0, 30 - len(e)):
+                for p in range(0, num - len(e)):
                     b += ' '
                 b += '\n'
             if len(e) > num * 2:
@@ -308,7 +309,7 @@ class ScreenManagement(ScreenManager):
                             break
             else:
                 b += '\n'
-            if len(e) > num * 3 + 1:
+            if len(e) > num * 3:
                 for p in range(0, num):
                     if c[num - p] == ' ':
                         b += c[:(num - p)]
@@ -348,7 +349,10 @@ class ScreenManagement(ScreenManager):
         self.TempPsy = self.character.Psyche
         self.Mastery = self.character.Psyche + 1
         self.MasTot = self.character.Mastery
-        self.ElTotal = self.character.Psyche * 4
+        if self.character.Psyche == 0:
+            self.ElTotal = 2
+        else:
+            self.ElTotal = self.character.Psyche * 4
         self.ids.elements.ids.ElTotVal.text = str(self.ElTotal)
         self.ids.elements.ids.MasTot.text = str(self.character.Mastery)
         self.ids.elements.ids.ZepVal.text = str(0)
@@ -371,7 +375,6 @@ class ScreenManagement(ScreenManager):
         self.character.Liquid = 0
 
     def SaveData(self):
-        self.name = "dfd"
         self.path.write(self.character.name + ',')
         self.path.write(str(self.character.lvl) + ',')
         self.path.write(str(self.character.health) + ',')
@@ -399,13 +402,18 @@ class ScreenManagement(ScreenManager):
         self.path.write(str(self.character.Void) + ',')
         self.path.write(str(self.character.Liquid) + "\n")
 
+        self.path.write(str(self.character.bloodType) + ",")
+        for i in range(0, 5):
+            self.path.write(str(self.character.bTStats[i]) + ",")
+        self.path.write(str(self.character.bTStats[5]) + "\n")
+
         self.deck = [19, 25, 25, 25, 31, 20, 26, 26, 26, 32, 21, 27, 27, 27, 33, 22, 22, 28, 28, 34, 34, 23, 23, 29, 29,
                      35, 35, 24, 30, 36]
 
         self.path.write(str(self.deck))
         self.path.write("\n" + str(len(self.character.inv)) + "\n")
 
-        for i in range(0, len(self.character.inv)):
+        for i in range(0, len(self.character.inv) - 1):
             if self.character.inv[i].type == "Melee" or self.character.inv[i].type == "Ranged":
                 self.path.write(self.character.inv[i].name + "," + self.character.inv[i].type + "," + str(self.character.inv[i].size)
                                 + "," + str(self.character.inv[i].attack[0]) + "," + str(self.character.inv[i].attack[1]) + "," +
@@ -424,31 +432,31 @@ class ScreenManagement(ScreenManager):
             parse.append(row)
 
         self.character.name = parse[0][0]
-        self.character.lvl = parse[0][1]
-        self.character.health = parse[0][2]
-        self.character.lightArmor = parse[0][3]
-        self.character.heavyArmor = parse[0][4]
+        self.character.lvl = int(parse[0][1])
+        self.character.health = int(parse[0][2])
+        self.character.lightArmor = int(parse[0][3])
+        self.character.heavyArmor = int(parse[0][4])
 
-        self.character.Instinct = parse[1][0]
-        self.character.Tech = parse[1][1]
-        self.character.Force = parse[1][2]
-        self.character.Vitality = parse[1][3]
-        self.character.Psyche = parse[1][4]
-        self.character.Mind = parse[1][5]
+        self.character.Instinct = int(parse[1][0])
+        self.character.Tech = int(parse[1][1])
+        self.character.Force = int(parse[1][2])
+        self.character.Vitality = int(parse[1][3])
+        self.character.Psyche = int(parse[1][4])
+        self.character.Mind = int(parse[1][5])
 
-        self.character.Movement = parse[2][0]
-        self.character.Range = parse[2][1]
-        self.character.Brutality = parse[2][2]
-        self.character.Inventory = parse[2][3]
-        self.character.Mastery = parse[2][4]
-        self.character.Intellect = parse[2][5]
+        self.character.Movement = int(parse[2][0])
+        self.character.Range = int(parse[2][1])
+        self.character.Brutality = int(parse[2][2])
+        self.character.Inventory = int(parse[2][3])
+        self.character.Mastery = int(parse[2][4])
+        self.character.Intellect = int(parse[2][5])
 
-        self.character.Zephyr = parse[3][0]
-        self.character.Spark = parse[3][1]
-        self.character.Heat = parse[3][2]
-        self.character.Mineral = parse[3][3]
-        self.character.Void = parse[3][4]
-        self.character.Liquid = parse[3][5]
+        self.character.Zephyr = int(parse[3][0])
+        self.character.Spark = int(parse[3][1])
+        self.character.Heat = int(parse[3][2])
+        self.character.Mineral = int(parse[3][3])
+        self.character.Void = int(parse[3][4])
+        self.character.Liquid = int(parse[3][5])
 
         self.tempHealth = self.character.health
         self.tempInstinct = self.character.Instinct
@@ -472,7 +480,11 @@ class ScreenManagement(ScreenManager):
         self.tempVoid = self.character.Void
         self.tempLiquid = self.character.Liquid
 
-        temp = parse[4]
+        self.character.bloodType = parse[4][0]
+        for i in range(0, 6):
+            self.character.bTStats[i] = int(parse[4][i + 1])
+
+        temp = parse[5]
 
         for i in range(0, 30):
             temp[i] = temp[i][1:]
@@ -481,13 +493,13 @@ class ScreenManagement(ScreenManager):
 
         self.deck = temp
 
-        for i in range(0, int(parse[5][0])):
-            if parse[i + 6][1] == "Melee" or parse[i + 6][1] == "Ranged":
-                self.character.inv[i] = Gear.Weapon(parse[i + 6][0], parse[i + 6][1], parse[i + 6][2],
-                                          [parse[i + 6][3], parse[i + 6][4], parse[i + 6][5]], parse[i + 6][6])
+        for i in range(0, int(parse[6][0]) - 1):
+            if parse[i + 7][1] == "Melee" or parse[i + 7][1] == "Ranged":
+                self.character.inv[i] = Gear.Weapon(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2],
+                                          [parse[i + 7][3], parse[i + 7][4], parse[i + 7][5]], parse[i + 7][6])
             else:
-                self.character.inv[i] = Gear.Gear(parse[i + 6][0], parse[i + 6][1], parse[i + 6][2], parse[i + 6][3],
-                                        parse[i + 6][4])
+                self.character.inv[i] = Gear.Gear(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2], parse[i + 7][3],
+                                        parse[i + 7][4])
 
         self.path.close()
 
@@ -715,7 +727,7 @@ class ScreenManagement(ScreenManager):
             screen.ids.liqMod.color = 1, 0, 0, 1
 
     def CharScreenUpdate(self, screen):
-        self.CharStats(self.ids.character)
+        self.CharStats(screen)
         screen.ids.nameVal.text = self.character.name
         screen.ids.lvlVal.text = str(self.character.lvl)
         screen.ids.healVal.text = str(self.character.health)
@@ -739,6 +751,34 @@ class ScreenManagement(ScreenManager):
         screen.ids.Mind.text = str(self.character.Mind)
         screen.ids.Int.text = str(self.character.Intellect)
         screen.ids.Liq.text = str(self.character.Liquid)
+        screen.ids.blood.text = str(self.character.bloodType)
+        self.BloodStuff(screen)
+
+    def BloodStuff(self, screen):
+        if self.character.bTStats[0] == 2:
+            screen.ids.zepBlood.text = "+"
+        else:
+            screen.ids.zepBlood.text = "--"
+        if self.character.bTStats[1] == 2:
+            screen.ids.spaBlood.text = "+"
+        else:
+            screen.ids.spaBlood.text = "--"
+        if self.character.bTStats[2] == 2:
+            screen.ids.heaBlood.text = "+"
+        else:
+            screen.ids.heaBlood.text = "--"
+        if self.character.bTStats[3] == 2:
+            screen.ids.minBlood.text = "+"
+        else:
+            screen.ids.minBlood.text = "--"
+        if self.character.bTStats[4] == 2:
+            screen.ids.psyBlood.text = "+"
+        else:
+            screen.ids.psyBlood.text = "--"
+        if self.character.bTStats[5] == 2:
+            screen.ids.liqBlood.text = "+"
+        else:
+            screen.ids.liqBlood.text = "--"
 
     def CharStats(self, screen):
         #repositions the stats portion of the character sheet
@@ -973,10 +1013,11 @@ class ScreenManagement(ScreenManager):
             button.color = (0, 0, 0, 1)
         return temp
 
-    def Reset(self):
+    def Reset(self, notUsed):
         self.CharScreenUpdate(self.ids.character)
 
-        self.tempInstinct = self.character.Instinct
+        self.ids.character.ids.healVal.color=(0, 0, 0, 1)
+        self.tempHealth = self.character.health
         self.ids.character.ids.Ins.color = (0, 0, 0, 1)
         self.tempTech = self.character.Tech
         self.ids.character.ids.Tec.color = (0, 0, 0, 1)
@@ -1014,13 +1055,13 @@ class ScreenManagement(ScreenManager):
         self.ids.character.ids.Liq.color = (0, 0, 0, 1)
 
         self.cardId = 0
-        print("len of hand before" + str(len(self.hand)))
-        for i in range(0, len(self.hand)):
+        print("len of hand before" + str(len(self.character.hand)))
+        for i in range(0, len(self.character.hand)):
             print("number of loops" + str(i))
-            self.Discard(self.hand[0])
-        print("len of hand after" + str(len(self.hand)))
-        self.cardsLeft.clear()
-        self.discard.clear()
+            self.Discard(self.character.hand[0])
+        print("len of hand after" + str(len(self.character.hand)))
+        self.character.cardsLeft.clear()
+        self.character.discard.clear()
         self.DeckAndGearInit()
         print(self.ids.character.ids.fL.children)
         self.selected = Button(pos=(0, 1))
@@ -1028,6 +1069,34 @@ class ScreenManagement(ScreenManager):
         self.ids.character.ids.discard.disabled = True
         self.ids.character.ids.draw.disabled = False
         self.ids.character.ids.drawMax.disabled = False
+
+    def NamePopup(self):
+        b = FloatLayout()
+        t = TextInput(size_hint=(.9, .38), font_size=30, pos_hint={"center_x": .5, "y": .55})
+        b1 = Button(size_hint=(.4, .4), pos_hint={"center_x": .73, "y": .04}, text="Confirm")
+        b2 = Button(size_hint=(.4, .4), pos_hint={"center_x": .27, "y": .04}, text="Cancel")
+        b.add_widget(t)
+        b.add_widget(b1)
+        b.add_widget(b2)
+
+        popup = Popup(title='Name',
+                      content=b,
+                      size_hint=(None, None), size=(410, 200),
+                      auto_dismiss=False)
+
+        b1.bind(on_release=popup.dismiss)
+        b1.bind(on_release=partial(self.NameSave, t))
+        b2.bind(on_release=popup.dismiss)
+        popup.open()
+
+    def NameSave(self, nam, button):
+        self.character.name = nam.text
+        self.ids.confirm.ids.nameVal.text = nam.text
+
+        if len(nam.text) > 0:
+            self.ids.confirm.ids.fin.disabled = False
+        else:
+            self.ids.confirm.ids.fin.disabled = True
 
     def LoadoutRandomizer(self, load):
         if load == "sF":
@@ -1177,6 +1246,12 @@ class ScreenManagement(ScreenManager):
             for i in range(1, int(screen.ids.cellTwelve.name) + 1):
                 screen.ids.cellTwelve.unbind_uid('on_release', i)
 
+        for i in range(0, num - 1):
+            if self.character.inv[i].name == "Light Armor":
+                self.character.lightArmor += 3
+            elif self.character.inv[i].name == "Heavy Armor":
+                self.character.heavyArmor += 1
+
     def CellPopup(self, gear, button):
         name = self.Text("name", gear.name)
         type = self.Text("type", gear.type + " - Size " + str(gear.size))
@@ -1281,30 +1356,30 @@ class ScreenManagement(ScreenManager):
                       size_hint=(None, None), size=size)
         popup.open()
 
-    def ElementList(self):
+    def ElementList(self, notUsed):
         fL = FloatLayout()
         one1 = Button(name="one+1+" + str(0), text="Zephyr", pos_hint={"x": .05, "y": .91}, size_hint=(.15, .07))
-        one1.fbind("on_release", partial(self.ElementPopup, one1.text))
+        one1.fbind("on_touch_down", partial(self.ElementPopup, one1.text))
         fL.add_widget(one1)
 
         one2 = Button(name="one+2+" + str(0), text="Spark", pos_hint={"x": .2, "y":  .91}, size_hint=(.15, .07))
-        one2.fbind("on_release", partial(self.ElementPopup, one2.text))
+        one2.fbind("on_touch_down", partial(self.ElementPopup, one2.text))
         fL.add_widget(one2)
 
         one3 = Button(name="one+3+" + str(0), text="Heat", pos_hint={"x": .35, "y": .91}, size_hint=(.15, .07))
-        one3.fbind("on_release", partial(self.ElementPopup, one3.text))
+        one3.fbind("on_touch_down", partial(self.ElementPopup, one3.text))
         fL.add_widget(one3)
 
         one4 = Button(name="one+4+" + str(0), text="Mineral", pos_hint={"x": .5, "y":  .91}, size_hint=(.15, .07))
-        one4.fbind("on_release", partial(self.ElementPopup, one4.text))
+        one4.fbind("on_touch_down", partial(self.ElementPopup, one4.text))
         fL.add_widget(one4)
 
         one5 = Button(name="one+5+" + str(0), text="Void", pos_hint={"x": .65, "y": .91}, size_hint=(.15, .07))
-        one5.fbind("on_release", partial(self.ElementPopup, one5.text))
+        one5.fbind("on_touch_down", partial(self.ElementPopup, one5.text))
         fL.add_widget(one5)
 
         one6 = Button(name="one+6+" + str(0), text="Liquid", pos_hint={"x": .8, "y":  .91}, size_hint=(.15, .07))
-        one6.fbind("on_release", partial(self.ElementPopup, one6.text))
+        one6.fbind("on_touch_down", partial(self.ElementPopup, one6.text))
         fL.add_widget(one6)
 
         two1 = Button(name="two+1+" + str(0), text="Null", pos_hint={"x": .125, "y": .76}, size_hint=(.15, .07))
@@ -1378,121 +1453,181 @@ class ScreenManagement(ScreenManager):
 
         oneButtons = [fL.children[len(fL.children)-7], fL.children[len(fL.children)-8], fL.children[len(fL.children)-9],
                       fL.children[len(fL.children)-10], fL.children[len(fL.children)-11]]
-        one1.fbind("on_release", partial(self.ElementButtons, oneButtons, fL))
-        one2.fbind("on_release", partial(self.ElementButtons, oneButtons, fL))
-        one3.fbind("on_release", partial(self.ElementButtons, oneButtons, fL))
-        one4.fbind("on_release", partial(self.ElementButtons, oneButtons, fL))
-        one5.fbind("on_release", partial(self.ElementButtons, oneButtons, fL))
-        one6.fbind("on_release", partial(self.ElementButtons, oneButtons, fL))
+        one1.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
+        one2.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
+        one3.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
+        one4.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
+        one5.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
+        one6.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
 
         popup = Popup(title="d",
                       content=fL,
                       size_hint=(None, None), size=(760, 600))
         popup.open()
 
-    def ElementButtons(self, buttons, fL, binder):
-        query = "SELECT * FROM elements WHERE elementName = %s"
-        self.cur.execute(query, binder.text)
-        element = self.cur.fetchone()
+    def ElementButtons(self, buttons, fL, binder, sys):
+        if sys.button == "left" and sys.x > binder.x and sys.x < binder.x + binder.size[0] and sys.y > binder.y and sys.y < binder.y + binder.size[1]:
+            namBut = binder.name.split("+")
+            self.ButtonColorReset(namBut[0], fL)
+            binder.background_color = .8, .8, 1, 1
+            query = "SELECT * FROM elements WHERE elementName = %s"
+            self.cur.execute(query, binder.text)
+            element = self.cur.fetchone()
 
-        num = str(element[2] + 1)
-        query = "SELECT * FROM elements WHERE elementLvl = "
-        query += num + " and elementCharges LIKE "
+            num = str(element[2] + 1)
+            query = "SELECT * FROM elements WHERE elementLvl = "
+            query += num + " and elementCharges LIKE "
 
-        types = element[3].split("+")
-        arg = "'%"
-        for h in range(0, len(types)):
-            arg += types[h]
-            if h < len(types) - 1:
-                arg += "%' and elementCharges LIKE '%"
+            types = element[3].split("+")
+            arg = "'%"
+            for h in range(0, len(types)):
+                arg += types[h]
+                if h < len(types) - 1:
+                    arg += "%' and elementCharges LIKE '%"
 
-        arg += "%'"
+            arg += "%'"
 
-        query += arg
-        self.cur.execute(query)
-        fetch = self.cur.fetchall()
-        newButtons = list(buttons)
-        newButtons.pop()
-        indexer = 12
+            query += arg
+            self.cur.execute(query)
+            fetch = self.cur.fetchall()
+            newButtons = list(buttons)
+            newButtons.pop()
+            indexer = 12
 
-        if num == "3":
-            indexer += 4
-        elif num == "4":
-            indexer += 7
-        elif num == "5":
-            indexer += 9
-        #for i in range(0, int(binder.name)):
-        #    indexer += 5 - int(binder.name)
+            if num == "3":
+                indexer += 4
+            elif num == "4":
+                indexer += 7
+            elif num == "5":
+                indexer += 9
+            #for i in range(0, int(binder.name)):
+            #    indexer += 5 - int(binder.name)
 
-        # Setting next buttons to pass to current buttons
-        for j in range(0, len(newButtons)):
-            newButtons[j] = fL.children[len(fL.children)-indexer-j]
+            # Setting next buttons to pass to current buttons
+            for j in range(0, len(newButtons)):
+                newButtons[j] = fL.children[len(fL.children)-indexer-j]
 
-        # Setting current buttons
-        if num != "6":
-            for k in range(0, len(buttons)):
-                buttons[k].text = fetch[k][1]
-                nam = buttons[k].name.split("+")
-                for l in range(1, int(nam[2]) + 1):
-                    buttons[k].unbind_uid('on_release', l)
-                buttons[k].name = nam[0] + "+" + nam[1] + "+" + str(buttons[k].fbind("on_release", partial(self.ElementPopup, fetch[k][1])))
-                buttons[k].fbind("on_release", partial(self.ElementButtons, newButtons, fL))
+            # Setting current buttons
+            if int(num) < 5:
+                for k in range(0, len(buttons)):
+                    buttons[k].text = fetch[k][1]
+                    nam = buttons[k].name.split("+")
+                    for l in range(1, int(nam[2]) + 1):
+                        buttons[k].unbind_uid("on_touch_down", l)
+                    buttons[k].name = nam[0] + "+" + nam[1] + "+" + str(buttons[k].fbind("on_touch_down", partial(self.ElementPopup, fetch[k][1])))
+                    buttons[k].fbind("on_touch_down", partial(self.ElementButtons, newButtons, fL))
 
-        # Setting symbols for combos
-        for sym in range(0, len(buttons)):
-            typers = fetch[sym][3].split("+")
-            for typ in range(0, len(typers)):
-                string = typers[typ] + '.png'
-                print(string)
-                buttons[sym].children[len(buttons[sym].children) - typ - 1].source = string
-                buttons[sym].children[len(buttons[sym].children) - typ - 1].color = (1, 1, 1, 1)
+            # Setting symbols for combos
+            for sym in range(0, len(buttons)):
+                typers = fetch[sym][3].split("+")
+                for typ in range(0, len(typers)):
+                    string = typers[typ] + '.png'
+                    buttons[sym].children[len(buttons[sym].children) - typ - 1].source = string
+                    buttons[sym].children[len(buttons[sym].children) - typ - 1].color = (1, 1, 1, 1)
 
-        self.DrawLine(binder, fL)
+            self.DrawLine(binder, fL)
 
-        # This can be a lot cleaner
-        run = 0
-        count = 0
-        if num == "2":
-            count = 9
-        elif num == "3":
-            count = 5
-        elif num == "4":
-            count = 2
+            # This can be a lot cleaner
+            run = 0
+            count = 0
+            if num == "2":
+                count = 9
+            elif num == "3":
+                count = 5
+            elif num == "4":
+                count = 2
 
-        # Nulling out combinations I'm not using anymore
-        while run != count:
-            nam = fL.children[len(fL.children)-indexer - run].name.split("+")
-            for m in range(1, int(nam[2]) + 2):
-                fL.children[len(fL.children)-indexer - run].unbind_uid('on_release', m)
-            fL.children[len(fL.children)-indexer - run].text = "Null"
-            for n in range(0, len(fL.children[len(fL.children)-indexer - run].children)):
-                fL.children[len(fL.children)-indexer - run].children[n].color = (0, 0, 0, 0)
-            run += 1
+            # Nulling out combinations I'm not using anymore
+            while run != count:
+                nam = fL.children[len(fL.children)-indexer - run].name.split("+")
+                for m in range(1, int(nam[2]) + 2):
+                    fL.children[len(fL.children)-indexer - run].unbind_uid("on_touch_down", m)
+                fL.children[len(fL.children)-indexer - run].text = "Null"
+                for n in range(0, len(fL.children[len(fL.children)-indexer - run].children)):
+                    fL.children[len(fL.children)-indexer - run].children[n].color = (0, 0, 0, 0)
+                run += 1
 
-    def ElementPopup(self, name, button):
-        query = "SELECT * FROM elements WHERE elementName = %s"
-        self.cur.execute(query, name)
-        fetch = self.cur.fetchone()
+    def ButtonColorReset(self, num, fL):
+        if num == "one":
+            for i in range(0, 20):
+                fL.children[26 - i].background_color = 1, 1, 1, 1
+        elif num == "two":
+            for i in range(0, 14):
+                fL.children[20 - i].background_color = 1, 1, 1, 1
+        elif num == "three":
+            for i in range(0, 9):
+                fL.children[15 - i].background_color = 1, 1, 1, 1
+        elif num == "four":
+            for i in range(0, 5):
+                fL.children[11 - i].background_color = 1, 1, 1, 1
+        elif num == "five":
+            for i in range(0, 2):
+                fL.children[9 - i].background_color = 1, 1, 1, 1
 
-        name = self.Text("name", fetch[1])
-        type = self.Text("type", fetch[3])
-        text = self.Text("text", fetch[5])
+    def ElementPopup(self, name, button, sys):
+        if sys.button == "right" and sys.x > button.x and sys.x < button.x + button.size[0] and sys.y > button.y and sys.y < button.y + button.size[1]:
+            query = "SELECT * FROM elements WHERE elementName = %s"
+            self.cur.execute(query, name)
+            fetch = self.cur.fetchone()
 
-        border = Image(source="ElementCard.png", size=(800, 800), allow_stretch=True)
-        border.add_widget(Image(source=str(fetch[3]+".png"), size=(45, 45), pos=(228, 465), allow_stretch=True))
-        border.add_widget(Image(texture=name, pos=(278, 392), size=(220, 220), allow_stretch=True))
-        border.add_widget(Image(texture=type, pos=(278, 363), size=(220, 220), allow_stretch=True))
-        border.add_widget(Image(texture=text, pos=(255, 8), size=(290, 290), allow_stretch=True))
+            name = self.Text("name", fetch[1])
+            type = self.Text("type", fetch[3])
+            text = self.Text("text", fetch[5])
 
-        popup = Popup(title='Element Viewer',
-                      content=border,
-                      size_hint=(None, None), size=(410, 580))
+            border = Image(source="ElementCard.png", size=(800, 800), allow_stretch=True)
+            border.add_widget(Image(source=str(fetch[3]+".png"), size=(45, 45), pos=(228, 465), allow_stretch=True))
+            border.add_widget(Image(texture=name, pos=(278, 392), size=(220, 220), allow_stretch=True))
+            border.add_widget(Image(texture=type, pos=(278, 363), size=(220, 220), allow_stretch=True))
+            border.add_widget(Image(texture=text, pos=(255, 8), size=(290, 290), allow_stretch=True))
+
+            popup = Popup(title='Element Viewer',
+                          content=border,
+                          size_hint=(None, None), size=(410, 580))
+            popup.open()
+
+    def ChargeScreen(self):
+
+        b = FloatLayout()
+        zep = Button(size_hint=(.15, .1), pos_hint={"center_x": .12, "y": .85}, background_color=(0, 0, 0, 0))
+        spa = Button(size_hint=(.15, .1), pos_hint={"center_x": .27, "y": .85}, background_color=(0, 0, 0, 0))
+        hea = Button(size_hint=(.15, .1), pos_hint={"center_x": .42, "y": .85}, background_color=(0, 0, 0, 0))
+        min = Button(size_hint=(.15, .1), pos_hint={"center_x": .57, "y": .85}, background_color=(0, 0, 0, 0))
+        voi = Button(size_hint=(.15, .1), pos_hint={"center_x": .72, "y": .85}, background_color=(0, 0, 0, 0))
+        liq = Button(size_hint=(.15, .1), pos_hint={"center_x": .87, "y": .85}, background_color=(0, 0, 0, 0))
+        print(zep.pos_hint)
+        zepImage = Image(source="Zephyr.png", pos=(zep.pos_hint[0] * self.width, zep.pos_hint[1] * self.height))
+        zep.add_widget(zepImage)
+        b1 = Button(size_hint=(.25, .1), pos_hint={"center_x": .8, "y": .04}, text="Add")
+        b2 = Button(size_hint=(.25, .1), pos_hint={"center_x": .2, "y": .04}, text="Reset")
+        b3 = Button(size_hint=(.25, .1), pos_hint={"center_x": .5, "y": .04}, text="Elements")
+        b.add_widget(zep)
+        b.add_widget(spa)
+        b.add_widget(hea)
+        b.add_widget(min)
+        b.add_widget(voi)
+        b.add_widget(liq)
+        b.add_widget(b1)
+        b.add_widget(b2)
+        b.add_widget(b3)
+
+        popup = Popup(title='Charge',
+                      content=b,
+                      size_hint=(None, None), size=(410, 500))
+
+        #b2.bind(on_release=self.ResetCharge)
+        b3.bind(on_release=self.ElementList)
         popup.open()
+
+    #def ResetCharge(self):
 
     def DrawLine(self, button, fL):
         nam = button.name.split("+")
         if nam[0] == "one":
             fL.canvas.remove_group("one")
+            fL.canvas.remove_group("two")
+            fL.canvas.remove_group("three")
+            fL.canvas.remove_group("four")
+            fL.canvas.remove_group("five")
             main = Line(group="one", points=((179, 485) + (620, 485)))
             one = Line(group="one", points=((179, 485) + (179, 470)))
             two = Line(group="one", points=((289, 485) + (289, 470)))
@@ -1525,6 +1660,9 @@ class ScreenManagement(ScreenManager):
 
         elif nam[0] == "two":
             fL.canvas.remove_group("two")
+            fL.canvas.remove_group("three")
+            fL.canvas.remove_group("four")
+            fL.canvas.remove_group("five")
             main = Line(group="two", points=((234, 402) + (564, 402)))
             one = Line(group="two", points=((234, 402) + (234, 387)))
             two = Line(group="two", points=((344, 402) + (344, 387)))
@@ -1553,6 +1691,8 @@ class ScreenManagement(ScreenManager):
 
         elif nam[0] == "three":
             fL.canvas.remove_group("three")
+            fL.canvas.remove_group("four")
+            fL.canvas.remove_group("five")
             main = Line(group="three", points=((289, 319) + (509, 319)))
             one = Line(group="three", points=((289, 319) + (289, 304)))
             two = Line(group="three", points=((399, 319) + (399, 304)))
@@ -1577,6 +1717,7 @@ class ScreenManagement(ScreenManager):
 
         elif nam[0] == "four":
             fL.canvas.remove_group("four")
+            fL.canvas.remove_group("five")
             main = Line(group="four", points=((344, 236) + (454, 236)))
             one = Line(group="four", points=((344, 236) + (344, 221)))
             two = Line(group="four", points=((454, 236) + (454, 221)))
@@ -1598,6 +1739,111 @@ class ScreenManagement(ScreenManager):
         fL.canvas.add(main)
         fL.canvas.add(con)
 
+    def CharInit(self):
+        self.LoadData()
+        self.DeckAndGearInit()
+        self.CharScreenUpdate(self.ids.character)
+        return "character"
+
+    def CharSelectUpdate(self):
+        if os.path.isfile('char1.txt'):
+            path = open("char1.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.char1.text = name
+            else:
+                self.ids.charSelect.ids.char2.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.char1.text = "NEW CHAR"
+        if os.path.isfile('char2.txt'):
+            path = open("char2.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.char2.text = name
+            else:
+                self.ids.charSelect.ids.char2.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.char2.text = "NEW CHAR"
+        if os.path.isfile('char3.txt'):
+            path = open("char3.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.char3.text = name
+            else:
+                self.ids.charSelect.ids.char3.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.char3.text = "NEW CHAR"
+        if os.path.isfile('char4.txt'):
+            path = open("char4.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.char4.text = name
+            else:
+                self.ids.charSelect.ids.char4.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.char4.text = "NEW CHAR"
+        if os.path.isfile('char5.txt'):
+            path = open("char5.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.char5.text = name
+            else:
+                self.ids.charSelect.ids.char5.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.char5.text = "NEW CHAR"
+        if os.path.isfile('char6.txt'):
+            path = open("char6.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.char6.text = name
+            else:
+                self.ids.charSelect.ids.char6.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.char6.text = "NEW CHAR"
+
+    def ResetPopup(self):
+        b = FloatLayout()
+        l = Label(font_size=25, pos_hint={"center_x": .5, "y": .3}, text="Reset all cards and temp stats?")
+        b1 = Button(size_hint=(.4, .4), pos_hint={"center_x": .73, "y": .04}, text="Confirm")
+        b2 = Button(size_hint=(.4, .4), pos_hint={"center_x": .27, "y": .04}, text="Cancel")
+        b.add_widget(l)
+        b.add_widget(b1)
+        b.add_widget(b2)
+
+        popup = Popup(title='Reset',
+                      content=b,
+                      size_hint=(None, None), size=(410, 200),
+                      auto_dismiss=False)
+
+        b1.bind(on_release=popup.dismiss)
+        b1.bind(on_release=self.Reset)
+        b2.bind(on_release=popup.dismiss)
+        popup.open()
+
     class TitleScreen(Screen):
         pass
 
@@ -1617,6 +1863,9 @@ class ScreenManagement(ScreenManager):
         pass
 
     class LoadoutScreen(Screen):
+        pass
+
+    class ConfirmationScreen(Screen):
         pass
 
     class CharacterScreen(Screen):

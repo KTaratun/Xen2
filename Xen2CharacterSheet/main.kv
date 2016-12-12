@@ -32,6 +32,10 @@ ScreenManagement:
 		id: loadout
 		name: "loadout"
 		manager: sManager
+	ConfirmationScreen:
+		id: confirm
+		name: "confirm"
+		manager: sManager
 	CharacterScreen:
 		id: character
 		name: "character"
@@ -64,11 +68,8 @@ ScreenManagement:
 		text: "Xen2 Alpha"
 	Button:
 		on_release: 
-			app.root.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char1.txt", "r")
-			app.root.LoadData()
-			app.root.CharScreenUpdate(app.root.ids.character)
-			app.root.DeckAndGearInit()
-			root.parent.nextscreen(last="title", next="character")
+			root.parent.CharSelectUpdate()
+			root.parent.nextscreen(last="title", next="charSelect")
 		text: "Player"
 		pos_hint: {"center_x": .5, "center_y": .55}
 		size_hint: 0.5, 0.2
@@ -82,47 +83,53 @@ ScreenManagement:
 	Label:
 		text: "Character Select"
 	Button:
-		text: "char1" if isfile('char1.txt') else "NEW CHAR"
+		id: char1
 		pos_hint: {"center_x": .25, "center_y": .65}
 		on_release: 
 			root.parent.backStack.append(root.name)
-			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char1.txt", "w")
-			app.root.current = "class" #if self.text == "NEW CHAR" else "game"
+			root.parent.character = app.root.Character()
+			root.parent.path = open("char1.txt", "w") if self.text == "NEW CHAR" else open("char1.txt", "r")
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
 	Button:
-		text: "char3" if isfile('char3.txt') else "NEW CHAR"
+		id: char3
 		pos_hint: {"center_x": .25, "center_y": .45}
 		on_release: 
 			root.parent.backStack.append(root.name)
-			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char3.txt", "w")
-			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+			root.parent.character = app.root.Character()
+			root.parent.path = open("char3.txt", "w") if self.text == "NEW CHAR" else open("char3.txt", "r")
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
 	Button:
-		text: "char5" if isfile('char5.txt') else "NEW CHAR"
+		id: char5
 		pos_hint: {"center_x": .25, "center_y": .25}
 		on_release: 
 			root.parent.backStack.append(root.name)
-			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char5.txt", "w")
-			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+			root.parent.character = app.root.Character()
+			root.parent.path = open("char5.txt", "w") if self.text == "NEW CHAR" else open("char5.txt", "r")
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
 	Button:
-		text: "char2" if isfile('char2.txt') else "NEW CHAR"
+		id: char2
 		pos_hint: {"center_x": .75, "center_y": .65}
 		on_release: 
 			root.parent.backStack.append(root.name)
-			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char2.txt", "w")
-			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+			root.parent.character = app.root.Character()
+			root.parent.path = open("char2.txt", "w") if self.text == "NEW CHAR" else open("char2.txt", "r")
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
 	Button:
-		text: "char4" if isfile('char4.txt') else "NEW CHAR"
+		id: char4
 		pos_hint: {"center_x": .75, "center_y": .45}
 		on_release: 
 			root.parent.backStack.append(root.name)
-			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char4.txt", "w")
-			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+			root.parent.character = app.root.Character()
+			root.parent.path = open("char4.txt", "w") if self.text == "NEW CHAR" else open("char14.txt", "r")
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
 	Button:
-		text: "char6" if isfile('char6.txt') else "NEW CHAR"
+		id: char6
 		pos_hint: {"center_x": .75, "center_y": .25}
 		on_release: 
 			root.parent.backStack.append(root.name)
-			root.parent.path = open("C:/Users/Kurt/IdeaProjects/Xen2CharacterSheet2/char6.txt", "w")
-			app.root.current = "class" if self.text == "NEW CHAR" else "game"
+			root.parent.character = app.root.Character()
+			root.parent.path = open("char6.txt", "w") if self.text == "NEW CHAR" else open("char6.txt", "r")
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
 
 <ClassSelectScreen>:
 	Label:
@@ -671,6 +678,13 @@ ScreenManagement:
 		font_size: 45
 		on_release: 
 			app.root.BloodTypeGenerator(screen=root)
+	Button:
+		text: "Elements"
+		pos_hint: {"x": .62, "y": .3}
+		size_hint: .2, .1
+		font_size: 35
+		on_release: 
+			app.root.ElementList()
 	Label:
 		id: bT
 		text: "none"
@@ -730,7 +744,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .9, "center_y": .08}
 		disabled: True
 		on_release:
-			root.parent.nextscreen(last="elements", next="character")
+			root.parent.nextscreen(last="elements", next="loadout")
 			
 <LoadoutScreen>
 	Label:
@@ -863,7 +877,419 @@ ScreenManagement:
 		disabled: True
 		on_release:
 			#app.root.SaveData()
-			root.parent.nextscreen(last="loadout", next="character")
+			app.root.CharScreenUpdate(app.root.ids.confirm)
+			app.root.CellInit(app.root.ids.confirm, len(app.root.character.inv) - 1)
+			root.parent.nextscreen(last="loadout", next="confirm")
+			
+<ConfirmationScreen>
+	Label:
+		id: name
+		text: "Name: "
+		font_size: 25
+		pos_hint: {"x": 0, "y": .95}
+		text_size: self.size
+	Label:
+		id: nameVal
+		font_size: 25
+		pos_hint: {"x": .1, "y": .95}
+		text_size: self.size
+	Label:
+		id: lvl
+		text: "Level: "
+		font_size: 25
+		pos_hint: {"x": 0, "y": .9}
+		text_size: self.size
+	Label:
+		id: lvlVal
+		font_size: 25
+		pos_hint: {"x": .09, "y": .9}
+		text_size: self.size
+	Label:
+		id: health
+		text: "Health: "
+		font_size: 25
+		pos_hint: {"x": .38, "y": .95}
+		text_size: self.size
+	Button:
+		id: healVal
+		color: 0, 0, 0, 1
+		font_size: 25
+		pos_hint: {"x": .485, "y": .95}
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.tempHealth = app.root.ChangeVal(button=healVal, orig=app.root.character.health, temp=app.root.tempHealth)
+	Label:
+		id: lArmor
+		text: "L Armor: "
+		font_size: 25
+		pos_hint: {"x": .38, "y": .9}
+		text_size: self.size
+	Label:
+		id: lArmVal
+		font_size: 25
+		pos_hint: {"x": .505, "y": .9}
+		text_size: self.size
+	Label:
+		id: hArmor
+		text: "H Armor: "
+		font_size: 25
+		pos_hint: {"x": .38, "y": .85}
+		text_size: self.size
+	Label:
+		id: hArmVal
+		font_size: 25
+		pos_hint: {"x": .51, "y": .85}
+		text_size: self.size
+	Label:
+		id: inventory
+		text: "Inventory: "
+		font_size: 25
+		pos_hint: {"x": 0, "y": .85}
+		text_size: self.size
+	Label:
+		id: invVal
+		font_size: 25
+		pos_hint: {"x": .135, "y": .85}
+		text_size: self.size
+	Image:
+		id: cS
+		source: "CharStats.png"
+		size_hint: .7, .7
+	Label:
+		id: blood
+		text: "BLLLAAAD"
+		color: 0, 0, 0, 1
+		font_size: 25
+		pos_hint: {"x": .24, "y": .57}
+		text_size: self.size
+	Label:
+		id: zepBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .1443, "y": .693}
+		text_size: self.size
+	Label:
+		id: spaBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .248, "y": .771}
+		text_size: self.size
+	Label:
+		id: heaBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .3512, "y": .693}
+		text_size: self.size
+	Label:
+		id: minBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .3512, "y": .535}
+		text_size: self.size
+	Label:
+		id: psyBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .248, "y": .456}
+		text_size: self.size
+	Label:
+		id: liqBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .1443, "y": .535}
+		text_size: self.size
+	Button:
+		id: Ins
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Mov
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Zep
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Tec
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Ran
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Spa
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: For
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Dam
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Hea
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Vit
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Inv
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.04, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Mine
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Psy
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Mas
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Voi
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Mind
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Int
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: Liq
+		text: "0"
+		color: 0, 0, 0, 1
+		font_size: 25
+		size_hint: (.027, .05)
+		text_size: self.size
+		background_color: (0, 0, 0, 0)
+	Button:
+		id: insInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("INS")
+	Button:
+		id: tecInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("TEC")
+	Button:
+		id: forInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("FOR")
+	Button:
+		id: vitInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("VIT")
+	Button:
+		id: psyInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("PSY")
+	Button:
+		id: minInfo
+		size_hint: (.085, .05)
+		background_color: (0, 0, 0, 0)
+		on_release:
+			app.root.Info("MIN")
+	Button:
+		id: elements
+		text: "Elements"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .42, "center_y": .08}
+		on_release: 
+			app.root.ElementList()
+	Button:
+		id: negotiations
+		text: "Negotiations"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .26, "center_y": .08}
+		on_release: 
+			app.root.Info("NEG")
+	Button:
+		id: deck
+		text: "Deck"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .58, "center_y": .08}
+		on_release: 
+			app.root.num = 0
+			app.root.deckStuff(cards=app.root.ids.cards)
+	Button:
+		id: name
+		text: "Name"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .74, "center_y": .08}
+		on_release:
+			root.parent.NamePopup()
+	Button:
+		id: fin
+		text: "Finish"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .9, "center_y": .08}
+		disabled: True
+		on_release:
+			root.parent.SaveData()
+			app.root.CharSelectUpdate()
+			app.root.nextscreen(last="title", next="charSelect")
+	Button:
+		id: cellOne
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .95}
+	Button:
+		id: cellTwo
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .95}
+	Button:
+		id: cellThree
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .95}
+	Button:
+		id: cellFour
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .85}
+	Button:
+		id: cellFive
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .85}
+	Button:
+		id: cellSix
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .85}
+	Button:
+		id: cellSeven
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .75}
+	Button:
+		id: cellEight
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .75}
+	Button:
+		id: cellNine
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .75}
+	Button:
+		id: cellTen
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .55, "center_y": .65}
+	Button:
+		id: cellEleven
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .7, "center_y": .65}
+	Button:
+		id: cellTwelve
+		name: "0"
+		text: "EMPTY"
+		size_hint: .15, .1
+		pos_hint: {"x": .85, "center_y": .65}
 			
 <CharacterScreen>
 	Label:
@@ -940,6 +1366,48 @@ ScreenManagement:
 		id: cS
 		source: "CharStats.png"
 		size_hint: .7, .7
+	Label:
+		id: blood
+		color: 0, 0, 0, 1
+		font_size: 25
+		pos_hint: {"x": .24, "y": .57}
+		text_size: self.size
+	Label:
+		id: zepBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .1443, "y": .693}
+		text_size: self.size
+	Label:
+		id: spaBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .248, "y": .771}
+		text_size: self.size
+	Label:
+		id: heaBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .3512, "y": .693}
+		text_size: self.size
+	Label:
+		id: minBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .3512, "y": .535}
+		text_size: self.size
+	Label:
+		id: psyBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .248, "y": .456}
+		text_size: self.size
+	Label:
+		id: liqBlood
+		color: 0, 0, 0, 1
+		font_size: 40
+		pos_hint: {"x": .1443, "y": .535}
+		text_size: self.size
 	Button:
 		id: Ins
 		text: "0"
@@ -1202,14 +1670,14 @@ ScreenManagement:
 		size_hint: .15, .1
 		pos_hint: {"center_x": .1, "center_y": .19}
 		on_release: 
-			app.root.Reset()
+			app.root.ResetPopup()
 	Button:
-		id: elements
-		text: "Elements"
+		id: charge
+		text: "Charge"
 		size_hint: .15, .1
 		pos_hint: {"center_x": .26, "center_y": .19}
 		on_release: 
-			app.root.ElementList()
+			app.root.ChargeScreen()
 	Button:
 		id: negotiations
 		text: "Negotiations"

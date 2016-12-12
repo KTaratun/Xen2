@@ -1,0 +1,18 @@
+La,12,24,1161,225
+3,2,1,4,0,2
+6,5,2,14,1,5
+2,0,0,0,0,0
+t9+,-2,2,2,-2,-2,2
+[19, 25, 25, 25, 31, 20, 26, 26, 26, 32, 21, 27, 27, 27, 33, 22, 22, 28, 28, 34, 34, 23, 23, 29, 29, 35, 35, 24, 30, 36]
+12
+Fist,Melee,4,1,6,1,6-10,A melee weapon of questionable ability.
+Polearm,Melee,2,2,1,2,4-10,A melee weapon of questionable ability.
+Heavy Armor,Armor,1,1,Adds 1 to your Heavy Armor
+Heavy Armor,Armor,1,1,Adds 1 to your Heavy Armor
+Light Armor,Armor,1,2,Adds 2 to your Light Armor
+Light Armor,Armor,1,2,Adds 2 to your Light Armor
+Light Armor,Armor,1,2,Adds 2 to your Light Armor
+Light Armor,Armor,1,2,Adds 2 to your Light Armor
+Purifier,Healing,1,0,Removes one status effect
+First Aid,Healing,1,6,Heals health equal to its quality to one adjacent target
+Purifier,Healing,1,0,Removes one status effect
