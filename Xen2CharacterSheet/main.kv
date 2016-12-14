@@ -89,7 +89,7 @@ ScreenManagement:
 			root.parent.backStack.append(root.name)
 			root.parent.character = app.root.Character()
 			root.parent.path = open("char1.txt", "w") if self.text == "NEW CHAR" else open("char1.txt", "r")
-			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit(app.root.character)
 	Button:
 		id: char3
 		pos_hint: {"center_x": .25, "center_y": .45}
@@ -97,7 +97,7 @@ ScreenManagement:
 			root.parent.backStack.append(root.name)
 			root.parent.character = app.root.Character()
 			root.parent.path = open("char3.txt", "w") if self.text == "NEW CHAR" else open("char3.txt", "r")
-			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit(app.root.character)
 	Button:
 		id: char5
 		pos_hint: {"center_x": .25, "center_y": .25}
@@ -105,7 +105,7 @@ ScreenManagement:
 			root.parent.backStack.append(root.name)
 			root.parent.character = app.root.Character()
 			root.parent.path = open("char5.txt", "w") if self.text == "NEW CHAR" else open("char5.txt", "r")
-			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit(app.root.character)
 	Button:
 		id: char2
 		pos_hint: {"center_x": .75, "center_y": .65}
@@ -113,15 +113,15 @@ ScreenManagement:
 			root.parent.backStack.append(root.name)
 			root.parent.character = app.root.Character()
 			root.parent.path = open("char2.txt", "w") if self.text == "NEW CHAR" else open("char2.txt", "r")
-			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit(app.root.character)
 	Button:
 		id: char4
 		pos_hint: {"center_x": .75, "center_y": .45}
 		on_release: 
 			root.parent.backStack.append(root.name)
 			root.parent.character = app.root.Character()
-			root.parent.path = open("char4.txt", "w") if self.text == "NEW CHAR" else open("char14.txt", "r")
-			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
+			root.parent.path = open("char4.txt", "w") if self.text == "NEW CHAR" else open("char4.txt", "r")
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit(app.root.character)
 	Button:
 		id: char6
 		pos_hint: {"center_x": .75, "center_y": .25}
@@ -129,7 +129,7 @@ ScreenManagement:
 			root.parent.backStack.append(root.name)
 			root.parent.character = app.root.Character()
 			root.parent.path = open("char6.txt", "w") if self.text == "NEW CHAR" else open("char6.txt", "r")
-			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit()
+			app.root.current = "class" if self.text == "NEW CHAR" else app.root.CharInit(app.root.character)
 
 <ClassSelectScreen>:
 	Label:
@@ -145,7 +145,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .2, "center_y": .7}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
 			root.ids.desc.text = "Scout characters favor Speed, Board Control and Non-Leathal\nCombat. Their Speed allows them to receive action bonues to\nensure success in combat. They can manipulate players\npositions on the battlefield for greater strategy. Scouts can\nknock players out by removing cards from their decks."
 	Button:
 		id: two
@@ -154,7 +155,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .5, "center_y": .7}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
 			root.ids.desc.text = "Technicians are proficient with Items, Weapons and Tech\nactions. They can create a variety of items on the spot and\nuse them more effectively. Their prowess with weapons\nallows them to push their weapons to the limits. Technicians\nTech abilities grant them the power to alter the stats of players."
 	Button:
 		id: three
@@ -163,7 +165,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .8, "center_y": .7}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
 			root.ids.desc.text = "Assault characters slay opponents with disabling effects,\npriority and raw power. Their power can be focused to target\ntheir opponents weak spots. Their attacks have increased\npriority which can grant bonuses in battle. They can down\nenemies faster than other classes with large damage buffs. "
 	Button:
 		id: four
@@ -172,7 +175,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .2, "center_y": .55}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
 			root.ids.desc.text = "Guards have the most defense, life gain and prevent abilities\nfrom triggering. They can carry the most armor and repair\nit when it starts breaking. They can heal fallen allies, amplify\nhealing abilities and leach life from opponents. They can\nalso cancel abilities and remove status effects from players. "
 	Button:
 		id: five
@@ -181,7 +185,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .5, "center_y": .55}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
 			root.ids.desc.text = "PSI characters have greater control over artificial magic. They\ncan create additional elements, charge them faster and\nalter currently charged elements in various ways. By sacrificing\naddtional elements, they can boost the effects of their charges. "
 	Button:
 		id: six
@@ -190,7 +195,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .8, "center_y": .55}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
 			root.ids.desc.text = "Arbiters dictate the flow of battle through speech. They\nreceive major bonuses while negotiating and can affect\nmultiple targets. Their greater intellect allows them to draw\ncards and force opponents to discard. They can trick\nopponents into moving and attack specific targets. "
 	Button:		
 		id: cardList
@@ -200,7 +206,6 @@ ScreenManagement:
 		disabled: True
 		on_release:
 			app.root.num = 0
-			app.root.deckStuff(cards=app.root.ids.cards)
 			root.parent.nextscreen(last="class", next="cards")
 	Button:
 		id: next
@@ -222,7 +227,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .4, "center_y": .08}
 		on_release:
 			app.root.num -= 1
-			app.root.deckStuff(cards=app.root.ids.cards)
+			app.root.deckStuff(cards=self)
 	Button:
 		id: next
 		text: "->"
@@ -230,7 +235,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .6, "center_y": .08}
 		on_release:
 			app.root.num += 1
-			app.root.deckStuff(cards=app.root.ids.cards)
+			app.root.deckStuff(cards=self)
 	FloatLayout:
 		id: fL
 		pos: (280, 0)
@@ -294,7 +299,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release:
-			app.root.character.Instinct = app.root.dec(stat=app.root.character.Instinct, lab=InsVal, screen=root)
+			app.root.character.Instinct = app.root.dec(stat=app.root.character.Instinct, lab=InsVal, screen=root, character=app.root.character)
 	Button:
 		name: "TecMINUS"
 		text: "-"
@@ -302,7 +307,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Tech = app.root.dec(stat=app.root.character.Tech, lab=TecVal, screen=root)
+			app.root.character.Tech = app.root.dec(stat=app.root.character.Tech, lab=TecVal, screen=root, character=app.root.character)
 	Button:
 		name: "ForMINUS"
 		text: "-"
@@ -310,7 +315,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Force = app.root.dec(stat=app.root.character.Force, lab=ForVal, screen=root)
+			app.root.character.Force = app.root.dec(stat=app.root.character.Force, lab=ForVal, screen=root, character=app.root.character)
 	Button:
 		name: "VitMINUS"
 		text: "-"
@@ -318,7 +323,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Vitality = app.root.dec(stat=app.root.character.Vitality, lab=VitVal, screen=root)
+			app.root.character.Vitality = app.root.dec(stat=app.root.character.Vitality, lab=VitVal, screen=root, character=app.root.character)
 	Button:
 		name: "PsyMINUS"
 		text: "-"
@@ -326,7 +331,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Psyche = app.root.dec(stat=app.root.character.Psyche, lab=PsyVal, screen=root)
+			app.root.character.Psyche = app.root.dec(stat=app.root.character.Psyche, lab=PsyVal, screen=root, character=app.root.character)
 	Button:
 		name: "MinMINUS"
 		text: "-"
@@ -334,7 +339,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Mind = app.root.dec(stat=app.root.character.Mind, lab=MinVal, screen=root)
+			app.root.character.Mind = app.root.dec(stat=app.root.character.Mind, lab=MinVal, screen=root, character=app.root.character)
 	Button:
 		name: "InsPlus"
 		text: "+"
@@ -342,7 +347,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release:
-			app.root.character.Instinct = app.root.inc(stat=app.root.character.Instinct, lab=InsVal, total=app.root.Total, screen=root)
+			app.root.character.Instinct = app.root.inc(stat=app.root.character.Instinct, lab=InsVal, total=app.root.character.Total, screen=root, character=app.root.character)
 	Button:
 		name: "TecPlus"
 		text: "+"
@@ -350,7 +355,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Tech = app.root.inc(stat=app.root.character.Tech, lab=TecVal, total=app.root.Total, screen=root)
+			app.root.character.Tech = app.root.inc(stat=app.root.character.Tech, lab=TecVal, total=app.root.character.Total, screen=root, character=app.root.character)
 	Button:
 		name: "ForPlus"
 		text: "+"
@@ -358,7 +363,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Force = app.root.inc(stat=app.root.character.Force, lab=ForVal, total=app.root.Total, screen=root)
+			app.root.character.Force = app.root.inc(stat=app.root.character.Force, lab=ForVal, total=app.root.character.Total, screen=root, character=app.root.character)
 	Button:
 		name: "VitPlus"
 		text: "+"
@@ -366,7 +371,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Vitality = app.root.inc(stat=app.root.character.Vitality, lab=VitVal, total=app.root.Total, screen=root)
+			app.root.character.Vitality = app.root.inc(stat=app.root.character.Vitality, lab=VitVal, total=app.root.character.Total, screen=root, character=app.root.character)
 	Button:
 		name: "PsyPlus"
 		text: "+"
@@ -374,7 +379,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Psyche = app.root.inc(stat=app.root.character.Psyche, lab=PsyVal, total=app.root.Total, screen=root)
+			app.root.character.Psyche = app.root.inc(stat=app.root.character.Psyche, lab=PsyVal, total=app.root.character.Total, screen=root, character=app.root.character)
 	Button:
 		name: "MinPlus"
 		text: "+"
@@ -382,7 +387,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Mind = app.root.inc(stat=app.root.character.Mind, lab=MinVal, total=app.root.Total, screen=root)
+			app.root.character.Mind = app.root.inc(stat=app.root.character.Mind, lab=MinVal, total=app.root.character.Total, screen=root, character=app.root.character)
 	Label:
 		name: "Ins"
 		id: InsVal
@@ -503,7 +508,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .9, "center_y": .08}
 		disabled: True
 		on_release:
-			app.root.ElementPage()
+			app.root.ElementPage(app.root.ids.elements, app.root.character)
 			app.root.nextscreen(last="stats", next="elements")
 		
 <ElementSelectScreen>
@@ -582,7 +587,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Zephyr = app.root.decEle(stat=app.root.character.Zephyr, label=root.ids.ZepVal, screen=root)
+			app.root.character.Zephyr = app.root.decEle(stat=app.root.character.Zephyr, label=root.ids.ZepVal, screen=root, character=app.root.character)
 	Button:
 		name: "SpaMINUS"
 		text: "-"
@@ -590,7 +595,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Spark = app.root.decEle(stat=app.root.character.Spark, label=root.ids.SpaVal, screen=root)
+			app.root.character.Spark = app.root.decEle(stat=app.root.character.Spark, label=root.ids.SpaVal, screen=root, character=app.root.character)
 	Button:
 		name: "HeaMINUS"
 		text: "-"
@@ -598,7 +603,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Heat = app.root.decEle(stat=app.root.character.Heat, label=root.ids.HeaVal, screen=root)
+			app.root.character.Heat = app.root.decEle(stat=app.root.character.Heat, label=root.ids.HeaVal, screen=root, character=app.root.character)
 	Button:
 		name: "MinMINUS"
 		text: "-"
@@ -606,7 +611,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Mineral = app.root.decEle(stat=app.root.character.Mineral, label=root.ids.MinVal, screen=root)
+			app.root.character.Mineral = app.root.decEle(stat=app.root.character.Mineral, label=root.ids.MinVal, screen=root, character=app.root.character)
 	Button:
 		name: "VoiMINUS"
 		text: "-"
@@ -614,7 +619,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Void = app.root.decEle(stat=app.root.character.Void, label=root.ids.VoiVal, screen=root)
+			app.root.character.Void = app.root.decEle(stat=app.root.character.Void, label=root.ids.VoiVal, screen=root, character=app.root.character)
 	Button:
 		name: "LiqMINUS"
 		text: "-"
@@ -622,7 +627,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Liquid = app.root.decEle(stat=app.root.character.Liquid, label=root.ids.LiqVal, screen=root)
+			app.root.character.Liquid = app.root.decEle(stat=app.root.character.Liquid, label=root.ids.LiqVal, screen=root, character=app.root.character)
 	Button:
 		name: "ZepPlus"
 		text: "+"
@@ -630,7 +635,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Zephyr = app.root.incEle(stat=app.root.character.Zephyr, total=app.root.ElTotal, mas=app.root.MasTot, label=ZepVal, screen=root)
+			app.root.character.Zephyr = app.root.incEle(stat=app.root.character.Zephyr, label=ZepVal, screen=root, character=app.root.character)
 	Button:
 		name: "SpaPlus"
 		text: "+"
@@ -638,7 +643,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Spark = app.root.incEle(stat=app.root.character.Spark, total=app.root.ElTotal, mas=app.root.MasTot, label=SpaVal, screen=root)
+			app.root.character.Spark = app.root.incEle(stat=app.root.character.Spark, label=SpaVal, screen=root, character=app.root.character)
 	Button:
 		name: "HeaPlus"
 		text: "+"
@@ -646,7 +651,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Heat = app.root.incEle(stat=app.root.character.Heat, total=app.root.ElTotal, mas=app.root.MasTot, label=HeaVal, screen=root)
+			app.root.character.Heat = app.root.incEle(stat=app.root.character.Heat, label=HeaVal, screen=root, character=app.root.character)
 	Button:
 		name: "MinPlus"
 		text: "+"
@@ -654,7 +659,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Mineral = app.root.incEle(stat=app.root.character.Mineral, total=app.root.ElTotal, mas=app.root.MasTot, label=MinVal, screen=root)
+			app.root.character.Mineral = app.root.incEle(stat=app.root.character.Mineral, label=MinVal, screen=root, character=app.root.character)
 	Button:
 		name: "VoiPlus"
 		text: "+"
@@ -662,7 +667,7 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Void = app.root.incEle(stat=app.root.character.Void, total=app.root.ElTotal, mas=app.root.MasTot, label=VoiVal, screen=root)
+			app.root.character.Void = app.root.incEle(stat=app.root.character.Void, label=VoiVal, screen=root, character=app.root.character)
 	Button:
 		name: "LiqPlus"
 		text: "+"
@@ -670,14 +675,14 @@ ScreenManagement:
 		size_hint: .04, .06
 		font_size: 30
 		on_release: 
-			app.root.character.Liquid = app.root.incEle(stat=app.root.character.Liquid, total=app.root.ElTotal, mas=app.root.MasTot, label=LiqVal, screen=root)
+			app.root.character.Liquid = app.root.incEle(stat=app.root.character.Liquid, label=LiqVal, screen=root, character=app.root.character)
 	Button:
 		text: "Roll"
 		pos_hint: {"x": .62, "y": .6}
 		size_hint: .2, .1
 		font_size: 45
 		on_release: 
-			app.root.BloodTypeGenerator(screen=root)
+			app.root.BloodTypeGenerator(screen=root, character=app.root.character)
 	Button:
 		text: "Elements"
 		pos_hint: {"x": .62, "y": .3}
@@ -755,48 +760,48 @@ ScreenManagement:
 		pos_hint: {"center_x": .2, "center_y": .7}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
-			app.root.LoadoutRandomizer("sF")
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.LoadoutRandomizer("sF", app.root.character)
 	Button:
 		id: two
 		text: "Tooth and Nail"
 		pos_hint: {"center_x": .5, "center_y": .7}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
-			app.root.LoadoutRandomizer("tN")
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.LoadoutRandomizer("tN", app.root.character)
 	Button:
 		id: three
 		text: "Lock and Load"
 		pos_hint: {"center_x": .8, "center_y": .7}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
-			app.root.LoadoutRandomizer("lL")
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.LoadoutRandomizer("lL", app.root.character)
 	Button:
 		id: four
 		text: "Chemist"
 		pos_hint: {"center_x": .2, "center_y": .55}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
-			app.root.LoadoutRandomizer("c")
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.LoadoutRandomizer("c", app.root.character)
 	Button:
 		id: five
 		text: "Trader"
 		pos_hint: {"center_x": .5, "center_y": .55}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
-			app.root.LoadoutRandomizer("t")
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.LoadoutRandomizer("t", app.root.character)
 	Button:
 		id: six
 		text: "Finders Keepers"
 		pos_hint: {"center_x": .8, "center_y": .55}
 		size_hint: 0.25, .1
 		on_release: 
-			app.root.colorUpdate(screen=root, curr=self)
-			app.root.LoadoutRandomizer("fK")
+			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
+			app.root.LoadoutRandomizer("fK", app.root.character)
 	Button:
 		id: cellOne
 		name: "0"
@@ -876,9 +881,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .9, "center_y": .08}
 		disabled: True
 		on_release:
-			#app.root.SaveData()
-			app.root.CharScreenUpdate(app.root.ids.confirm)
-			app.root.CellInit(app.root.ids.confirm, len(app.root.character.inv) - 1)
+			app.root.CharScreenUpdate(app.root.ids.confirm, app.root.character)
+			app.root.DeckAndGearInit(app.root.ids.confirm, app.root.character)
 			root.parent.nextscreen(last="loadout", next="confirm")
 			
 <ConfirmationScreen>
@@ -910,15 +914,12 @@ ScreenManagement:
 		font_size: 25
 		pos_hint: {"x": .38, "y": .95}
 		text_size: self.size
-	Button:
+	Label:
 		id: healVal
 		color: 0, 0, 0, 1
 		font_size: 25
 		pos_hint: {"x": .485, "y": .95}
 		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.tempHealth = app.root.ChangeVal(button=healVal, orig=app.root.character.health, temp=app.root.tempHealth)
 	Label:
 		id: lArmor
 		text: "L Armor: "
@@ -1207,7 +1208,7 @@ ScreenManagement:
 		size_hint: .15, .1
 		pos_hint: {"center_x": .74, "center_y": .08}
 		on_release:
-			root.parent.NamePopup()
+			root.parent.NamePopup(app.root.character)
 	Button:
 		id: fin
 		text: "Finish"
@@ -1215,7 +1216,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .9, "center_y": .08}
 		disabled: True
 		on_release:
-			root.parent.SaveData()
+			root.parent.SaveData(app.root.character)
 			app.root.CharSelectUpdate()
 			app.root.nextscreen(last="title", next="charSelect")
 	Button:
@@ -1631,7 +1632,7 @@ ScreenManagement:
 		size_hint: .1, .1
 		font_size: 30
 		on_release: 
-			app.root.DrawMax()
+			app.root.DrawMax(app.root.character)
 	Button:
 		id: draw
 		text: "Draw"
@@ -1639,7 +1640,7 @@ ScreenManagement:
 		size_hint: .1, .1
 		font_size: 30
 		on_release: 
-			app.root.DrawCard()
+			app.root.DrawCard(app.root.character)
 	Button:
 		id: discard
 		text: "Discard"
@@ -1648,7 +1649,7 @@ ScreenManagement:
 		font_size: 30
 		disabled: True
 		on_release: 
-			app.root.Discard(card=app.root.selected)
+			app.root.Discard(card=app.root.selected, character=app.root.character)
 	Button:
 		id: undo
 		text: "Undo"
@@ -1657,7 +1658,7 @@ ScreenManagement:
 		font_size: 30
 		disabled: True
 		on_release: 
-			app.root.Undo()
+			app.root.Undo(character)
 	Button:
 		id: manage
 		text: "Manage"
@@ -1670,14 +1671,14 @@ ScreenManagement:
 		size_hint: .15, .1
 		pos_hint: {"center_x": .1, "center_y": .19}
 		on_release: 
-			app.root.ResetPopup()
+			app.root.ResetPopup(app.root.character)
 	Button:
 		id: charge
 		text: "Charge"
 		size_hint: .15, .1
 		pos_hint: {"center_x": .26, "center_y": .19}
 		on_release: 
-			app.root.ChargeScreen()
+			app.root.ChargePopup(app.root.character)
 	Button:
 		id: negotiations
 		text: "Negotiations"

@@ -1,15 +1,15 @@
 import pymysql
 import Gear
+import Cards
+import Screens
+import Elements
 from random import randint
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.button import Button
-from kivy.graphics import Rectangle
-from kivy.uix.label import CoreLabel
 from kivy.uix.label import Label
 from kivy.config import Config
-from kivy.graphics import Line
 from kivy.uix.image import Image
 from functools import partial
 from kivy.uix.floatlayout import FloatLayout
@@ -28,33 +28,68 @@ class ScreenManagement(ScreenManager):
     class Character:
         name = ""
         lvl = 12
-        health = 0
+        health = 16
         lightArmor = 0
         heavyArmor = 0
         bloodType = ""
         bTStats = [0, 0, 0, 0, 0, 0]
         inv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
         Instinct = 0
         Tech = 0
         Force = 0
         Vitality = 0
         Psyche = 0
         Mind = 0
+
         Movement = 3
         Range = 3
         Brutality = 0
         Inventory = 6
         Mastery = 1
         Intellect = 3
+
         Zephyr = 0
         Spark = 0
         Heat = 0
         Mineral = 0
         Void = 0
         Liquid = 0
+
+        tempHealth = 0
+        tempInstinct = 0
+        tempTech = 0
+        tempForce = 0
+        tempVitality = 0
+        tempPsyche = 0
+        tempMind = 0
+
+        tempMovement = 3
+        tempRange = 3
+        tempBrutality = 0
+        tempInventory = 6
+        tempMastery = 1
+        tempIntellect = 3
+
+        tempZephyr = 0
+        tempSpark = 0
+        tempHeat = 0
+        tempMineral = 0
+        tempVoid = 0
+        tempLiquid = 0
+
         cardsLeft = []
         discard = []
         hand = []
+
+        Total = 12
+        MasTot = 1
+        TempPsy = 0
+        ElTotal = 2
+        Class = ""
+        deck = []
+
+    activeElements = [0, 0, 0, 0, 0, 0]
 
     conn = pymysql.connect(user="root", passwd="root", host="127.0.0.1", port=8889, database="xen2")
     cur = conn.cursor()
@@ -62,108 +97,110 @@ class ScreenManagement(ScreenManager):
     cPos = .2
     global path
     num = 0
-    Class = ""
 
     selected = Button(pos=(0, 1))
     cardId = 0
-    deck = []
 
     character = Character()
-
-    Total = 12
-    MasTot = 1
-    TempPsy = 0
-    ElTotal = 2
-
-    tempHealth = 0
-    tempInstinct = 0
-    tempTech = 0
-    tempForce = 0
-    tempVitality = 0
-    tempPsyche = 0
-    tempMind = 0
-
-    tempMovement = 3
-    tempRange = 3
-    tempBrutality = 0
-    tempInventory = 6
-    tempMastery = 1
-    tempIntellect = 3
-
-    tempZephyr = 0
-    tempSpark = 0
-    tempHeat = 0
-    tempMineral = 0
-    tempVoid = 0
-    tempLiquid = 0
-
     backStack = []
 
     def nextscreen(self, last, next):
+        # simple function to change screen and remember the previous one fof
+        # back button functionality
+        # last: The current screen
+        # next: The next screen
         self.backStack.append(last)
         self.current = next
 
-    def inc(self, stat, lab, total, screen):
-        original = stat
+    def inc(self, stat, lab, total, screen, character):
+        # Used in the character stats screen to add a point to a specific
+        # stat from the total stat points available
+        # stat: The current stat we are incrementing if we have enough total
+        # lab: The label associated to the stat which needs to be updated
+        # total: The total amount of stat points to allocate to stats
+        # screen: The screen that contains the next button which will become
+        # active when all stat points have been allocated
         total -= 1
-        stat += 1
-        if total < 0 or stat > 5:
-            return original
+        if total < 0 or stat + 1 > 5:
+            return stat
         else:
+            stat += 1
             if total == 0:
                 screen.ids.next.disabled = False
-            self.StatLabelUpdate(stat, lab)
-            self.Total -= 1
+            Screens.StatLabelUpdate(screen, stat, lab, character)
+            character.Total -= 1
             lab.text = str(stat)
-            self.ids.stats.ids.TotVal.text = str(self.Total)
+            self.ids.stats.ids.TotVal.text = str(character.Total)
             return stat
 
-    def dec(self, stat, lab, screen):
-        stat -= 1
-        print(stat)
-        if stat >= 0:
-            self.Total += 1
+    def dec(self, stat, lab, screen, character):
+        # Used in the character stats screen to subtract a point from a
+        # specific stat
+        # stat: The current stat we are decrementing if it's above 0
+        # lab: The label associated to the stat which needs to be updated
+        # screen: The screen that contains the next button which will become
+        # deactivated if there are still stat points to be allocated
+        if stat - 1 >= 0:
+            stat -= 1
+            character.Total += 1
             print(stat)
-            self.StatLabelUpdate(stat, lab)
+            Screens.StatLabelUpdate(screen, stat, lab, character)
             lab.text = str(stat)
-            self.ids.stats.ids.TotVal.text = str(self.Total)
+            self.ids.stats.ids.TotVal.text = str(character.Total)
             screen.ids.next.disabled = True
             return stat
         else:
             return 0
 
-    def incEle(self, stat, mas, total, label, screen):
-        total -= 1
-        if total < 0 or self.MasTot == 0 and stat == 0:
+    def incEle(self, stat, label, screen, character):
+        # Used in the elements screen to add a point to a specific element
+        # based on the total element points available
+        # stat: The current element we are incrementing if we have enough total
+        # mas: The number of unique elements a player can add points to
+        # total: The total amount of element points to allocate to elements
+        # label: The label associated to the stat which needs to be updated
+        # screen: The screen that contains the next button which will become
+        # active when all element points have been allocated
+        if character.ElTotal - 1 < 0 or character.MasTot == 0 and stat == 0:
             return stat
-        if total == 0:
+        if character.ElTotal - 1 == 0 and character.bloodType != "":
             screen.ids.next.disabled = False
         stat += 1
         label.text = str(stat)
-        self.ElTotal -= 1
-        self.ids.elements.ids.ElTotVal.text = str(self.ElTotal)
-        if stat == 1 and mas > 0:
+        character.ElTotal -= 1
+        self.ids.elements.ids.ElTotVal.text = str(character.ElTotal)
+        if stat == 1 and character.MasTot > 0:
             label.color = 1, 1, 1, 1
-            self.MasTot -= 1
-            self.ids.elements.ids.MasTot.text = str(self.MasTot)
+            character.MasTot -= 1
+            self.ids.elements.ids.MasTot.text = str(character.MasTot)
         return stat
 
-    def decEle(self, stat, label, screen):
+    def decEle(self, stat, label, screen, character):
+        # Used in the character elements screen to subtract a point from a
+        # specific element
+        # stat: The current element we are decrementing if it's above 0
+        # label: The label associated to the element which needs to be updated
+        # screen: The screen that contains the next button which will become
+        # deactivated if there are still element points to be allocated
         copy = stat
         stat -= 1
         if stat < 0:
             return copy
         screen.ids.next.disabled = True
         label.text = str(stat)
-        self.ElTotal += 1
-        self.ids.elements.ids.ElTotVal.text = str(self.ElTotal)
+        character.ElTotal += 1
+        self.ids.elements.ids.ElTotVal.text = str(character.ElTotal)
         if stat == 0 and copy == 1:
             label.color = 1, 0, 0, 1
-            self.MasTot += 1
-            self.ids.elements.ids.MasTot.text = str(self.MasTot)
+            character.MasTot += 1
+            self.ids.elements.ids.MasTot.text = str(character.MasTot)
         return stat
 
-    def colorUpdate(self, screen, curr):
+    def colorUpdate(self, screen, curr, character):
+        # used in the class and loadout screens to change the color of
+        # currently selected item and deselects old selection
+        # screen: Determines which screen to alter
+        # curr: The current item to highlight
         screen.ids.one.color = 1, 1, 1, 1
         screen.ids.two.color = 1, 1, 1, 1
         screen.ids.three.color = 1, 1, 1, 1
@@ -171,39 +208,26 @@ class ScreenManagement(ScreenManager):
         screen.ids.five.color = 1, 1, 1, 1
         screen.ids.six.color = 1, 1, 1, 1
         if screen.name == "class":
-            self.Class = curr.name
+            character.Class = curr.name
             screen.ids.cardList.disabled = False
         curr.color = 0, 1, 0, 1
         screen.ids.next.disabled = False
 
-    def deckStuff(self, cards):
+    def deckStuff(self, screen, starter):
+        # Sets up initial deck from the class select screen
+        # screen: The current screen to update
+
+        if starter == True:
+            Cards.InitialDeck(self.character)
 
         for i in range(0, 31):
-            cards.canvas.remove_group(str(i))
-        crds = []
-        if self.Class == "Scout":
-            self.deck = [1, 7, 7, 7, 13, 2, 8, 8, 8, 14, 3, 9, 9, 9, 15, 4, 4, 10, 10, 16, 16, 5, 5, 11, 11, 17, 17, 6, 12,
-                         18]
-        elif self.Class == "Technician":
-            self.deck = [19, 25, 25, 25, 31, 20, 26, 26, 26, 32, 21, 27, 27, 27, 33, 22, 22, 28, 28, 34, 34, 23, 23, 29, 29,
-                         35, 35, 24, 30, 36]
-        elif self.Class == "Assault":
-            self.deck = [37, 43, 43, 43, 49, 38, 44, 44, 44, 50, 39, 45, 45, 45, 51, 40, 40, 46, 46, 52, 52, 41, 41, 47, 47,
-                         53, 53, 42, 48, 54]
-        elif self.Class == "Guard":
-            self.deck = [55, 61, 61, 61, 67, 56, 62, 62, 62, 68, 57, 63, 63, 63, 69, 58, 58, 64, 64, 70, 70, 59, 59, 65, 65,
-                         71, 71, 60, 66, 72]
-        elif self.Class == "PSI":
-            self.deck = [73, 79, 79, 79, 85, 74, 80, 80, 80, 86, 75, 81, 81, 81, 87, 76, 76, 82, 82, 88, 88, 77, 77, 83, 83,
-                         89, 89, 78, 84, 90]
-        elif self.Class == "Arbiter":
-            self.deck = [91, 97, 97, 97, 103, 92, 98, 98, 98, 104, 93, 99, 99, 99, 105, 94, 94, 100, 100, 106, 106, 95, 95,
-                         101, 101, 107, 107, 96, 102, 108]
+            screen.canvas.remove_group(str(i))
 
-        crds = self.FetchDeck()
+        fetch = Cards.FetchDeck(self)
 
         col = 0
         mult = 1
+        # Sets up positions for each card
         for j in range(0, 30):
 
             if j == 10 or j == 20:
@@ -218,271 +242,155 @@ class ScreenManagement(ScreenManager):
 
             col += 30
 
-            card = Button(name=str(j), pos=pos, size=(130 * mult, 180 * mult), background_color=(0, 0, 0, 0))
-            self.LoadCardCanvas(crds[j], self.ids.cards, j, pos, mult)
+            # Loads card data from the fetch into canvas items
+            Cards.LoadCardCanvas(fetch[j], self.ids.cards, j, pos, mult)
 
         if self.num < 0:
             self.num = 0
         elif self.num > 29:
             self.num = 29
 
-        self.Resizing(cards, self.num)
+        # Enlarges current card selection
+        Cards.Resizing(screen, self.num)
 
-    def Sorting(self, cards):
-        deck = []
-        cards.sort()
-        for i in range(0, 30):
-            if cards[i][5] == "Defensive":
-                deck.append(cards[i])
-        for i in range(0, 30):
-            if cards[i][5] == "Tactical":
-                deck.append(cards[i])
-        for i in range(0, 30):
-            if cards[i][5] == "Aggressive":
-                deck.append(cards[i])
-        for i in range(0, 30):
-            if cards[i][4] == "Reaction":
-                deck.append(cards[i])
-        for i in range(0, 30):
-            if cards[i][4] == "Half-Round":
-                deck.append(cards[i])
-        for i in range(0, 30):
-            if cards[i][4] == "Full-Round":
-                deck.append(cards[i])
-        return deck
-
-    def Text(self, type, string):
-        if string == "Opponent removes 2 Elements of your choice from their Reserves and add 1 of those to yours.":
-            d = 2
-        if (type == "name"):
-            e = string
-            siz = len(e)
-            for b in range(0, 38 - siz):
-                e += " "
-            name = CoreLabel(text=e, color=(0, 0, 0, 1))
-            name.refresh()
-            return name.texture
-        elif (type == "type"):
-            e = string
-            siz = len(e)
-            for b in range(0, 38 - siz):
-                e += " "
-            t = CoreLabel(text=e, color=(0, 0, 0, 1))
-            t.refresh()
-            return t.texture
-        elif (type == "text"):
-            e = string
-            siz = len(e)
-            b = []
-            c = []
-            num = 30
-            if len(e) > num:
-                for p in range(0, num):
-                    if e[num - p] == ' ':
-                        b = e[:(num - p)]
-                        for i in range(0, p):
-                            b += ' '
-                        b += '\n'
-                        c = e[(num - p + 1):]
-                        if len(e) <= num * 2:
-                            b += c
-                        break
-            else:
-                b = e
-                for p in range(0, num - len(e)):
-                    b += ' '
-                b += '\n'
-            if len(e) > num * 2:
-                if len(c) == 30:
-                    b += c
-                    b += '\n'
-                else:
-                    for p in range(0, num):
-                        if c[num - p] == ' ':
-                            b += c[:(num - p)]
-                            for i in range(0, p):
-                                b += ' '
-                            b += '\n'
-                            c = c[(num - p + 1):]
-                            if len(e) < num * 3:
-                                b += c
-                            break
-            else:
-                b += '\n'
-            if len(e) > num * 3:
-                for p in range(0, num):
-                    if c[num - p] == ' ':
-                        b += c[:(num - p)]
-                        for i in range(0, p):
-                            b += ' '
-                        b += '\n'
-                        c = c[(num - p + 1):]
-                        if len(e) < num * 4:
-                            b += c
-                        break
-            else:
-                b += '\n'
-
-            text = CoreLabel(text=b, color=(0, 0, 0, 1), bold=True)
-            text.refresh()
-            return text.texture
-
-    def Resizing(self, cards, grp):
-        #resize in card viewer
-        mult = 2.5
-        pos = (440, 85)
-        cards.canvas.get_group(str(grp))[1].size = (cards.canvas.get_group(str(grp))[1].size[0] * mult, cards.canvas.get_group(str(grp))[1].size[1] * mult)
-        cards.canvas.get_group(str(grp))[1].pos = pos
-        cards.canvas.get_group(str(grp))[3].size = (cards.canvas.get_group(str(grp))[3].size[0] * mult, cards.canvas.get_group(str(grp))[3].size[1] * mult)
-        cards.canvas.get_group(str(grp))[3].pos = (pos[0] + 7.2 * mult, pos[1] + 155 * mult)
-        cards.canvas.get_group(str(grp))[5].size = (cards.canvas.get_group(str(grp))[5].size[0] * mult, cards.canvas.get_group(str(grp))[5].size[1] * mult)
-        cards.canvas.get_group(str(grp))[5].pos = (pos[0] + 22 * mult, pos[1] + 162 * mult)
-        cards.canvas.get_group(str(grp))[7].size = (cards.canvas.get_group(str(grp))[7].size[0] * mult, cards.canvas.get_group(str(grp))[7].size[1] * mult)
-        cards.canvas.get_group(str(grp))[7].pos = (pos[0] + 22 * mult, pos[1] + 152.5 * mult)
-        cards.canvas.get_group(str(grp))[9].size = (cards.canvas.get_group(str(grp))[9].size[0] * mult, cards.canvas.get_group(str(grp))[9].size[1] * mult)
-        cards.canvas.get_group(str(grp))[9].pos = (pos[0] + 16 * mult, pos[1] + 24 * mult)
-
-    def ElementPage(self):
-        if self.TempPsy == self.character.Psyche:
+    def ElementPage(self, screen, character):
+        if character.TempPsy == character.Psyche:
             return
 
-        self.TempPsy = self.character.Psyche
-        self.Mastery = self.character.Psyche + 1
-        self.MasTot = self.character.Mastery
-        if self.character.Psyche == 0:
-            self.ElTotal = 2
+        character.TempPsy = character.Psyche
+        character.Mastery = character.Psyche + 1
+        character.MasTot = character.Mastery
+        if character.Psyche == 0:
+            character.ElTotal = 2
         else:
-            self.ElTotal = self.character.Psyche * 4
-        self.ids.elements.ids.ElTotVal.text = str(self.ElTotal)
-        self.ids.elements.ids.MasTot.text = str(self.character.Mastery)
-        self.ids.elements.ids.ZepVal.text = str(0)
-        self.ids.elements.ids.ZepVal.color = 1, 0, 0, 1
-        self.ids.elements.ids.SpaVal.text = str(0)
-        self.ids.elements.ids.SpaVal.color = 1, 0, 0, 1
-        self.ids.elements.ids.HeaVal.text = str(0)
-        self.ids.elements.ids.HeaVal.color = 1, 0, 0, 1
-        self.ids.elements.ids.MinVal.text = str(0)
-        self.ids.elements.ids.MinVal.color = 1, 0, 0, 1
-        self.ids.elements.ids.VoiVal.text = str(0)
-        self.ids.elements.ids.VoiVal.color = 1, 0, 0, 1
-        self.ids.elements.ids.LiqVal.text = str(0)
-        self.ids.elements.ids.LiqVal.color = 1, 0, 0, 1
-        self.character.Zephyr = 0
-        self.character.Spark = 0
-        self.character.Heat = 0
-        self.character.Mineral = 0
-        self.character.Void = 0
-        self.character.Liquid = 0
+            character.ElTotal = character.Psyche * 4
+        screen.ids.ElTotVal.text = str(character.ElTotal)
+        screen.ids.MasTot.text = str(character.Mastery)
+        screen.ids.ZepVal.text = str(0)
+        screen.ids.ZepVal.color = 1, 0, 0, 1
+        screen.ids.SpaVal.text = str(0)
+        screen.ids.SpaVal.color = 1, 0, 0, 1
+        screen.ids.HeaVal.text = str(0)
+        screen.ids.HeaVal.color = 1, 0, 0, 1
+        screen.ids.MinVal.text = str(0)
+        screen.ids.MinVal.color = 1, 0, 0, 1
+        screen.ids.VoiVal.text = str(0)
+        screen.ids.VoiVal.color = 1, 0, 0, 1
+        screen.ids.LiqVal.text = str(0)
+        screen.ids.LiqVal.color = 1, 0, 0, 1
+        character.Zephyr = 0
+        character.Spark = 0
+        character.Heat = 0
+        character.Mineral = 0
+        character.Void = 0
+        character.Liquid = 0
 
-    def SaveData(self):
-        self.path.write(self.character.name + ',')
-        self.path.write(str(self.character.lvl) + ',')
-        self.path.write(str(self.character.health) + ',')
-        self.path.write(str(self.character.lightArmor) + ',')
-        self.path.write(str(self.character.heavyArmor) + "\n")
+    def SaveData(self, character):
+        self.path.write(character.name + ',')
+        self.path.write(str(character.lvl) + ',')
+        self.path.write(str(character.health) + ',')
+        self.path.write(str(character.lightArmor) + ',')
+        self.path.write(str(character.heavyArmor) + "\n")
 
-        self.path.write(str(self.character.Instinct) + ",")
-        self.path.write(str(self.character.Tech) + ',')
-        self.path.write(str(self.character.Force) + ',')
-        self.path.write(str(self.character.Vitality) + ',')
-        self.path.write(str(self.character.Psyche) + ',')
-        self.path.write(str(self.character.Mind) + "\n")
+        self.path.write(str(character.Instinct) + ",")
+        self.path.write(str(character.Tech) + ',')
+        self.path.write(str(character.Force) + ',')
+        self.path.write(str(character.Vitality) + ',')
+        self.path.write(str(character.Psyche) + ',')
+        self.path.write(str(character.Mind) + "\n")
 
-        self.path.write(str(self.character.Movement) + ",")
-        self.path.write(str(self.character.Range) + ',')
-        self.path.write(str(self.character.Brutality) + ',')
-        self.path.write(str(self.character.Inventory) + ',')
-        self.path.write(str(self.character.Mastery) + ',')
-        self.path.write(str(self.character.Intellect) + "\n")
+        self.path.write(str(character.Movement) + ",")
+        self.path.write(str(character.Range) + ',')
+        self.path.write(str(character.Brutality) + ',')
+        self.path.write(str(character.Inventory) + ',')
+        self.path.write(str(character.Mastery) + ',')
+        self.path.write(str(character.Intellect) + "\n")
 
-        self.path.write(str(self.character.Zephyr) + ",")
-        self.path.write(str(self.character.Spark) + ',')
-        self.path.write(str(self.character.Heat) + ',')
-        self.path.write(str(self.character.Mineral) + ',')
-        self.path.write(str(self.character.Void) + ',')
-        self.path.write(str(self.character.Liquid) + "\n")
+        self.path.write(str(character.Zephyr) + ",")
+        self.path.write(str(character.Spark) + ',')
+        self.path.write(str(character.Heat) + ',')
+        self.path.write(str(character.Mineral) + ',')
+        self.path.write(str(character.Void) + ',')
+        self.path.write(str(character.Liquid) + "\n")
 
-        self.path.write(str(self.character.bloodType) + ",")
+        self.path.write(str(character.bloodType) + ",")
         for i in range(0, 5):
-            self.path.write(str(self.character.bTStats[i]) + ",")
-        self.path.write(str(self.character.bTStats[5]) + "\n")
+            self.path.write(str(character.bTStats[i]) + ",")
+        self.path.write(str(character.bTStats[5]) + "\n")
 
-        self.deck = [19, 25, 25, 25, 31, 20, 26, 26, 26, 32, 21, 27, 27, 27, 33, 22, 22, 28, 28, 34, 34, 23, 23, 29, 29,
-                     35, 35, 24, 30, 36]
+        self.path.write(str(character.deck))
+        self.path.write("\n" + str(len(character.inv)) + "\n")
 
-        self.path.write(str(self.deck))
-        self.path.write("\n" + str(len(self.character.inv)) + "\n")
-
-        for i in range(0, len(self.character.inv) - 1):
-            if self.character.inv[i].type == "Melee" or self.character.inv[i].type == "Ranged":
-                self.path.write(self.character.inv[i].name + "," + self.character.inv[i].type + "," + str(self.character.inv[i].size)
-                                + "," + str(self.character.inv[i].attack[0]) + "," + str(self.character.inv[i].attack[1]) + "," +
-                                str(self.character.inv[i].attack[2]) + "," + str(self.character.inv[i].damage) + "," + self.character.inv[i].definition + "\n")
+        for i in range(0, len(character.inv) - 1):
+            if character.inv[i].type == "Melee" or character.inv[i].type == "Ranged":
+                self.path.write(character.inv[i].name + "," + character.inv[i].type + "," + str(character.inv[i].size)
+                                + "," + str(character.inv[i].attack[0]) + "," + str(character.inv[i].attack[1]) + "," +
+                                str(character.inv[i].attack[2]) + "," + str(character.inv[i].damage) + "," + character.inv[i].definition + "\n")
             else:
-                self.path.write(self.character.inv[i].name + "," + self.character.inv[i].type + "," + str(self.character.inv[i].size)
-                                + "," + str(self.character.inv[i].quality) + "," + self.character.inv[i].definition + "\n")
+                self.path.write(character.inv[i].name + "," + character.inv[i].type + "," + str(character.inv[i].size)
+                                + "," + str(character.inv[i].quality) + "," + character.inv[i].definition + "\n")
 
         self.path.close()
 
-    def LoadData(self):
+    def LoadData(self, character):
         data = csv.reader(self.path, delimiter=',')
         parse = []
 
         for row in data:
             parse.append(row)
 
-        self.character.name = parse[0][0]
-        self.character.lvl = int(parse[0][1])
-        self.character.health = int(parse[0][2])
-        self.character.lightArmor = int(parse[0][3])
-        self.character.heavyArmor = int(parse[0][4])
+        character.name = parse[0][0]
+        character.lvl = int(parse[0][1])
+        character.health = int(parse[0][2])
+        character.lightArmor = int(parse[0][3])
+        character.heavyArmor = int(parse[0][4])
 
-        self.character.Instinct = int(parse[1][0])
-        self.character.Tech = int(parse[1][1])
-        self.character.Force = int(parse[1][2])
-        self.character.Vitality = int(parse[1][3])
-        self.character.Psyche = int(parse[1][4])
-        self.character.Mind = int(parse[1][5])
+        character.Instinct = int(parse[1][0])
+        character.Tech = int(parse[1][1])
+        character.Force = int(parse[1][2])
+        character.Vitality = int(parse[1][3])
+        character.Psyche = int(parse[1][4])
+        character.Mind = int(parse[1][5])
 
-        self.character.Movement = int(parse[2][0])
-        self.character.Range = int(parse[2][1])
-        self.character.Brutality = int(parse[2][2])
-        self.character.Inventory = int(parse[2][3])
-        self.character.Mastery = int(parse[2][4])
-        self.character.Intellect = int(parse[2][5])
+        character.Movement = int(parse[2][0])
+        character.Range = int(parse[2][1])
+        character.Brutality = int(parse[2][2])
+        character.Inventory = int(parse[2][3])
+        character.Mastery = int(parse[2][4])
+        character.Intellect = int(parse[2][5])
 
-        self.character.Zephyr = int(parse[3][0])
-        self.character.Spark = int(parse[3][1])
-        self.character.Heat = int(parse[3][2])
-        self.character.Mineral = int(parse[3][3])
-        self.character.Void = int(parse[3][4])
-        self.character.Liquid = int(parse[3][5])
+        character.Zephyr = int(parse[3][0])
+        character.Spark = int(parse[3][1])
+        character.Heat = int(parse[3][2])
+        character.Mineral = int(parse[3][3])
+        character.Void = int(parse[3][4])
+        character.Liquid = int(parse[3][5])
 
-        self.tempHealth = self.character.health
-        self.tempInstinct = self.character.Instinct
-        self.tempTech = self.character.Tech
-        self.tempForce = self.character.Force
-        self.tempVitality = self.character.Vitality
-        self.tempPsyche = self.character.Psyche
-        self.tempMind = self.character.Mind
+        character.tempHealth = character.health
+        character.tempInstinct = character.Instinct
+        character.tempTech = character.Tech
+        character.tempForce = character.Force
+        character.tempVitality = character.Vitality
+        character.tempPsyche = character.Psyche
+        character.tempMind = character.Mind
 
-        self.tempMovement = self.character.Movement
-        self.tempRange = self.character.Range
-        self.tempBrutality = self.character.Brutality
-        self.tempInventory = self.character.Inventory
-        self.tempMastery = self.character.Mastery
-        self.tempIntellect = self.character.Intellect
+        character.tempMovement = character.Movement
+        character.tempRange = character.Range
+        character.tempBrutality = character.Brutality
+        character.tempInventory = character.Inventory
+        character.tempMastery = character.Mastery
+        character.tempIntellect = character.Intellect
 
-        self.tempZephyr = self.character.Zephyr
-        self.tempSpark = self.character.Spark
-        self.tempHeat = self.character.Heat
-        self.tempMineral = self.character.Mineral
-        self.tempVoid = self.character.Void
-        self.tempLiquid = self.character.Liquid
+        character.tempZephyr = character.Zephyr
+        character.tempSpark = character.Spark
+        character.tempHeat = character.Heat
+        character.tempMineral = character.Mineral
+        character.tempVoid = character.Void
+        character.tempLiquid = character.Liquid
 
-        self.character.bloodType = parse[4][0]
+        character.bloodType = parse[4][0]
         for i in range(0, 6):
-            self.character.bTStats[i] = int(parse[4][i + 1])
+            character.bTStats[i] = int(parse[4][i + 1])
 
         temp = parse[5]
 
@@ -491,510 +399,301 @@ class ScreenManagement(ScreenManager):
 
         temp[29] = temp[29][:len(temp[29]) - 1]
 
-        self.deck = temp
+        character.deck = temp
 
         for i in range(0, int(parse[6][0]) - 1):
             if parse[i + 7][1] == "Melee" or parse[i + 7][1] == "Ranged":
-                self.character.inv[i] = Gear.Weapon(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2],
+                character.inv[i] = Gear.Weapon(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2],
                                           [parse[i + 7][3], parse[i + 7][4], parse[i + 7][5]], parse[i + 7][6])
             else:
-                self.character.inv[i] = Gear.Gear(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2], parse[i + 7][3],
+                character.inv[i] = Gear.Gear(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2], parse[i + 7][3],
                                         parse[i + 7][4])
 
         self.path.close()
 
-    def StatLabelUpdate(self, stat, lab):
-        if lab.name == "Ins":
-            self.character.Movement = 3 + stat
-            self.ids.stats.ids.MovVal.text = str(self.character.Movement)
-        elif lab.name == "Tec":
-            self.character.Range = 3 + stat
-            self.ids.stats.ids.RanVal.text = str(self.character.Range)
-        elif lab.name == "For":
-            self.character.Brutality = stat * 2
-            self.ids.stats.ids.DamVal.text = str(self.character.Brutality)
-        elif lab.name == "Vit":
-            self.character.health = 16 + stat * 2
-            self.character.Inventory = 6 + stat * 2
-            self.ids.stats.ids.InvVal.text = str(self.character.Inventory)
-        elif lab.name == "Psy":
-            self.character.Mastery = stat + 1
-            self.ElTotal = stat * 4
-            self.ids.stats.ids.MasVal.text = str(self.character.Mastery)
-        elif lab.name == "Min":
-            self.character.Intellect = 3 + stat
-            self.ids.stats.ids.IntVal.text = str(self.character.Intellect)
-
-    def BloodTypeGenerator(self, screen):
+    def BloodTypeGenerator(self, screen, character):
         b = (randint(0, 19))
 
         if b == 0:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "A7+"
+            character.bTStats[0] = -2
+            character.bTStats[1] = 2
+            character.bTStats[2] = -2
+            character.bTStats[3] = 2
+            character.bTStats[4] = -2
+            character.bTStats[5] = 2
+            character.bloodType = "A7+"
         elif b == 10:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "A7-"
+            character.bTStats[0] = 2
+            character.bTStats[1] = -2
+            character.bTStats[2] = 2
+            character.bTStats[3] = -2
+            character.bTStats[4] = 2
+            character.bTStats[5] = -2
+            character.bloodType = "A7-"
         elif b == 1:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "B6+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = -2
+            character.bTStats[2] = -2
+            character.bTStats[3] = -2
+            character.bTStats[4] = 2
+            character.bTStats[5] = 2
+            character.bloodType = "B6+"
         elif b == 11:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "B6-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = 2
+            character.bTStats[2] = 2
+            character.bTStats[3] = 2
+            character.bTStats[4] = -2
+            character.bTStats[5] = -2
+            character.bloodType = "B6-"
         elif b == 2:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "C1+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = -2
+            character.bTStats[2] = -2
+            character.bTStats[3] = 2
+            character.bTStats[4] = 2
+            character.bTStats[5] = -2
+            character.bloodType = "C1+"
         elif b == 12:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "C1-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = 2
+            character.bTStats[2] = 2
+            character.bTStats[3] = -2
+            character.bTStats[4] = -2
+            character.bTStats[5] = 2
+            character.bloodType = "C1-"
         elif b == 3:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "D9+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = -2
+            character.bTStats[2] = 2
+            character.bTStats[3] = 2
+            character.bTStats[4] = -2
+            character.bTStats[5] = -2
+            character.bloodType = "D9+"
         elif b == 13:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "D9-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = 2
+            character.bTStats[2] = -2
+            character.bTStats[3] = -2
+            character.bTStats[4] = 2
+            character.bTStats[5] = 2
+            character.bloodType = "D9-"
         elif b == 4:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "E2+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = -2
+            character.bTStats[2] = -2
+            character.bTStats[3] = 2
+            character.bTStats[4] = -2
+            character.bTStats[5] = 2
+            character.bloodType = "E2+"
         elif b == 14:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "E2-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = 2
+            character.bTStats[2] = 2
+            character.bTStats[3] = -2
+            character.bTStats[4] = 2
+            character.bTStats[5] = -2
+            character.bloodType = "E2-"
         elif b == 5:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "F4+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = 2
+            character.bTStats[2] = 2
+            character.bTStats[3] = -2
+            character.bTStats[4] = -2
+            character.bTStats[5] = -2
+            character.bloodType = "F4+"
         elif b == 15:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "F4-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = -2
+            character.bTStats[2] = -2
+            character.bTStats[3] = 2
+            character.bTStats[4] = 2
+            character.bTStats[5] = 2
+            character.bloodType = "F4-"
         elif b == 6:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "G8+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = 2
+            character.bTStats[2] = -2
+            character.bTStats[3] = -2
+            character.bTStats[4] = 2
+            character.bTStats[5] = -2
+            character.bloodType = "G8+"
         elif b == 16:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "G8-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = -2
+            character.bTStats[2] = 2
+            character.bTStats[3] = 2
+            character.bTStats[4] = -2
+            character.bTStats[5] = 2
+            character.bloodType = "G8-"
         elif b == 7:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "H5+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = 2
+            character.bTStats[2] = -2
+            character.bTStats[3] = 2
+            character.bTStats[4] = -2
+            character.bTStats[5] = -2
+            character.bloodType = "H5+"
         elif b == 17:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "H5-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = -2
+            character.bTStats[2] = 2
+            character.bTStats[3] = -2
+            character.bTStats[4] = 2
+            character.bTStats[5] = 2
+            character.bloodType = "H5-"
         elif b == 8:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "I3+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = 2
+            character.bTStats[2] = -2
+            character.bTStats[3] = -2
+            character.bTStats[4] = -2
+            character.bTStats[5] = 2
+            character.bloodType = "I3+"
         elif b == 18:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "I3-"
+            character.bTStats[0] = -2
+            character.bTStats[1] = -2
+            character.bTStats[2] = 2
+            character.bTStats[3] = 2
+            character.bTStats[4] = 2
+            character.bTStats[5] = -2
+            character.bloodType = "I3-"
         elif b == 9:
-            self.character.bTStats[0] = 2
-            self.character.bTStats[1] = -2
-            self.character.bTStats[2] = 2
-            self.character.bTStats[3] = -2
-            self.character.bTStats[4] = -2
-            self.character.bTStats[5] = 2
-            self.character.bloodType = "O0+"
+            character.bTStats[0] = 2
+            character.bTStats[1] = -2
+            character.bTStats[2] = 2
+            character.bTStats[3] = -2
+            character.bTStats[4] = -2
+            character.bTStats[5] = 2
+            character.bloodType = "O0+"
         elif b == 19:
-            self.character.bTStats[0] = -2
-            self.character.bTStats[1] = 2
-            self.character.bTStats[2] = -2
-            self.character.bTStats[3] = 2
-            self.character.bTStats[4] = 2
-            self.character.bTStats[5] = -2
-            self.character.bloodType = "O0-"
-        screen.ids.bT.text = self.character.bloodType
-        if self.character.bTStats[0] == 2:
+            character.bTStats[0] = -2
+            character.bTStats[1] = 2
+            character.bTStats[2] = -2
+            character.bTStats[3] = 2
+            character.bTStats[4] = 2
+            character.bTStats[5] = -2
+            character.bloodType = "O0-"
+        screen.ids.bT.text = character.bloodType
+        if character.bTStats[0] == 2:
             screen.ids.zepMod.text = "+"
             screen.ids.zepMod.color = 1, 1, 1, 1
         else:
             screen.ids.zepMod.text = "--"
             screen.ids.zepMod.color = 1, 0, 0, 1
-        if self.character.bTStats[1] == 2:
+        if character.bTStats[1] == 2:
             screen.ids.spaMod.text = "+"
             screen.ids.spaMod.color = 1, 1, 1, 1
         else:
             screen.ids.spaMod.text = "--"
             screen.ids.spaMod.color = 1, 0, 0, 1
-        if self.character.bTStats[2] == 2:
+        if character.bTStats[2] == 2:
             screen.ids.heaMod.text = "+"
             screen.ids.heaMod.color = 1, 1, 1, 1
         else:
             screen.ids.heaMod.text = "--"
             screen.ids.heaMod.color = 1, 0, 0, 1
-        if self.character.bTStats[3] == 2:
+        if character.bTStats[3] == 2:
             screen.ids.minMod.text = "+"
             screen.ids.minMod.color = 1, 1, 1, 1
         else:
             screen.ids.minMod.text = "--"
             screen.ids.minMod.color = 1, 0, 0, 1
-        if self.character.bTStats[4] == 2:
+        if character.bTStats[4] == 2:
             screen.ids.voiMod.text = "+"
             screen.ids.voiMod.color = 1, 1, 1, 1
         else:
             screen.ids.voiMod.text = "--"
             screen.ids.voiMod.color = 1, 0, 0, 1
-        if self.character.bTStats[5] == 2:
+        if character.bTStats[5] == 2:
             screen.ids.liqMod.text = "+"
             screen.ids.liqMod.color = 1, 1, 1, 1
         else:
             screen.ids.liqMod.text = "--"
             screen.ids.liqMod.color = 1, 0, 0, 1
 
-    def CharScreenUpdate(self, screen):
-        self.CharStats(screen)
-        screen.ids.nameVal.text = self.character.name
-        screen.ids.lvlVal.text = str(self.character.lvl)
-        screen.ids.healVal.text = str(self.character.health)
-        screen.ids.lArmVal.text = str(self.character.lightArmor)
-        screen.ids.hArmVal.text = str(self.character.heavyArmor)
-        screen.ids.Ins.text = str(self.character.Instinct)
-        screen.ids.Mov.text = str(self.character.Movement)
-        screen.ids.Zep.text = str(self.character.Zephyr)
-        screen.ids.Tec.text = str(self.character.Tech)
-        screen.ids.Ran.text = str(self.character.Range)
-        screen.ids.Spa.text = str(self.character.Spark)
-        screen.ids.For.text = str(self.character.Force)
-        screen.ids.Dam.text = str(self.character.Brutality)
-        screen.ids.Hea.text = str(self.character.Heat)
-        screen.ids.Vit.text = str(self.character.Vitality)
-        screen.ids.Inv.text = str(self.character.Inventory)
-        screen.ids.Mine.text = str(self.character.Mineral)
-        screen.ids.Psy.text = str(self.character.Psyche)
-        screen.ids.Mas.text = str(self.character.Mastery)
-        screen.ids.Voi.text = str(self.character.Void)
-        screen.ids.Mind.text = str(self.character.Mind)
-        screen.ids.Int.text = str(self.character.Intellect)
-        screen.ids.Liq.text = str(self.character.Liquid)
-        screen.ids.blood.text = str(self.character.bloodType)
-        self.BloodStuff(screen)
+        if character.ElTotal == 0:
+            screen.ids.next.disabled = False
 
-    def BloodStuff(self, screen):
-        if self.character.bTStats[0] == 2:
-            screen.ids.zepBlood.text = "+"
-        else:
-            screen.ids.zepBlood.text = "--"
-        if self.character.bTStats[1] == 2:
-            screen.ids.spaBlood.text = "+"
-        else:
-            screen.ids.spaBlood.text = "--"
-        if self.character.bTStats[2] == 2:
-            screen.ids.heaBlood.text = "+"
-        else:
-            screen.ids.heaBlood.text = "--"
-        if self.character.bTStats[3] == 2:
-            screen.ids.minBlood.text = "+"
-        else:
-            screen.ids.minBlood.text = "--"
-        if self.character.bTStats[4] == 2:
-            screen.ids.psyBlood.text = "+"
-        else:
-            screen.ids.psyBlood.text = "--"
-        if self.character.bTStats[5] == 2:
-            screen.ids.liqBlood.text = "+"
-        else:
-            screen.ids.liqBlood.text = "--"
+    def CharScreenUpdate(self, screen, character):
+        Screens.CharStats(screen)
+        screen.ids.nameVal.text = character.name
+        screen.ids.lvlVal.text = str(character.lvl)
+        screen.ids.healVal.text = str(character.health)
+        screen.ids.lArmVal.text = str(character.lightArmor)
+        screen.ids.hArmVal.text = str(character.heavyArmor)
+        screen.ids.Ins.text = str(character.Instinct)
+        screen.ids.Mov.text = str(character.Movement)
+        screen.ids.Zep.text = str(character.Zephyr)
+        screen.ids.Tec.text = str(character.Tech)
+        screen.ids.Ran.text = str(character.Range)
+        screen.ids.Spa.text = str(character.Spark)
+        screen.ids.For.text = str(character.Force)
+        screen.ids.Dam.text = str(character.Brutality)
+        screen.ids.Hea.text = str(character.Heat)
+        screen.ids.Vit.text = str(character.Vitality)
+        screen.ids.Inv.text = str(character.Inventory)
+        screen.ids.Mine.text = str(character.Mineral)
+        screen.ids.Psy.text = str(character.Psyche)
+        screen.ids.Mas.text = str(character.Mastery)
+        screen.ids.Voi.text = str(character.Void)
+        screen.ids.Mind.text = str(character.Mind)
+        screen.ids.Int.text = str(character.Intellect)
+        screen.ids.Liq.text = str(character.Liquid)
+        screen.ids.blood.text = str(character.bloodType)
+        Screens.BloodStuff(screen, character)
 
-    def CharStats(self, screen):
-        #repositions the stats portion of the character sheet
-        posX = -.24
-        posY = -.03
-
-        screen.ids.cS.pos_hint = {"center_x": .5 + posX, "center_y": .65 + posY}
-        screen.ids.Ins.pos_hint = {"x": .29 + posX, "y": .74 + posY}
-        screen.ids.Mov.pos_hint = {"x": .33 + posX, "y": .74 + posY}
-        screen.ids.Zep.pos_hint = {"x": .389 + posX, "y": .67 + posY}
-        screen.ids.Tec.pos_hint = {"x": .465 + posX, "y": .88 + posY}
-        screen.ids.Ran.pos_hint = {"x": .515 + posX, "y": .88 + posY}
-        screen.ids.Spa.pos_hint = {"x": .493 + posX, "y": .7455 + posY}
-        screen.ids.For.pos_hint = {"x": .65 + posX, "y": .74 + posY}
-        screen.ids.Dam.pos_hint = {"x": .69 + posX, "y": .74 + posY}
-        screen.ids.Hea.pos_hint = {"x": .5955 + posX, "y": .67 + posY}
-        screen.ids.Vit.pos_hint = {"x": .65 + posX, "y": .465 + posY}
-        screen.ids.Inv.pos_hint = {"x": .69 + posX, "y": .465 + posY}
-        screen.ids.Mine.pos_hint = {"x": .5955 + posX, "y": .512 + posY}
-        screen.ids.Psy.pos_hint = {"x": .47 + posX, "y": .325 + posY}
-        screen.ids.Mas.pos_hint = {"x": .515 + posX, "y": .325 + posY}
-        screen.ids.Voi.pos_hint = {"x": .493 + posX, "y": .43 + posY}
-        screen.ids.Mind.pos_hint = {"x": .29 + posX, "y": .465 + posY}
-        screen.ids.Int.pos_hint = {"x": .33 + posX, "y": .465 + posY}
-        screen.ids.Liq.pos_hint = {"x": .389 + posX, "y": .512 + posY}
-        screen.ids.insInfo.pos_hint = {"x": .279 + posX, "y": .79 + posY}
-        screen.ids.tecInfo.pos_hint = {"x": .458 + posX, "y": .93 + posY}
-        screen.ids.forInfo.pos_hint = {"x": .638 + posX, "y": .79 + posY}
-        screen.ids.vitInfo.pos_hint = {"x": .638 + posX, "y": .513 + posY}
-        screen.ids.psyInfo.pos_hint = {"x": .458 + posX, "y": .372 + posY}
-        screen.ids.minInfo.pos_hint = {"x": .279 + posX, "y": .513 + posY}
-
-    def BindCardPos(self, card, sys):
-        #For grabbing and moving cards
-        if sys.x > 150 and sys.y < 240:
-            if card.state == "down" and sys.button == "left":
-                card.pos_hint={"x": (sys.x-280)/520, "y": sys.y/200}
-
-                card.children[4].pos=(card.x - 5, card.y - 20)
-                card.children[3].pos=(card.children[4].x + 9, card.children[4].y + 229)
-                card.children[2].pos=(card.children[4].x + 30, card.children[4].y + 239)
-                card.children[1].pos=(card.children[4].x + 30, card.children[4].y + 225)
-                card.children[0].pos=(card.children[4].x + 21, card.children[4].y + 49.5)
-
-    def FetchDeck(self):
-        #Used to grab entire deck from database based on the text file saved out
-        cards = []
-        for i in range(0, 30):
-            query = "SELECT * FROM cards WHERE cardId = %s"
-            self.cur.execute(query, (str(self.deck[i])))
-            cards.append(self.cur.fetchone())
-        return cards
-
-    def LoadCardCanvas(self, data, screen, group, pos, mult):
-        #Used to grab data of specified card from currently loaded deck
-        #card.bind(on_touch_move=self.BindCardPos)
-        #card.bind(on_touch_down=self.CardSelect)
-
-        name = self.Text(type="name", string=data[1])
-        type = self.Text(type="type", string=data[4] + '-' + data[5])
-        text = self.Text(type="text", string=data[6])
-
-        if data[5] == "Defensive":
-            src = "LightCard.png"
-        elif data[5] == "Tactical":
-            src = "MediumCard.png"
-        elif data[5] == "Aggressive":
-            src = "HeavyCard.png"
-        else:
-            src = "ActionCard.png"
-
-        if data[2] == "Instinct":
-            element = "Zephyr.png"
-        elif data[2] == "Tech":
-            element = "Spark.png"
-        elif data[2] == "Force":
-            element = "Heat.png"
-        elif data[2] == "Vitality":
-            element = "Mineral.png"
-        elif data[2] == "Psyche":
-            element = "Void.png"
-        elif data[2] == "Mind":
-            element = "Liquid.png"
-
-        size = (130 * mult, 180 * mult)
-        border = Rectangle(group=str(group), pos=pos, size=size, source=src)
-        screen.canvas.add(border)
-        screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .1, border.size[1] * .072), pos=(border.pos[0] + 7.2 * mult, border.pos[1] + 155 * mult), source=element))
-        screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .6, border.size[1] * .05), pos=(border.pos[0] + 24 * mult, border .pos[1] + 162 * mult), texture=name))
-        screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .64, border.size[1] * .05), pos=(border.pos[0] + 24 * mult, border.pos[1] + 152.5 * mult), texture=type))
-        screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .76, border.size[1] * .22), pos=(border.pos[0] + 16 * mult, border.pos[1] + 24 * mult), texture=text))
-        screen.canvas.add(Rectangle(group=str(group), pos=(5000, 5000), size=size, source="SelectedBorder.png"))
-
-    def LoadCard(self, data, card):
-        #Used to grab data of specified card from currently loaded deck
-        card.bind(on_touch_move=self.BindCardPos)
-        card.bind(on_touch_down=self.CardSelect)
-        size = (620, -20)
-        card.add_widget(Image(pos=size, size=(182,280)))
-        card.add_widget(Image(x=size[0] + 9, y=size[1] + 229, size=(20,20)))
-        card.add_widget(Image(x=size[0] + 30, y=size[1] + 239, size=(card.size[0] * 1.2, card.size[1] * .16)))
-        card.add_widget(Image(x=size[0] + 30, y=size[1] + 225, size=(card.size[0] * 1.2, card.size[1] * .16)))
-        card.add_widget(Image(x=size[0] + 21, y=size[1] + 49.5, size=(card.size[0] * 1.42, card.size[1] * .545)))
-
-        print(data)
-        card.children[2].texture = self.Text(type="name", string=data[1])
-        card.children[1].texture = self.Text(type="type", string=data[4] + '-' + data[5])
-        card.children[0].texture = self.Text(type="text", string=data[6])
-
-        if data[5] == "Defensive":
-            card.children[4].source = "LightCard.png"
-        elif data[5] == "Tactical":
-            card.children[4].source = "MediumCard.png"
-        elif data[5] == "Aggressive":
-            card.children[4].source = "HeavyCard.png"
-        else:
-            card.children[4].source = "ActionCard.png"
-
-        if data[2] == "Instinct":
-            card.children[3].source = "Zephyr.png"
-        elif data[2] == "Tech":
-            card.children[3].source = "Spark.png"
-        elif data[2] == "Force":
-            card.children[3].source = "Heat.png"
-        elif data[2] == "Vitality":
-            card.children[3].source = "Mineral.png"
-        elif data[2] == "Psyche":
-            card.children[3].source = "Void.png"
-        elif data[2] == "Mind":
-            card.children[3].source = "Liquid.png"
-
-    def DeckAndGearInit(self):
+    # maybe move this
+    def DeckAndGearInit(self, screen, character):
         #Sets deck equal to the received data of FetchDeck
-        self.character.cardsLeft = self.FetchDeck()
-        self.CellInit(self.ids.character, len(self.character.inv) - 1)
+        self.character.cardsLeft = Cards.FetchDeck(self)
+        Gear.CellInit(screen, len(character.inv) - 1, character)
 
-    def DrawCard(self):
+    def DrawCard(self, character):
         #Loads and adds a card from deck to hand
-        if len(self.character.cardsLeft) == 0:
+        if len(character.cardsLeft) == 0:
             return
 
-        num = randint(0, len(self.character.cardsLeft) - 1)
+        num = randint(0, len(character.cardsLeft) - 1)
         #pos = [uniform(.94, 1), uniform(.94, 1)]
         pos = (610, 5)
         card = Button(name=str(num), pos_hint={"x": 1, "y": 1}, size_hint=(.47, 8), background_color=(0, 0, 0, 0))
-        self.LoadCard(self.character.cardsLeft[num], card)
+        Cards.LoadCard(self, character.cardsLeft[num], card)
         self.cardId += 1
         self.ids.character.ids.fL.add_widget(card)
-        self.character.cardsLeft.pop(num)
-        self.character.hand.append(card)
+        character.cardsLeft.pop(num)
+        character.hand.append(card)
 
-        if len(self.character.cardsLeft) == 0:
+        if len(character.cardsLeft) == 0:
             self.ids.character.ids.draw.disabled = True
             self.ids.character.ids.drawMax.disabled = True
 
-    def DrawMax(self):
+    def DrawMax(self, character):
         #Draw up to max hand size
-        while len(self.character.hand) < int(self.character.Intellect):
-            self.DrawCard()
+        while len(character.hand) < int(character.Intellect):
+            self.DrawCard(character)
 
-    def CardSelect(self, card, sys):
-        #Used for reordering cards in hand and highlighting selected card
-        if sys.x > card.x and sys.x < card.x + card.size[0] and sys.y > card.y and sys.y < card.y + card.size[1]:
-            if sys.button == "left":
-                if sys.is_double_tap:
-                    self.CloseUp(card)
-                print(card.name)
-                if self.selected.pos != [0,1]: #Doing a weird check because I don't know how else to check if not initialized
-                    #self.ids.character.canvas.get_group(str(self.selected.name))[11].pos = (5000, 5000)
-                    self.selected.children[4].color = (1, 1, 1, 1)
-                    self.selected.children[3].color = (1, 1, 1, 1)
-
-                card.children[4].color = (.7, .7, 1, 1)
-                card.children[3].color = (.7, .7, 1, 1)
-                #self.ids.character.canvas.get_group(str(card.name))[11].pos = self.ids.character.canvas.get_group(str(card.name))[1].pos
-                self.selected = card
-                self.ids.character.ids.discard.disabled = False
-            elif sys.button == "right":
-                self.BringCardToFront(card)
-
-    def BringCardToFront(self, card):
-        self.ids.character.ids.fL.remove_widget(card)
-        self.ids.character.ids.fL.add_widget(card)
-
-    def CloseUp(self, card):
-        border = Image(source=card.children[4].source, size=(800, 800), allow_stretch=True)
-        border.add_widget(Image(source=card.children[3].source, size=(45, 45), pos=(228, 465), allow_stretch=True))
-        border.add_widget(Image(texture=card.children[2].texture, pos=(275, 392), size=(220, 220), allow_stretch=True))
-        border.add_widget(Image(texture=card.children[1].texture, pos=(275, 363), size=(220, 220), allow_stretch=True))
-        border.add_widget(Image(texture=card.children[0].texture, pos=(255, 8), size=(290, 290), allow_stretch=True))
-        popup = Popup(title='Card Viewer',
-                      content=border,
-                      size_hint=(None, None), size=(410, 580))
-        popup.open()
-
-    def Discard(self, card):
-        for i in range(0, len(self.character.hand)):
-            if self.character.hand[i].name == card.name:
+    def Discard(self, card, character):
+        for i in range(0, len(character.hand)):
+            if character.hand[i].name == card.name:
                 card.children[4].color = (1, 1, 1, 1)
                 card.children[3].color = (1, 1, 1, 1)
-                self.character.hand.remove(card)
+                character.hand.remove(card)
 
                 self.ids.character.ids.fL.remove_widget(card)
-                self.character.discard.append(card)
+                character.discard.append(card)
                 self.ids.character.ids.undo.disabled = False
                 self.ids.character.ids.discard.disabled = True
                 break
 
-    def Undo(self):
+    def Undo(self, character):
         if (len(self.character.discard) < 1):
             return
-        last = self.character.discard.pop()
-        self.character.hand.append(last)
+        last = character.discard.pop()
+        character.hand.append(last)
         self.ids.character.ids.fL.add_widget(last)
 
-        if (len(self.character.discard) < 1):
+        if (len(character.discard) < 1):
             self.ids.character.ids.undo.disabled = True
 
     def ChangeVal(self, button, orig, temp):
@@ -1013,64 +712,60 @@ class ScreenManagement(ScreenManager):
             button.color = (0, 0, 0, 1)
         return temp
 
-    def Reset(self, notUsed):
-        self.CharScreenUpdate(self.ids.character)
+    def Reset(self, character, notUsed):
+        self.CharScreenUpdate(self.ids.character, character)
 
         self.ids.character.ids.healVal.color=(0, 0, 0, 1)
-        self.tempHealth = self.character.health
+        character.tempHealth = character.health
         self.ids.character.ids.Ins.color = (0, 0, 0, 1)
-        self.tempTech = self.character.Tech
+        character.tempTech = character.Tech
         self.ids.character.ids.Tec.color = (0, 0, 0, 1)
-        self.tempForce = self.character.Force
+        character.tempForce = character.Force
         self.ids.character.ids.For.color = (0, 0, 0, 1)
-        self.tempVitality = self.character.Vitality
+        character.tempVitality = character.Vitality
         self.ids.character.ids.Vit.color = (0, 0, 0, 1)
-        self.tempPsyche = self.character.Psyche
+        character.tempPsyche = character.Psyche
         self.ids.character.ids.Psy.color = (0, 0, 0, 1)
-        self.tempMind = self.character.Mind
+        character.tempMind = character.Mind
         self.ids.character.ids.Mind.color = (0, 0, 0, 1)
-        self.tempMovement = self.character.Movement
+        character.tempMovement = character.Movement
         self.ids.character.ids.Mov.color = (0, 0, 0, 1)
-        self.tempRange = self.character.Range
+        character.tempRange = character.Range
         self.ids.character.ids.Ran.color = (0, 0, 0, 1)
-        self.tempBrutality = self.character.Brutality
+        character.tempBrutality = character.Brutality
         self.ids.character.ids.Dam.color = (0, 0, 0, 1)
-        self.tempInventory = self.character.Inventory
+        character.tempInventory = character.Inventory
         self.ids.character.ids.Inv.color = (0, 0, 0, 1)
-        self.tempMastery = self.character.Mastery
+        character.tempMastery = character.Mastery
         self.ids.character.ids.Mas.color = (0, 0, 0, 1)
-        self.tempIntellect = self.character.Intellect
+        character.tempIntellect = character.Intellect
         self.ids.character.ids.Int.color = (0, 0, 0, 1)
-        self.tempZephyr = self.character.Zephyr
+        character.tempZephyr = character.Zephyr
         self.ids.character.ids.Zep.color = (0, 0, 0, 1)
-        self.tempSpark = self.character.Spark
+        character.tempSpark = character.Spark
         self.ids.character.ids.Spa.color = (0, 0, 0, 1)
-        self.tempHeat = self.character.Heat
+        character.tempHeat = character.Heat
         self.ids.character.ids.Hea.color = (0, 0, 0, 1)
-        self.tempMineral = self.character.Mineral
+        character.tempMineral = character.Mineral
         self.ids.character.ids.Mine.color = (0, 0, 0, 1)
-        self.tempVoid = self.character.Void
+        character.tempVoid = character.Void
         self.ids.character.ids.Voi.color = (0, 0, 0, 1)
-        self.tempLiquid = self.character.Liquid
+        character.tempLiquid = character.Liquid
         self.ids.character.ids.Liq.color = (0, 0, 0, 1)
 
         self.cardId = 0
-        print("len of hand before" + str(len(self.character.hand)))
-        for i in range(0, len(self.character.hand)):
-            print("number of loops" + str(i))
-            self.Discard(self.character.hand[0])
-        print("len of hand after" + str(len(self.character.hand)))
-        self.character.cardsLeft.clear()
-        self.character.discard.clear()
-        self.DeckAndGearInit()
-        print(self.ids.character.ids.fL.children)
+        for i in range(0, len(character.hand)):
+            self.Discard(character.hand[0], character)
+        character.cardsLeft.clear()
+        character.discard.clear()
+        self.DeckAndGearInit(character)
         self.selected = Button(pos=(0, 1))
         self.ids.character.ids.undo.disabled = True
         self.ids.character.ids.discard.disabled = True
         self.ids.character.ids.draw.disabled = False
         self.ids.character.ids.drawMax.disabled = False
 
-    def NamePopup(self):
+    def NamePopup(self, character):
         b = FloatLayout()
         t = TextInput(size_hint=(.9, .38), font_size=30, pos_hint={"center_x": .5, "y": .55})
         b1 = Button(size_hint=(.4, .4), pos_hint={"center_x": .73, "y": .04}, text="Confirm")
@@ -1085,217 +780,40 @@ class ScreenManagement(ScreenManager):
                       auto_dismiss=False)
 
         b1.bind(on_release=popup.dismiss)
-        b1.bind(on_release=partial(self.NameSave, t))
+        b1.bind(on_release=partial(Screens.NameSave, self.ids.confirm, t, character))
         b2.bind(on_release=popup.dismiss)
         popup.open()
 
-    def NameSave(self, nam, button):
-        self.character.name = nam.text
-        self.ids.confirm.ids.nameVal.text = nam.text
-
-        if len(nam.text) > 0:
-            self.ids.confirm.ids.fin.disabled = False
-        else:
-            self.ids.confirm.ids.fin.disabled = True
-
-    def LoadoutRandomizer(self, load):
+    def LoadoutRandomizer(self, load, character):
         if load == "sF":
-            self.character.inv[0] = Gear.Weapon(name="Shield", type="Melee", size=2, attack=Gear.AtkRando(8), damage=Gear.DmgRando(6))
+            character.inv[0] = Gear.Weapon(name="Shield", type="Melee", size=2, attack=Gear.AtkRando(8), damage=Gear.DmgRando(6))
             for i in range(0, 4):
-                self.GetGear("SELECT * FROM gear WHERE gearName = 'Heavy Armor'", i + 1)
+                Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Heavy Armor'", i + 1, character)
             for i in range(0, 3):
-                self.GetGear("SELECT * FROM gear WHERE gearName = 'Light Armor'", i + 5)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'First Aid'", 8)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'First Aid'", 9)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'Purifier'", 10)
-            self.CellInit(screen=self.ids.loadout, num=11)
+                Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", i + 5, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'First Aid'", 8, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'First Aid'", 9, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Purifier'", 10, character)
+            Gear.CellInit(screen=self.ids.loadout, num=11, character=character)
         elif load == "tN":
-            self.character.inv[0] = Gear.WeaponRandomizer(size=4, type="Melee")
-            self.character.inv[1] = Gear.WeaponRandomizer(size=2, type="Melee")
+            character.inv[0] = Gear.WeaponRandomizer(size=4, type="Melee")
+            character.inv[1] = Gear.WeaponRandomizer(size=2, type="Melee")
             for i in range(0, 2):
-                self.GetGear("SELECT * FROM gear WHERE gearName = 'Heavy Armor'", i + 2)
+                Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Heavy Armor'", i + 2, character)
             for i in range(0, 4):
-                self.GetGear("SELECT * FROM gear WHERE gearName = 'Light Armor'", i + 4)
-            #for i in range(0, 4):
-            #    self.inv[i] = 0
-            self.CellInit(screen=self.ids.loadout, num=8)
+                Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", i + 4, character)
+            Gear.CellInit(screen=self.ids.loadout, num=8, character=character)
         elif load == "lL":
-            self.character.inv[0] = Gear.WeaponRandomizer(size=4, type="Ranged")
-            self.character.inv[1] = Gear.WeaponRandomizer(size=2, type="Ranged")
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'Ammo'", 2)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'Ammo'", 3)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'Grenade'", 4)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'Heavy Armor'", 5)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'Light Armor'", 6)
-            self.GetGear("SELECT * FROM gear WHERE gearName = 'Light Armor'", 7)
-            self.RandomItem(8)
-            self.CellInit(screen=self.ids.loadout, num=9)
-
-    def GetGear(self, query, index):
-        self.cur.execute(query)
-        fetch = self.cur.fetchone()
-        self.character.inv[index] = Gear.Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[7])
-
-    def CellInit(self, screen, num):
-        if num > 0:
-            screen.ids.cellOne.text = str(self.character.inv[0].name)
-            for i in range(1, int(screen.ids.cellOne.name) + 1):
-                screen.ids.cellOne.unbind_uid('on_release', i)
-            screen.ids.cellOne.name = str(screen.ids.cellOne.fbind('on_release', partial(self.CellPopup, self.character.inv[0])))
-        else:
-            screen.ids.cellOne.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellOne.name) + 1):
-                screen.ids.cellOne.unbind_uid('on_release', i)
-        if num > 1:
-            screen.ids.cellTwo.text = str(self.character.inv[1].name)
-            for i in range(1, int(screen.ids.cellTwo.name) + 1):
-                screen.ids.cellTwo.unbind_uid('on_release', i)
-            screen.ids.cellTwo.name = str(screen.ids.cellTwo.fbind('on_release', partial(self.CellPopup, self.character.inv[1])))
-        else:
-            screen.ids.cellTwo.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellTwo.name) + 1):
-                screen.ids.cellTwo.unbind_uid('on_release', i)
-        if num > 2:
-            screen.ids.cellThree.text = str(self.character.inv[2].name)
-            for i in range(1, int(screen.ids.cellThree.name) + 1):
-                screen.ids.cellThree.unbind_uid('on_release', i)
-            screen.ids.cellThree.name = str(screen.ids.cellThree.fbind('on_release', partial(self.CellPopup, self.character.inv[2])))
-        else:
-            screen.ids.cellThree.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellThree.name) + 1):
-                screen.ids.cellThree.unbind_uid('on_release', i)
-        if num > 3:
-            screen.ids.cellFour.text = str(self.character.inv[3].name)
-            for i in range(1, int(screen.ids.cellFour.name) + 1):
-                screen.ids.cellFour.unbind_uid('on_release', i)
-            screen.ids.cellFour.name = str(screen.ids.cellFour.fbind('on_release', partial(self.CellPopup, self.character.inv[3])))
-        else:
-            screen.ids.cellFour.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellFour.name) + 1):
-                screen.ids.cellFour.unbind_uid('on_release', i)
-        if num > 4:
-            screen.ids.cellFive.text = str(self.character.inv[4].name)
-            for i in range(1, int(screen.ids.cellFive.name) + 1):
-                screen.ids.cellFive.unbind_uid('on_release', i)
-            screen.ids.cellFive.name = str(screen.ids.cellFive.fbind('on_release', partial(self.CellPopup, self.character.inv[4])))
-        else:
-            screen.ids.cellFive.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellFive.name) + 1):
-                screen.ids.cellFive.unbind_uid('on_release', i)
-        if num > 5:
-            screen.ids.cellSix.text = str(self.character.inv[5].name)
-            for i in range(1, int(screen.ids.cellSix.name) + 1):
-                screen.ids.cellSix.unbind_uid('on_release', i)
-            screen.ids.cellSix.name = str(screen.ids.cellSix.fbind('on_release', partial(self.CellPopup, self.character.inv[5])))
-        else:
-            screen.ids.cellSix.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellSix.name) + 1):
-                screen.ids.cellSix.unbind_uid('on_release', i)
-        if num > 6:
-            screen.ids.cellSeven.text = str(self.character.inv[6].name)
-            for i in range(1, int(screen.ids.cellSeven.name) + 1):
-                screen.ids.cellSeven.unbind_uid('on_release', i)
-            screen.ids.cellSeven.name = str(screen.ids.cellSeven.fbind('on_release', partial(self.CellPopup, self.character.inv[6])))
-        else:
-            screen.ids.cellSeven.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellSeven.name) + 1):
-                screen.ids.cellSeven.unbind_uid('on_release', i)
-        if num > 7:
-            screen.ids.cellEight.text = str(self.character.inv[7].name)
-            for i in range(1, int(screen.ids.cellEight.name) + 1):
-                screen.ids.cellEight.unbind_uid('on_release', i)
-            screen.ids.cellEight.name = str(screen.ids.cellEight.fbind('on_release', partial(self.CellPopup, self.character.inv[7])))
-        else:
-            screen.ids.cellEight.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellEight.name) + 1):
-                screen.ids.cellEight.unbind_uid('on_release', i)
-        if num > 8:
-            screen.ids.cellNine.text = str(self.character.inv[8].name)
-            for i in range(1, int(screen.ids.cellNine.name) + 1):
-                screen.ids.cellNine.unbind_uid('on_release', i)
-            screen.ids.cellNine.name = str(screen.ids.cellNine.fbind('on_release', partial(self.CellPopup, self.character.inv[8])))
-        else:
-            screen.ids.cellNine.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellNine.name) + 1):
-                screen.ids.cellNine.unbind_uid('on_release', i)
-        if num > 9:
-            screen.ids.cellTen.text = str(self.character.inv[9].name)
-            for i in range(1, int(screen.ids.cellTen.name) + 1):
-                screen.ids.cellTen.unbind_uid('on_release', i)
-            screen.ids.cellTen.name = str(screen.ids.cellTen.fbind('on_release', partial(self.CellPopup, self.character.inv[9])))
-        else:
-            screen.ids.cellTen.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellTen.name) + 1):
-                screen.ids.cellTen.unbind_uid('on_release', i)
-        if num > 10:
-            screen.ids.cellEleven.text = str(self.character.inv[10].name)
-            for i in range(1, int(screen.ids.cellEleven.name) + 1):
-                screen.ids.cellEleven.unbind_uid('on_release', i)
-            screen.ids.cellEleven.name = str(screen.ids.cellEleven.fbind('on_release', partial(self.CellPopup, self.character.inv[10])))
-        else:
-            screen.ids.cellEleven.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellEleven.name) + 1):
-                screen.ids.cellEleven.unbind_uid('on_release', i)
-        if num > 11:
-            screen.ids.cellTwelve.text = str(self.character.inv[11].name)
-            for i in range(1, int(screen.ids.cellTwelve.name) + 1):
-                screen.ids.cellTwelve.unbind_uid('on_release', i)
-            screen.ids.cellTwelve.name = str(screen.ids.cellTwelve.fbind('on_release', partial(self.CellPopup, self.character.inv[11])))
-        else:
-            screen.ids.cellTwelve.text = "EMPTY"
-            for i in range(1, int(screen.ids.cellTwelve.name) + 1):
-                screen.ids.cellTwelve.unbind_uid('on_release', i)
-
-        for i in range(0, num - 1):
-            if self.character.inv[i].name == "Light Armor":
-                self.character.lightArmor += 3
-            elif self.character.inv[i].name == "Heavy Armor":
-                self.character.heavyArmor += 1
-
-    def CellPopup(self, gear, button):
-        name = self.Text("name", gear.name)
-        type = self.Text("type", gear.type + " - Size " + str(gear.size))
-        text = self.Text("text", gear.definition)
-
-        if gear.type == "Melee" or gear.type == "Ranged":
-            border = Image(source="WeaponCard.png", size=(800, 800), allow_stretch=True)
-            border.add_widget(Label(text=str(gear.attack[0]), pos=(250, 17), font_size=20, color=(0, 0, 0, 1)))
-            border.add_widget(Label(text=str(gear.attack[1]), pos=(324, 17), font_size=20, color=(0, 0, 0, 1)))
-            border.add_widget(Label(text=str(gear.attack[2]), pos=(397, 17), font_size=20, color=(0, 0, 0, 1)))
-            border.add_widget(Label(text=gear.damage, pos=(482, 17), font_size=20, color=(0, 0, 0, 1)))
-        else:
-            border = Image(source="GearCard.png", size=(800, 800), allow_stretch=True)
-            border.add_widget(Label(text=str(gear.quality), pos=(487, 17), font_size=20, color=(0, 0, 0, 1)))
-
-        border.add_widget(Image(texture=name, pos=(275, 392), size=(220, 220), allow_stretch=True))
-        border.add_widget(Image(texture=type, pos=(275, 363), size=(220, 220), allow_stretch=True))
-        border.add_widget(Image(texture=text, pos=(255, 8), size=(290, 290), allow_stretch=True))
-
-        popup = Popup(title='Card Viewer',
-                      content=border,
-                      size_hint=(None, None), size=(410, 580))
-        popup.open()
-
-    def RandomItem(self, index):
-        self.cur.execute("SELECT * FROM gear")
-        num = self.cur.fetchall()
-        findRate = []
-        for i in range(0, len(num)):
-            for j in range(0, num[i][6]):
-                findRate.append(num[i][0])
-        var = findRate[randint(0, len(findRate) - 1)]
-        query = "SELECT * FROM gear WHERE gearId = %s"
-        self.cur.execute(query, var)
-        fetch = self.cur.fetchone()
-        if (fetch[2] == "Melee" or fetch[2] == "Ranged"):
-            ran = randint(fetch[4], fetch[5])
-            typ = randint(0, 1)
-            if typ == 0:
-                nam = "Melee"
-            else:
-                nam = "Ranged"
-            self.character.inv[index] = Gear.WeaponRandomizer(ran, nam)
-        self.character.inv[index] = Gear.Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[7])
+            character.inv[0] = Gear.WeaponRandomizer(size=4, type="Ranged")
+            character.inv[1] = Gear.WeaponRandomizer(size=2, type="Ranged")
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Ammo'", 2, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Ammo'", 3, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Grenade'", 4, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Heavy Armor'", 5, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", 6, character)
+            Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", 7, character)
+            Gear.RandomItem(self.cur, 8, character)
+            Gear.CellInit(screen=self.ids.loadout, num=9, character=character)
 
     def Info(self, name):
         if name == "INS":
@@ -1359,27 +877,27 @@ class ScreenManagement(ScreenManager):
     def ElementList(self, notUsed):
         fL = FloatLayout()
         one1 = Button(name="one+1+" + str(0), text="Zephyr", pos_hint={"x": .05, "y": .91}, size_hint=(.15, .07))
-        one1.fbind("on_touch_down", partial(self.ElementPopup, one1.text))
+        one1.fbind("on_touch_down", partial(Elements.ElementPopup, self.cur, one1.text))
         fL.add_widget(one1)
 
         one2 = Button(name="one+2+" + str(0), text="Spark", pos_hint={"x": .2, "y":  .91}, size_hint=(.15, .07))
-        one2.fbind("on_touch_down", partial(self.ElementPopup, one2.text))
+        one2.fbind("on_touch_down", partial(Elements.ElementPopup, self.cur, one2.text))
         fL.add_widget(one2)
 
         one3 = Button(name="one+3+" + str(0), text="Heat", pos_hint={"x": .35, "y": .91}, size_hint=(.15, .07))
-        one3.fbind("on_touch_down", partial(self.ElementPopup, one3.text))
+        one3.fbind("on_touch_down", partial(Elements.ElementPopup, self.cur, one3.text))
         fL.add_widget(one3)
 
         one4 = Button(name="one+4+" + str(0), text="Mineral", pos_hint={"x": .5, "y":  .91}, size_hint=(.15, .07))
-        one4.fbind("on_touch_down", partial(self.ElementPopup, one4.text))
+        one4.fbind("on_touch_down", partial(Elements.ElementPopup, self.cur, one4.text))
         fL.add_widget(one4)
 
         one5 = Button(name="one+5+" + str(0), text="Void", pos_hint={"x": .65, "y": .91}, size_hint=(.15, .07))
-        one5.fbind("on_touch_down", partial(self.ElementPopup, one5.text))
+        one5.fbind("on_touch_down", partial(Elements.ElementPopup, self.cur, one5.text))
         fL.add_widget(one5)
 
         one6 = Button(name="one+6+" + str(0), text="Liquid", pos_hint={"x": .8, "y":  .91}, size_hint=(.15, .07))
-        one6.fbind("on_touch_down", partial(self.ElementPopup, one6.text))
+        one6.fbind("on_touch_down", partial(Elements.ElementPopup, self.cur, one6.text))
         fL.add_widget(one6)
 
         two1 = Button(name="two+1+" + str(0), text="Null", pos_hint={"x": .125, "y": .76}, size_hint=(.15, .07))
@@ -1410,6 +928,8 @@ class ScreenManagement(ScreenManager):
         fL.add_widget(five1)
         five2 = Button(name="five+2+" + str(0), text="Null", pos_hint={"x": .5, "y": .3}, size_hint=(.15, .07))
         fL.add_widget(five2)
+        six1 = Button(name="six+1+" + str(0), text="Null", pos_hint={"x": .423, "y": .15}, size_hint=(.15, .07))
+        fL.add_widget(six1)
 
         jump = 110
 
@@ -1424,6 +944,7 @@ class ScreenManagement(ScreenManager):
         threes = [three1, three2, three3, three4]
         fours = [four1, four2, four3]
         fives = [five1, five2]
+        sixes = [six1]
 
         for i in range(0, 5):
             #{"x": .155 + jump*i, "y": .82}
@@ -1449,300 +970,89 @@ class ScreenManagement(ScreenManager):
             fives[i].add_widget(Image(pos=(356 + jump * i, 206), size=(18, 18), color=(0, 0, 0, 0)))
             fives[i].add_widget(Image(pos=(376 + jump * i, 206), size=(18, 18), color=(0, 0, 0, 0)))
 
-        fL.add_widget(Label(text="This is the textsdnsdsadjssdsdssds\najkdhasd\or the things...", pos_hint={"x": 0, "y": -.35}))
+        sixes[0].add_widget(Image(pos=(336, 125), size=(18, 18), color=(0, 0, 0, 0)))
+        sixes[0].add_widget(Image(pos=(356, 125), size=(18, 18), color=(0, 0, 0, 0)))
+        sixes[0].add_widget(Image(pos=(376, 125), size=(18, 18), color=(0, 0, 0, 0)))
+        sixes[0].add_widget(Image(pos=(396, 125), size=(18, 18), color=(0, 0, 0, 0)))
+        sixes[0].add_widget(Image(pos=(416, 125), size=(18, 18), color=(0, 0, 0, 0)))
+        sixes[0].add_widget(Image(pos=(436, 125), size=(18, 18), color=(0, 0, 0, 0)))
+
+        fL.add_widget(Label(text="This is the textsdnsdsadjssdsdss", pos_hint={"x": 0, "y": -.42}))
 
         oneButtons = [fL.children[len(fL.children)-7], fL.children[len(fL.children)-8], fL.children[len(fL.children)-9],
                       fL.children[len(fL.children)-10], fL.children[len(fL.children)-11]]
-        one1.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
-        one2.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
-        one3.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
-        one4.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
-        one5.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
-        one6.fbind("on_touch_down", partial(self.ElementButtons, oneButtons, fL))
+        one1.fbind("on_touch_down", partial(Elements.ElementButtons, self, oneButtons, fL))
+        one2.fbind("on_touch_down", partial(Elements.ElementButtons, self, oneButtons, fL))
+        one3.fbind("on_touch_down", partial(Elements.ElementButtons, self, oneButtons, fL))
+        one4.fbind("on_touch_down", partial(Elements.ElementButtons, self, oneButtons, fL))
+        one5.fbind("on_touch_down", partial(Elements.ElementButtons, self, oneButtons, fL))
+        one6.fbind("on_touch_down", partial(Elements.ElementButtons, self, oneButtons, fL))
 
         popup = Popup(title="d",
                       content=fL,
                       size_hint=(None, None), size=(760, 600))
         popup.open()
 
-    def ElementButtons(self, buttons, fL, binder, sys):
-        if sys.button == "left" and sys.x > binder.x and sys.x < binder.x + binder.size[0] and sys.y > binder.y and sys.y < binder.y + binder.size[1]:
-            namBut = binder.name.split("+")
-            self.ButtonColorReset(namBut[0], fL)
-            binder.background_color = .8, .8, 1, 1
-            query = "SELECT * FROM elements WHERE elementName = %s"
-            self.cur.execute(query, binder.text)
-            element = self.cur.fetchone()
-
-            num = str(element[2] + 1)
-            query = "SELECT * FROM elements WHERE elementLvl = "
-            query += num + " and elementCharges LIKE "
-
-            types = element[3].split("+")
-            arg = "'%"
-            for h in range(0, len(types)):
-                arg += types[h]
-                if h < len(types) - 1:
-                    arg += "%' and elementCharges LIKE '%"
-
-            arg += "%'"
-
-            query += arg
-            self.cur.execute(query)
-            fetch = self.cur.fetchall()
-            newButtons = list(buttons)
-            newButtons.pop()
-            indexer = 12
-
-            if num == "3":
-                indexer += 4
-            elif num == "4":
-                indexer += 7
-            elif num == "5":
-                indexer += 9
-            #for i in range(0, int(binder.name)):
-            #    indexer += 5 - int(binder.name)
-
-            # Setting next buttons to pass to current buttons
-            for j in range(0, len(newButtons)):
-                newButtons[j] = fL.children[len(fL.children)-indexer-j]
-
-            # Setting current buttons
-            if int(num) < 5:
-                for k in range(0, len(buttons)):
-                    buttons[k].text = fetch[k][1]
-                    nam = buttons[k].name.split("+")
-                    for l in range(1, int(nam[2]) + 1):
-                        buttons[k].unbind_uid("on_touch_down", l)
-                    buttons[k].name = nam[0] + "+" + nam[1] + "+" + str(buttons[k].fbind("on_touch_down", partial(self.ElementPopup, fetch[k][1])))
-                    buttons[k].fbind("on_touch_down", partial(self.ElementButtons, newButtons, fL))
-
-            # Setting symbols for combos
-            for sym in range(0, len(buttons)):
-                typers = fetch[sym][3].split("+")
-                for typ in range(0, len(typers)):
-                    string = typers[typ] + '.png'
-                    buttons[sym].children[len(buttons[sym].children) - typ - 1].source = string
-                    buttons[sym].children[len(buttons[sym].children) - typ - 1].color = (1, 1, 1, 1)
-
-            self.DrawLine(binder, fL)
-
-            # This can be a lot cleaner
-            run = 0
-            count = 0
-            if num == "2":
-                count = 9
-            elif num == "3":
-                count = 5
-            elif num == "4":
-                count = 2
-
-            # Nulling out combinations I'm not using anymore
-            while run != count:
-                nam = fL.children[len(fL.children)-indexer - run].name.split("+")
-                for m in range(1, int(nam[2]) + 2):
-                    fL.children[len(fL.children)-indexer - run].unbind_uid("on_touch_down", m)
-                fL.children[len(fL.children)-indexer - run].text = "Null"
-                for n in range(0, len(fL.children[len(fL.children)-indexer - run].children)):
-                    fL.children[len(fL.children)-indexer - run].children[n].color = (0, 0, 0, 0)
-                run += 1
-
-    def ButtonColorReset(self, num, fL):
-        if num == "one":
-            for i in range(0, 20):
-                fL.children[26 - i].background_color = 1, 1, 1, 1
-        elif num == "two":
-            for i in range(0, 14):
-                fL.children[20 - i].background_color = 1, 1, 1, 1
-        elif num == "three":
-            for i in range(0, 9):
-                fL.children[15 - i].background_color = 1, 1, 1, 1
-        elif num == "four":
-            for i in range(0, 5):
-                fL.children[11 - i].background_color = 1, 1, 1, 1
-        elif num == "five":
-            for i in range(0, 2):
-                fL.children[9 - i].background_color = 1, 1, 1, 1
-
-    def ElementPopup(self, name, button, sys):
-        if sys.button == "right" and sys.x > button.x and sys.x < button.x + button.size[0] and sys.y > button.y and sys.y < button.y + button.size[1]:
-            query = "SELECT * FROM elements WHERE elementName = %s"
-            self.cur.execute(query, name)
-            fetch = self.cur.fetchone()
-
-            name = self.Text("name", fetch[1])
-            type = self.Text("type", fetch[3])
-            text = self.Text("text", fetch[5])
-
-            border = Image(source="ElementCard.png", size=(800, 800), allow_stretch=True)
-            border.add_widget(Image(source=str(fetch[3]+".png"), size=(45, 45), pos=(228, 465), allow_stretch=True))
-            border.add_widget(Image(texture=name, pos=(278, 392), size=(220, 220), allow_stretch=True))
-            border.add_widget(Image(texture=type, pos=(278, 363), size=(220, 220), allow_stretch=True))
-            border.add_widget(Image(texture=text, pos=(255, 8), size=(290, 290), allow_stretch=True))
-
-            popup = Popup(title='Element Viewer',
-                          content=border,
-                          size_hint=(None, None), size=(410, 580))
-            popup.open()
-
-    def ChargeScreen(self):
-
+    def ChargePopup(self, character):
         b = FloatLayout()
-        zep = Button(size_hint=(.15, .1), pos_hint={"center_x": .12, "y": .85}, background_color=(0, 0, 0, 0))
-        spa = Button(size_hint=(.15, .1), pos_hint={"center_x": .27, "y": .85}, background_color=(0, 0, 0, 0))
-        hea = Button(size_hint=(.15, .1), pos_hint={"center_x": .42, "y": .85}, background_color=(0, 0, 0, 0))
-        min = Button(size_hint=(.15, .1), pos_hint={"center_x": .57, "y": .85}, background_color=(0, 0, 0, 0))
-        voi = Button(size_hint=(.15, .1), pos_hint={"center_x": .72, "y": .85}, background_color=(0, 0, 0, 0))
-        liq = Button(size_hint=(.15, .1), pos_hint={"center_x": .87, "y": .85}, background_color=(0, 0, 0, 0))
-        print(zep.pos_hint)
-        zepImage = Image(source="Zephyr.png", pos=(zep.pos_hint[0] * self.width, zep.pos_hint[1] * self.height))
+        zep = Button(size_hint=(.11, .08), pos_hint={"center_x": .12, "y": .88}, background_color=(0, 0, 0, 0))
+        spa = Button(size_hint=(.11, .08), pos_hint={"center_x": .27, "y": .88}, background_color=(0, 0, 0, 0))
+        hea = Button(size_hint=(.11, .08), pos_hint={"center_x": .42, "y": .88}, background_color=(0, 0, 0, 0))
+        min = Button(size_hint=(.11, .08), pos_hint={"center_x": .57, "y": .88}, background_color=(0, 0, 0, 0))
+        voi = Button(size_hint=(.11, .08), pos_hint={"center_x": .72, "y": .88}, background_color=(0, 0, 0, 0))
+        liq = Button(size_hint=(.11, .08), pos_hint={"center_x": .87, "y": .88}, background_color=(0, 0, 0, 0))
+        xJump = 60
+        xCorrection = 2
+        color = (1, 1, 1, .3)
+        zepImage = Image(source="Zephyr.png", pos=(203, 438), color=color)
+        spaImage = Image(source="Spark.png", pos=(203 + xJump - xCorrection, 438), color=color)
+        heaImage = Image(source="Heat.png", pos=(203 + xJump * 2 - xCorrection * 2, 438), color=color)
+        minImage = Image(source="Mineral.png", pos=(203 + xJump * 3 - xCorrection * 3, 438), color=color)
+        voiImage = Image(source="Void.png", pos=(203 + xJump * 4 - xCorrection * 4, 438), color=color)
+        liqImage = Image(source="Liquid.png", pos=(203 + xJump * 5 - xCorrection * 5, 438), color=color)
         zep.add_widget(zepImage)
-        b1 = Button(size_hint=(.25, .1), pos_hint={"center_x": .8, "y": .04}, text="Add")
-        b2 = Button(size_hint=(.25, .1), pos_hint={"center_x": .2, "y": .04}, text="Reset")
-        b3 = Button(size_hint=(.25, .1), pos_hint={"center_x": .5, "y": .04}, text="Elements")
+        zep.add_widget(spaImage)
+        zep.add_widget(heaImage)
+        zep.add_widget(minImage)
+        zep.add_widget(voiImage)
+        zep.add_widget(liqImage)
+        b2 = Button(size_hint=(.25, .1), pos_hint={"center_x": .3, "y": .025}, text="Reset")
+        b3 = Button(size_hint=(.25, .1), pos_hint={"center_x": .7, "y": .025}, text="Elements")
         b.add_widget(zep)
         b.add_widget(spa)
         b.add_widget(hea)
         b.add_widget(min)
         b.add_widget(voi)
         b.add_widget(liq)
-        b.add_widget(b1)
         b.add_widget(b2)
         b.add_widget(b3)
 
+        images = [zepImage, spaImage, heaImage, minImage, voiImage, liqImage]
+
+        for i in range(0, 6):
+            if self.activeElements[i] == 1:
+                images[i].color = (1, 1, 1, 1)
+
         popup = Popup(title='Charge',
                       content=b,
-                      size_hint=(None, None), size=(410, 500))
+                      size_hint=(None, None), size=(410, 550))
 
-        #b2.bind(on_release=self.ResetCharge)
+        zep.bind(on_release=partial(Elements.ChargeUpdate, self, 0, images, b, character))
+        spa.bind(on_release=partial(Elements.ChargeUpdate, self, 1, images, b, character))
+        hea.bind(on_release=partial(Elements.ChargeUpdate, self, 2, images, b, character))
+        min.bind(on_release=partial(Elements.ChargeUpdate, self, 3, images, b, character))
+        voi.bind(on_release=partial(Elements.ChargeUpdate, self, 4, images, b, character))
+        liq.bind(on_release=partial(Elements.ChargeUpdate, self, 5, images, b, character))
+        b2.bind(on_release=partial(Elements.ResetCharge, images, b, self))
         b3.bind(on_release=self.ElementList)
+
+        Elements.ChargeUpdate(self, -1, images, b, b3, b)
         popup.open()
 
-    #def ResetCharge(self):
-
-    def DrawLine(self, button, fL):
-        nam = button.name.split("+")
-        if nam[0] == "one":
-            fL.canvas.remove_group("one")
-            fL.canvas.remove_group("two")
-            fL.canvas.remove_group("three")
-            fL.canvas.remove_group("four")
-            fL.canvas.remove_group("five")
-            main = Line(group="one", points=((179, 485) + (620, 485)))
-            one = Line(group="one", points=((179, 485) + (179, 470)))
-            two = Line(group="one", points=((289, 485) + (289, 470)))
-            three = Line(group="one",  points=((399, 485) + (399, 470)))
-            four = Line(group="one", points=((509, 485) + (509, 470)))
-            five = Line(group="one", points=((619, 485) + (619, 470)))
-
-            if nam[1] == "1":
-                con = Line(group="one", points=((124, 485) + (124, 505)))
-                con2 = Line(group="one", points=((124, 485) + (179, 485)))
-                fL.canvas.add(con2)
-            elif nam[1] == "2":
-                con = Line(group="one", points=((234, 485) + (234, 505)))
-            elif nam[1] == "3":
-                con = Line(group="one", points=((344, 485) + (344, 505)))
-            elif nam[1] == "4":
-                con = Line(group="one", points=((454, 485) + (454, 505)))
-            elif nam[1] == "5":
-                con = Line(group="one", points=((564, 485) + (564, 505)))
-            elif nam[1] == "6":
-                con = Line(group="one", points=((619, 485) + (674, 485)))
-                con2 = Line(group="one", points=((674, 485) + (674, 505)))
-                fL.canvas.add(con2)
-
-            fL.canvas.add(one)
-            fL.canvas.add(two)
-            fL.canvas.add(three)
-            fL.canvas.add(four)
-            fL.canvas.add(five)
-
-        elif nam[0] == "two":
-            fL.canvas.remove_group("two")
-            fL.canvas.remove_group("three")
-            fL.canvas.remove_group("four")
-            fL.canvas.remove_group("five")
-            main = Line(group="two", points=((234, 402) + (564, 402)))
-            one = Line(group="two", points=((234, 402) + (234, 387)))
-            two = Line(group="two", points=((344, 402) + (344, 387)))
-            three = Line(group="two", points=((454, 402) + (454, 387)))
-            four = Line(group="two", points=((564, 402) + (564, 387)))
-
-            if nam[1] == "1":
-                con = Line(group="two", points=((179, 402) + (179, 422)))
-                con2 = Line(group="two", points=((179, 402) + (234, 402)))
-                fL.canvas.add(con2)
-            elif nam[1] == "2":
-                con = Line(group="two", points=((289, 402) + (289, 422)))
-            elif nam[1] == "3":
-                con = Line(group="two", points=((399, 402) + (399, 422)))
-            elif nam[1] == "4":
-                con = Line(group="two", points=((509, 402) + (509, 422)))
-            elif nam[1] == "5":
-                con = Line(group="two", points=((619, 402) + (619, 422)))
-                con2 = Line(group="two", points=((619, 402) + (564, 402)))
-                fL.canvas.add(con2)
-
-            fL.canvas.add(one)
-            fL.canvas.add(two)
-            fL.canvas.add(three)
-            fL.canvas.add(four)
-
-        elif nam[0] == "three":
-            fL.canvas.remove_group("three")
-            fL.canvas.remove_group("four")
-            fL.canvas.remove_group("five")
-            main = Line(group="three", points=((289, 319) + (509, 319)))
-            one = Line(group="three", points=((289, 319) + (289, 304)))
-            two = Line(group="three", points=((399, 319) + (399, 304)))
-            three = Line(group="three", points=((509, 319) + (509, 304)))
-
-            if nam[1] == "1":
-                con = Line(group="three", points=((234, 319) + (234, 339)))
-                con2 = Line(group="three", points=((234, 319) + (289, 319)))
-                fL.canvas.add(con2)
-            elif nam[1] == "2":
-                con = Line(group="three", points=((344, 319) + (344, 339)))
-            elif nam[1] == "3":
-                con = Line(group="three", points=((454, 319) + (454, 339)))
-            elif nam[1] == "4":
-                con = Line(group="three", points=((564, 319) + (564, 339)))
-                con2 = Line(group="three", points=((564, 319) + (509, 319)))
-                fL.canvas.add(con2)
-
-            fL.canvas.add(one)
-            fL.canvas.add(two)
-            fL.canvas.add(three)
-
-        elif nam[0] == "four":
-            fL.canvas.remove_group("four")
-            fL.canvas.remove_group("five")
-            main = Line(group="four", points=((344, 236) + (454, 236)))
-            one = Line(group="four", points=((344, 236) + (344, 221)))
-            two = Line(group="four", points=((454, 236) + (454, 221)))
-
-            if nam[1] == "1":
-                con = Line(group="four", points=((289, 236) + (289, 256)))
-                con2 = Line(group="four", points=((289, 236) + (344, 236)))
-                fL.canvas.add(con2)
-            elif nam[1] == "2":
-                con = Line(group="four", points=((399, 236) + (399, 256)))
-            elif nam[1] == "3":
-                con = Line(group="four", points=((509, 236) + (509, 256)))
-                con2 = Line(group="four", points=((509, 236) + (454, 236)))
-                fL.canvas.add(con2)
-
-            fL.canvas.add(one)
-            fL.canvas.add(two)
-
-        fL.canvas.add(main)
-        fL.canvas.add(con)
-
-    def CharInit(self):
-        self.LoadData()
-        self.DeckAndGearInit()
-        self.CharScreenUpdate(self.ids.character)
+    def CharInit(self, character):
+        self.LoadData(character)
+        self.DeckAndGearInit(self.ids.character, character)
+        self.CharScreenUpdate(self.ids.character, character)
         return "character"
 
     def CharSelectUpdate(self):
@@ -1825,7 +1135,7 @@ class ScreenManagement(ScreenManager):
         else:
             self.ids.charSelect.ids.char6.text = "NEW CHAR"
 
-    def ResetPopup(self):
+    def ResetPopup(self, character):
         b = FloatLayout()
         l = Label(font_size=25, pos_hint={"center_x": .5, "y": .3}, text="Reset all cards and temp stats?")
         b1 = Button(size_hint=(.4, .4), pos_hint={"center_x": .73, "y": .04}, text="Confirm")
@@ -1840,7 +1150,7 @@ class ScreenManagement(ScreenManager):
                       auto_dismiss=False)
 
         b1.bind(on_release=popup.dismiss)
-        b1.bind(on_release=self.Reset)
+        b1.bind(on_release=partial(self.Reset, character))
         b2.bind(on_release=popup.dismiss)
         popup.open()
 
