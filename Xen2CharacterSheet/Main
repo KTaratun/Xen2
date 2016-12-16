@@ -3,6 +3,7 @@ import Gear
 import Cards
 import Screens
 import Elements
+import Random
 from random import randint
 from kivy.app import App
 from kivy.lang import Builder
@@ -96,6 +97,7 @@ class ScreenManagement(ScreenManager):
 
     cPos = .2
     global path
+    delete = ""
     num = 0
 
     selected = Button(pos=(0, 1))
@@ -207,6 +209,8 @@ class ScreenManagement(ScreenManager):
         screen.ids.four.color = 1, 1, 1, 1
         screen.ids.five.color = 1, 1, 1, 1
         screen.ids.six.color = 1, 1, 1, 1
+        if screen.name == "charSelect":
+            character.Class = curr.text
         if screen.name == "class":
             character.Class = curr.name
             screen.ids.cardList.disabled = False
@@ -412,168 +416,7 @@ class ScreenManagement(ScreenManager):
         self.path.close()
 
     def BloodTypeGenerator(self, screen, character):
-        b = (randint(0, 19))
-
-        if b == 0:
-            character.bTStats[0] = -2
-            character.bTStats[1] = 2
-            character.bTStats[2] = -2
-            character.bTStats[3] = 2
-            character.bTStats[4] = -2
-            character.bTStats[5] = 2
-            character.bloodType = "A7+"
-        elif b == 10:
-            character.bTStats[0] = 2
-            character.bTStats[1] = -2
-            character.bTStats[2] = 2
-            character.bTStats[3] = -2
-            character.bTStats[4] = 2
-            character.bTStats[5] = -2
-            character.bloodType = "A7-"
-        elif b == 1:
-            character.bTStats[0] = 2
-            character.bTStats[1] = -2
-            character.bTStats[2] = -2
-            character.bTStats[3] = -2
-            character.bTStats[4] = 2
-            character.bTStats[5] = 2
-            character.bloodType = "B6+"
-        elif b == 11:
-            character.bTStats[0] = -2
-            character.bTStats[1] = 2
-            character.bTStats[2] = 2
-            character.bTStats[3] = 2
-            character.bTStats[4] = -2
-            character.bTStats[5] = -2
-            character.bloodType = "B6-"
-        elif b == 2:
-            character.bTStats[0] = 2
-            character.bTStats[1] = -2
-            character.bTStats[2] = -2
-            character.bTStats[3] = 2
-            character.bTStats[4] = 2
-            character.bTStats[5] = -2
-            character.bloodType = "C1+"
-        elif b == 12:
-            character.bTStats[0] = -2
-            character.bTStats[1] = 2
-            character.bTStats[2] = 2
-            character.bTStats[3] = -2
-            character.bTStats[4] = -2
-            character.bTStats[5] = 2
-            character.bloodType = "C1-"
-        elif b == 3:
-            character.bTStats[0] = 2
-            character.bTStats[1] = -2
-            character.bTStats[2] = 2
-            character.bTStats[3] = 2
-            character.bTStats[4] = -2
-            character.bTStats[5] = -2
-            character.bloodType = "D9+"
-        elif b == 13:
-            character.bTStats[0] = -2
-            character.bTStats[1] = 2
-            character.bTStats[2] = -2
-            character.bTStats[3] = -2
-            character.bTStats[4] = 2
-            character.bTStats[5] = 2
-            character.bloodType = "D9-"
-        elif b == 4:
-            character.bTStats[0] = 2
-            character.bTStats[1] = -2
-            character.bTStats[2] = -2
-            character.bTStats[3] = 2
-            character.bTStats[4] = -2
-            character.bTStats[5] = 2
-            character.bloodType = "E2+"
-        elif b == 14:
-            character.bTStats[0] = -2
-            character.bTStats[1] = 2
-            character.bTStats[2] = 2
-            character.bTStats[3] = -2
-            character.bTStats[4] = 2
-            character.bTStats[5] = -2
-            character.bloodType = "E2-"
-        elif b == 5:
-            character.bTStats[0] = 2
-            character.bTStats[1] = 2
-            character.bTStats[2] = 2
-            character.bTStats[3] = -2
-            character.bTStats[4] = -2
-            character.bTStats[5] = -2
-            character.bloodType = "F4+"
-        elif b == 15:
-            character.bTStats[0] = -2
-            character.bTStats[1] = -2
-            character.bTStats[2] = -2
-            character.bTStats[3] = 2
-            character.bTStats[4] = 2
-            character.bTStats[5] = 2
-            character.bloodType = "F4-"
-        elif b == 6:
-            character.bTStats[0] = 2
-            character.bTStats[1] = 2
-            character.bTStats[2] = -2
-            character.bTStats[3] = -2
-            character.bTStats[4] = 2
-            character.bTStats[5] = -2
-            character.bloodType = "G8+"
-        elif b == 16:
-            character.bTStats[0] = -2
-            character.bTStats[1] = -2
-            character.bTStats[2] = 2
-            character.bTStats[3] = 2
-            character.bTStats[4] = -2
-            character.bTStats[5] = 2
-            character.bloodType = "G8-"
-        elif b == 7:
-            character.bTStats[0] = 2
-            character.bTStats[1] = 2
-            character.bTStats[2] = -2
-            character.bTStats[3] = 2
-            character.bTStats[4] = -2
-            character.bTStats[5] = -2
-            character.bloodType = "H5+"
-        elif b == 17:
-            character.bTStats[0] = -2
-            character.bTStats[1] = -2
-            character.bTStats[2] = 2
-            character.bTStats[3] = -2
-            character.bTStats[4] = 2
-            character.bTStats[5] = 2
-            character.bloodType = "H5-"
-        elif b == 8:
-            character.bTStats[0] = 2
-            character.bTStats[1] = 2
-            character.bTStats[2] = -2
-            character.bTStats[3] = -2
-            character.bTStats[4] = -2
-            character.bTStats[5] = 2
-            character.bloodType = "I3+"
-        elif b == 18:
-            character.bTStats[0] = -2
-            character.bTStats[1] = -2
-            character.bTStats[2] = 2
-            character.bTStats[3] = 2
-            character.bTStats[4] = 2
-            character.bTStats[5] = -2
-            character.bloodType = "I3-"
-        elif b == 9:
-            character.bTStats[0] = 2
-            character.bTStats[1] = -2
-            character.bTStats[2] = 2
-            character.bTStats[3] = -2
-            character.bTStats[4] = -2
-            character.bTStats[5] = 2
-            character.bloodType = "O0+"
-        elif b == 19:
-            character.bTStats[0] = -2
-            character.bTStats[1] = 2
-            character.bTStats[2] = -2
-            character.bTStats[3] = 2
-            character.bTStats[4] = 2
-            character.bTStats[5] = -2
-            character.bloodType = "O0-"
+        Random.RandomBloodType(character)
         screen.ids.bT.text = character.bloodType
         if character.bTStats[0] == 2:
             screen.ids.zepMod.text = "+"
@@ -656,7 +499,6 @@ class ScreenManagement(ScreenManager):
 
         num = randint(0, len(character.cardsLeft) - 1)
         #pos = [uniform(.94, 1), uniform(.94, 1)]
-        pos = (610, 5)
         card = Button(name=str(num), pos_hint={"x": 1, "y": 1}, size_hint=(.47, 8), background_color=(0, 0, 0, 0))
         Cards.LoadCard(self, character.cardsLeft[num], card)
         self.cardId += 1
@@ -697,7 +539,7 @@ class ScreenManagement(ScreenManager):
             self.ids.character.ids.undo.disabled = True
 
     def ChangeVal(self, button, orig, temp):
-        #Temporarily change values of stats while playing. WHY ARE MY VARIABLES BEING PASSED AS STRINGS?
+        #Temporarily change values of stats while playing.
         if button.last_touch.button == "left":
             temp = int(temp) + 1
             button.text = str(temp)
@@ -711,59 +553,6 @@ class ScreenManagement(ScreenManager):
         else:
             button.color = (0, 0, 0, 1)
         return temp
-
-    def Reset(self, character, notUsed):
-        self.CharScreenUpdate(self.ids.character, character)
-
-        self.ids.character.ids.healVal.color=(0, 0, 0, 1)
-        character.tempHealth = character.health
-        self.ids.character.ids.Ins.color = (0, 0, 0, 1)
-        character.tempTech = character.Tech
-        self.ids.character.ids.Tec.color = (0, 0, 0, 1)
-        character.tempForce = character.Force
-        self.ids.character.ids.For.color = (0, 0, 0, 1)
-        character.tempVitality = character.Vitality
-        self.ids.character.ids.Vit.color = (0, 0, 0, 1)
-        character.tempPsyche = character.Psyche
-        self.ids.character.ids.Psy.color = (0, 0, 0, 1)
-        character.tempMind = character.Mind
-        self.ids.character.ids.Mind.color = (0, 0, 0, 1)
-        character.tempMovement = character.Movement
-        self.ids.character.ids.Mov.color = (0, 0, 0, 1)
-        character.tempRange = character.Range
-        self.ids.character.ids.Ran.color = (0, 0, 0, 1)
-        character.tempBrutality = character.Brutality
-        self.ids.character.ids.Dam.color = (0, 0, 0, 1)
-        character.tempInventory = character.Inventory
-        self.ids.character.ids.Inv.color = (0, 0, 0, 1)
-        character.tempMastery = character.Mastery
-        self.ids.character.ids.Mas.color = (0, 0, 0, 1)
-        character.tempIntellect = character.Intellect
-        self.ids.character.ids.Int.color = (0, 0, 0, 1)
-        character.tempZephyr = character.Zephyr
-        self.ids.character.ids.Zep.color = (0, 0, 0, 1)
-        character.tempSpark = character.Spark
-        self.ids.character.ids.Spa.color = (0, 0, 0, 1)
-        character.tempHeat = character.Heat
-        self.ids.character.ids.Hea.color = (0, 0, 0, 1)
-        character.tempMineral = character.Mineral
-        self.ids.character.ids.Mine.color = (0, 0, 0, 1)
-        character.tempVoid = character.Void
-        self.ids.character.ids.Voi.color = (0, 0, 0, 1)
-        character.tempLiquid = character.Liquid
-        self.ids.character.ids.Liq.color = (0, 0, 0, 1)
-
-        self.cardId = 0
-        for i in range(0, len(character.hand)):
-            self.Discard(character.hand[0], character)
-        character.cardsLeft.clear()
-        character.discard.clear()
-        self.DeckAndGearInit(character)
-        self.selected = Button(pos=(0, 1))
-        self.ids.character.ids.undo.disabled = True
-        self.ids.character.ids.discard.disabled = True
-        self.ids.character.ids.draw.disabled = False
-        self.ids.character.ids.drawMax.disabled = False
 
     def NamePopup(self, character):
         b = FloatLayout()
@@ -1064,11 +853,11 @@ class ScreenManagement(ScreenManager):
                 parse.append(row)
             if len(parse) > 0:
                 name = parse[0][0]
-                self.ids.charSelect.ids.char1.text = name
+                self.ids.charSelect.ids.one.text = name
             else:
-                self.ids.charSelect.ids.char2.text = "NEW CHAR"
+                self.ids.charSelect.ids.one.text = "NEW CHAR"
         else:
-            self.ids.charSelect.ids.char1.text = "NEW CHAR"
+            self.ids.charSelect.ids.one.text = "NEW CHAR"
         if os.path.isfile('char2.txt'):
             path = open("char2.txt", "r")
             data = csv.reader(path, delimiter=',')
@@ -1077,11 +866,11 @@ class ScreenManagement(ScreenManager):
                 parse.append(row)
             if len(parse) > 0:
                 name = parse[0][0]
-                self.ids.charSelect.ids.char2.text = name
+                self.ids.charSelect.ids.two.text = name
             else:
-                self.ids.charSelect.ids.char2.text = "NEW CHAR"
+                self.ids.charSelect.ids.two.text = "NEW CHAR"
         else:
-            self.ids.charSelect.ids.char2.text = "NEW CHAR"
+            self.ids.charSelect.ids.two.text = "NEW CHAR"
         if os.path.isfile('char3.txt'):
             path = open("char3.txt", "r")
             data = csv.reader(path, delimiter=',')
@@ -1090,11 +879,11 @@ class ScreenManagement(ScreenManager):
                 parse.append(row)
             if len(parse) > 0:
                 name = parse[0][0]
-                self.ids.charSelect.ids.char3.text = name
+                self.ids.charSelect.ids.three.text = name
             else:
-                self.ids.charSelect.ids.char3.text = "NEW CHAR"
+                self.ids.charSelect.ids.three.text = "NEW CHAR"
         else:
-            self.ids.charSelect.ids.char3.text = "NEW CHAR"
+            self.ids.charSelect.ids.three.text = "NEW CHAR"
         if os.path.isfile('char4.txt'):
             path = open("char4.txt", "r")
             data = csv.reader(path, delimiter=',')
@@ -1103,11 +892,11 @@ class ScreenManagement(ScreenManager):
                 parse.append(row)
             if len(parse) > 0:
                 name = parse[0][0]
-                self.ids.charSelect.ids.char4.text = name
+                self.ids.charSelect.ids.four.text = name
             else:
-                self.ids.charSelect.ids.char4.text = "NEW CHAR"
+                self.ids.charSelect.ids.four.text = "NEW CHAR"
         else:
-            self.ids.charSelect.ids.char4.text = "NEW CHAR"
+            self.ids.charSelect.ids.four.text = "NEW CHAR"
         if os.path.isfile('char5.txt'):
             path = open("char5.txt", "r")
             data = csv.reader(path, delimiter=',')
@@ -1116,11 +905,11 @@ class ScreenManagement(ScreenManager):
                 parse.append(row)
             if len(parse) > 0:
                 name = parse[0][0]
-                self.ids.charSelect.ids.char5.text = name
+                self.ids.charSelect.ids.five.text = name
             else:
-                self.ids.charSelect.ids.char5.text = "NEW CHAR"
+                self.ids.charSelect.ids.five.text = "NEW CHAR"
         else:
-            self.ids.charSelect.ids.char5.text = "NEW CHAR"
+            self.ids.charSelect.ids.five.text = "NEW CHAR"
         if os.path.isfile('char6.txt'):
             path = open("char6.txt", "r")
             data = csv.reader(path, delimiter=',')
@@ -1129,30 +918,56 @@ class ScreenManagement(ScreenManager):
                 parse.append(row)
             if len(parse) > 0:
                 name = parse[0][0]
-                self.ids.charSelect.ids.char6.text = name
+                self.ids.charSelect.ids.six.text = name
             else:
-                self.ids.charSelect.ids.char6.text = "NEW CHAR"
+                self.ids.charSelect.ids.six.text = "NEW CHAR"
         else:
-            self.ids.charSelect.ids.char6.text = "NEW CHAR"
+            self.ids.charSelect.ids.six.text = "NEW CHAR"
 
     def ResetPopup(self, character):
         b = FloatLayout()
-        l = Label(font_size=25, pos_hint={"center_x": .5, "y": .3}, text="Reset all cards and temp stats?")
-        b1 = Button(size_hint=(.4, .4), pos_hint={"center_x": .73, "y": .04}, text="Confirm")
-        b2 = Button(size_hint=(.4, .4), pos_hint={"center_x": .27, "y": .04}, text="Cancel")
+        l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Reset all cards and temp stats?")
+        b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .83, "y": .13}, text="Reset All")
+        b3 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Reset Stats")
+        b4 = Button(size_hint=(.3, .3), pos_hint={"center_x": .17, "y": .13}, text="Reset Deck")
         b.add_widget(l)
         b.add_widget(b1)
-        b.add_widget(b2)
+        b.add_widget(b3)
+        b.add_widget(b4)
 
         popup = Popup(title='Reset',
                       content=b,
-                      size_hint=(None, None), size=(410, 200),
-                      auto_dismiss=False)
+                      size_hint=(None, None), size=(410, 200))
 
         b1.bind(on_release=popup.dismiss)
-        b1.bind(on_release=partial(self.Reset, character))
-        b2.bind(on_release=popup.dismiss)
+        b1.bind(on_release=partial(Screens.ResetAll, self, character))
+        b3.bind(on_release=popup.dismiss)
+        b3.bind(on_release=partial(Screens.ResetStats, self, character))
+        b4.bind(on_release=popup.dismiss)
+        b4.bind(on_release=partial(Screens.ResetDeck, self, character))
         popup.open()
+
+    def DeletePopup(self, button):
+        b = FloatLayout()
+        l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Are you sure you want to delete?")
+        b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Delete")
+        b.add_widget(l)
+        b.add_widget(b1)
+
+        popup = Popup(title='Delete Character',
+                      content=b,
+                      size_hint=(None, None), size=(410, 200))
+
+        b1.bind(on_press=partial(Screens.DeleteChar, self, button))
+        b1.bind(on_release=popup.dismiss)
+        popup.open()
+
+    def RandomCharacter(self, lvl):
+        self.nextscreen("title", "character")
+        Random.RandomEnemy(lvl, self.character, self.cur)
+        self.DeckAndGearInit(self.ids.character, self.character)
+        Screens.ResetAll(self, self.character, self)
+        self.CharScreenUpdate(self.ids.character, self.character)
 
     class TitleScreen(Screen):
         pass

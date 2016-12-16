@@ -1,3 +1,7 @@
+import Gear
+import Cards
+from kivy.uix.button import Button
+
 def StatLabelUpdate(screen, stat, lab, character):
     if lab.name == "Ins":
         character.Movement = 3 + stat
@@ -11,6 +15,7 @@ def StatLabelUpdate(screen, stat, lab, character):
     elif lab.name == "Vit":
         character.health = 16 + stat * 2
         character.Inventory = 6 + stat * 2
+        screen.ids.HPVal.text = str(character.health)
         screen.ids.InvVal.text = str(character.Inventory)
     elif lab.name == "Psy":
         character.Mastery = stat + 1
@@ -85,3 +90,70 @@ def NameSave(screen, nam, character, button):
         screen.ids.fin.disabled = False
     else:
         screen.ids.fin.disabled = True
+
+def ResetAll(main, character, notUsed):
+    ResetStats(main, character, notUsed)
+    ResetDeck(main, character, notUsed)
+
+def ResetStats(self, character, notUsed):
+    self.CharScreenUpdate(self.ids.character, character)
+
+    self.ids.character.ids.healVal.color=(0, 0, 0, 1)
+    character.tempHealth = character.health
+    self.ids.character.ids.Ins.color = (0, 0, 0, 1)
+    character.tempTech = character.Tech
+    self.ids.character.ids.Tec.color = (0, 0, 0, 1)
+    character.tempForce = character.Force
+    self.ids.character.ids.For.color = (0, 0, 0, 1)
+    character.tempVitality = character.Vitality
+    self.ids.character.ids.Vit.color = (0, 0, 0, 1)
+    character.tempPsyche = character.Psyche
+    self.ids.character.ids.Psy.color = (0, 0, 0, 1)
+    character.tempMind = character.Mind
+    self.ids.character.ids.Mind.color = (0, 0, 0, 1)
+    character.tempMovement = character.Movement
+    self.ids.character.ids.Mov.color = (0, 0, 0, 1)
+    character.tempRange = character.Range
+    self.ids.character.ids.Ran.color = (0, 0, 0, 1)
+    character.tempBrutality = character.Brutality
+    self.ids.character.ids.Dam.color = (0, 0, 0, 1)
+    character.tempInventory = character.Inventory
+    self.ids.character.ids.Inv.color = (0, 0, 0, 1)
+    character.tempMastery = character.Mastery
+    self.ids.character.ids.Mas.color = (0, 0, 0, 1)
+    character.tempIntellect = character.Intellect
+    self.ids.character.ids.Int.color = (0, 0, 0, 1)
+    character.tempZephyr = character.Zephyr
+    self.ids.character.ids.Zep.color = (0, 0, 0, 1)
+    character.tempSpark = character.Spark
+    self.ids.character.ids.Spa.color = (0, 0, 0, 1)
+    character.tempHeat = character.Heat
+    self.ids.character.ids.Hea.color = (0, 0, 0, 1)
+    character.tempMineral = character.Mineral
+    self.ids.character.ids.Mine.color = (0, 0, 0, 1)
+    character.tempVoid = character.Void
+    self.ids.character.ids.Voi.color = (0, 0, 0, 1)
+    character.tempLiquid = character.Liquid
+    self.ids.character.ids.Liq.color = (0, 0, 0, 1)
+
+    Gear.CellInit(self.ids.character, len(character.inv) - 1, character)
+
+def ResetDeck(self, character, notUsed):
+    self.cardId = 0
+    for i in range(0, len(character.hand)):
+        self.Discard(character.hand[0], character)
+    character.cardsLeft.clear()
+    character.discard.clear()
+    self.selected = Button(pos=(0, 1))
+    self.ids.character.ids.undo.disabled = True
+    self.ids.character.ids.discard.disabled = True
+    self.ids.character.ids.draw.disabled = False
+    self.ids.character.ids.drawMax.disabled = False
+    self.character.cardsLeft = Cards.FetchDeck(self)
+
+def DeleteChar(main, button, notUsed):
+    main.path.close()
+    main.path = open(main.delete, "w")
+    main.path.close()
+    main.CharSelectUpdate()
+    button.disabled = True

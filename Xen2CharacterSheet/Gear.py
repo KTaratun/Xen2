@@ -221,7 +221,8 @@ def RandomItem(cur, index, character):
         else:
             nam = "Ranged"
         character.inv[index] = WeaponRandomizer(ran, nam)
-    character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[7])
+    else:
+        character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[7])
 
 class Gear:
     def __init__(self, name, type, size, quality, definition):

@@ -241,7 +241,7 @@ def CardSelect(main, card, sys):
     if sys.x > card.x and sys.x < card.x + card.size[0] and sys.y > card.y and sys.y < card.y + card.size[1]:
         if sys.button == "left":
             if sys.is_double_tap:
-                BringCardToFront(main.ids.characer.ids.fL, card)
+                BringCardToFront(main.ids.character.ids.fL, card)
             if main.selected.pos != [0,1]: #Doing a weird check because I don't know how else to check if not initialized
                 main.selected.children[4].color = (1, 1, 1, 1)
                 main.selected.children[3].color = (1, 1, 1, 1)
