@@ -74,7 +74,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .5, "center_y": .55}
 		size_hint: 0.5, 0.2
 	Button:
-		on_release: app.root.RandomCharacter(12)
+		on_release: app.root.RandomCharacter(12, app.root.ids.character, app.root.character)
 		text: "Game Master"
 		pos_hint: {"center_x": .5, "center_y": .25}
 		size_hint: 0.5, 0.2
@@ -154,6 +154,9 @@ ScreenManagement:
 			root.parent.backStack.append(root.name)
 			app.root.current = "class" if app.root.character.Class == "NEW CHAR" else app.root.CharInit(app.root.character)
 			if app.root.character.Class == "NEW CHAR": app.root.character = app.root.Character()
+			next.disabled = True
+			delete.disabled = True
+			app.root.colorUpdate(root, self, app.root.character)
 			
 <ClassSelectScreen>:
 	Label:
@@ -1371,7 +1374,8 @@ ScreenManagement:
 		id: healVal
 		color: 0, 0, 0, 1
 		font_size: 25
-		pos_hint: {"x": .485, "y": .95}
+		pos_hint: {"x": .49, "y": .95}
+		size_hint: (.035, .05)
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:

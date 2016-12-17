@@ -15,92 +15,92 @@ create table Gear(
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Melee Weapon', 'Melee', 0, 0, 6, 5,
-        'A random melee weapon with a size rating equal to its quality'
+		'Melee Weapon', 'Melee', 0, 1, 6, 5,
+        'A random melee weapon with a size rating equal to its quality.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Ranged Weapon', 'Ranged', 0, 0, 6, 5,
-        'A random melee weapon with a size rating equal to its quality'
+		'Ranged Weapon', 'Ranged', 0, 1, 6, 5,
+        'A random melee weapon with a size rating equal to its quality.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Light Armor', 'Armor', 1, 2, 2, 5,
-        'Adds 2 to your Light Armor'
+		'Light Armor', 'Armor', 1, 1, 3, 5,
+        'Adds up to 3 to your Light Armor.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Heavy Armor', 'Armor', 1, 1, 1, 5,
-        'Adds 1 to your Heavy Armor'
+        'Adds 1 to your Heavy Armor.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'First Aid', 'Healing', 1, 3, 8, 5,
-        'Heals health equal to its quality to one adjacent target'
+        'Heals health equal to its quality to one adjacent target.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Refresher', 'Healing', 1, 0, 0, 4,
-        'Put your discard pile into your deck and draw a card'
+        'Put your discard pile into your deck and draw a card.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Purifier', 'Healing', 1, 0, 0, 4,
-        'Removes one status effect'
+        'Removes one status effect.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Grenade', 'Damage', 1, 8, 14, 4,
-        'R:1, deals damage to all within the blast radius that fails an Instinct check'
+        'R:1, deals damage to all within the blast radius that fails an Instinct check.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Ammo', 'Other', 1, 1, 6, 5,
-        'Ammo'
+        'Ammo. Up to 6 per stack.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Element', 'Other', 1, 1, 5, 5,
-        'Receive x elements of one type equal to its quality'
+        'Receive x elements of one type equal to its quality.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Currency', 'Other', 1, 1, 20, 3,
-        'Money'
+        'Money. Up to 20 per stack.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'EXP', 'Other', 1, 4, 12, 1,
-        'Gain x EXP equal to its quality'
+        'Gain x EXP equal to its quality.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Skill Pack', 'Other', 1, 1, 4, 3,
-        'Receive x cards equal to its quality'
+        'Receive x cards equal to its quality.'
     );
     
     

@@ -1,7 +1,7 @@
 import Gear
 from random import randint
 
-def RandomEnemy(lvl, character, cur):
+def RandomCharacter(lvl, character, cur):
     character.name = RandomName()
     character.lvl = lvl
     stats = RandomStats(lvl)
@@ -23,16 +23,10 @@ def RandomEnemy(lvl, character, cur):
     else:
         character.ElTotal = stats[4] * 4
     character.Mastery = 1 + stats[4]
-    character.Mind = 3 + stats[5]
+    character.Intellect = 3 + stats[5]
 
-    for i in range(0, 11):
-        Gear.RandomItem(cur, i, character)
-        size = 0
-        for j in range(0, 1 + i):
-            size += character.inv[i].size
-
-    print(character.Mastery)
-
+    RandomInventory(cur, character)
+    print(character.inv)
     ele = RandomElements(character)
 
     character.Zephyr = ele[0]
@@ -227,6 +221,18 @@ def RandomBloodType(character):
         character.bTStats[4] = 2
         character.bTStats[5] = -2
         character.bloodType = "O0-"
+
+def RandomInventory(cur, character):
+    i = 0
+    size = 0
+    while size < character.Inventory:
+        if i == 12:
+            break
+        Gear.RandomItem(cur, i, character)
+        size = 0
+        for j in range(0, 1 + i):
+            size += character.inv[j].size
+        i += 1
 
 def RandomElements(character):
     elements = []

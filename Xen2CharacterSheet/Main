@@ -132,7 +132,7 @@ class ScreenManagement(ScreenManager):
             Screens.StatLabelUpdate(screen, stat, lab, character)
             character.Total -= 1
             lab.text = str(stat)
-            self.ids.stats.ids.TotVal.text = str(character.Total)
+            screen.ids.TotVal.text = str(character.Total)
             return stat
 
     def dec(self, stat, lab, screen, character):
@@ -148,7 +148,7 @@ class ScreenManagement(ScreenManager):
             print(stat)
             Screens.StatLabelUpdate(screen, stat, lab, character)
             lab.text = str(stat)
-            self.ids.stats.ids.TotVal.text = str(character.Total)
+            screen.ids.TotVal.text = str(character.Total)
             screen.ids.next.disabled = True
             return stat
         else:
@@ -170,11 +170,11 @@ class ScreenManagement(ScreenManager):
         stat += 1
         label.text = str(stat)
         character.ElTotal -= 1
-        self.ids.elements.ids.ElTotVal.text = str(character.ElTotal)
+        screen.ids.ElTotVal.text = str(character.ElTotal)
         if stat == 1 and character.MasTot > 0:
             label.color = 1, 1, 1, 1
             character.MasTot -= 1
-            self.ids.elements.ids.MasTot.text = str(character.MasTot)
+            screen.ids.MasTot.text = str(character.MasTot)
         return stat
 
     def decEle(self, stat, label, screen, character):
@@ -191,11 +191,11 @@ class ScreenManagement(ScreenManager):
         screen.ids.next.disabled = True
         label.text = str(stat)
         character.ElTotal += 1
-        self.ids.elements.ids.ElTotVal.text = str(character.ElTotal)
+        screen.ids.ElTotVal.text = str(character.ElTotal)
         if stat == 0 and copy == 1:
             label.color = 1, 0, 0, 1
             character.MasTot += 1
-            self.ids.elements.ids.MasTot.text = str(character.MasTot)
+            screen.ids.MasTot.text = str(character.MasTot)
         return stat
 
     def colorUpdate(self, screen, curr, character):
@@ -214,8 +214,9 @@ class ScreenManagement(ScreenManager):
         if screen.name == "class":
             character.Class = curr.name
             screen.ids.cardList.disabled = False
-        curr.color = 0, 1, 0, 1
-        screen.ids.next.disabled = False
+        if curr.text != "Select":
+            curr.color = 0, 1, 0, 1
+            screen.ids.next.disabled = False
 
     def deckStuff(self, screen, starter):
         # Sets up initial deck from the class select screen
@@ -332,7 +333,8 @@ class ScreenManagement(ScreenManager):
                                 str(character.inv[i].attack[2]) + "," + str(character.inv[i].damage) + "," + character.inv[i].definition + "\n")
             else:
                 self.path.write(character.inv[i].name + "," + character.inv[i].type + "," + str(character.inv[i].size)
-                                + "," + str(character.inv[i].quality) + "," + character.inv[i].definition + "\n")
+                                + "," + str(character.inv[i].quality) + "," + str(character.inv[i].min) + "," +
+                                str(character.inv[i].max) + "," + character.inv[i].definition + "\n")
 
         self.path.close()
 
@@ -411,7 +413,7 @@ class ScreenManagement(ScreenManager):
                                           [parse[i + 7][3], parse[i + 7][4], parse[i + 7][5]], parse[i + 7][6])
             else:
                 character.inv[i] = Gear.Gear(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2], parse[i + 7][3],
-                                        parse[i + 7][4])
+                                        parse[i + 7][4], parse[i + 7][5], parse[i + 7][6])
 
         self.path.close()
 
@@ -490,7 +492,7 @@ class ScreenManagement(ScreenManager):
     def DeckAndGearInit(self, screen, character):
         #Sets deck equal to the received data of FetchDeck
         self.character.cardsLeft = Cards.FetchDeck(self)
-        Gear.CellInit(screen, len(character.inv) - 1, character)
+        Gear.CellInit(self.cur, screen, character)
 
     def DrawCard(self, character):
         #Loads and adds a card from deck to hand
@@ -583,7 +585,7 @@ class ScreenManagement(ScreenManager):
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'First Aid'", 8, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'First Aid'", 9, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Purifier'", 10, character)
-            Gear.CellInit(screen=self.ids.loadout, num=11, character=character)
+            Gear.CellInit(cur=self.cur, screen=self.ids.loadout, character=character)
         elif load == "tN":
             character.inv[0] = Gear.WeaponRandomizer(size=4, type="Melee")
             character.inv[1] = Gear.WeaponRandomizer(size=2, type="Melee")
@@ -591,7 +593,7 @@ class ScreenManagement(ScreenManager):
                 Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Heavy Armor'", i + 2, character)
             for i in range(0, 4):
                 Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", i + 4, character)
-            Gear.CellInit(screen=self.ids.loadout, num=8, character=character)
+            Gear.CellInit(cur=self.cur, screen=self.ids.loadout, character=character)
         elif load == "lL":
             character.inv[0] = Gear.WeaponRandomizer(size=4, type="Ranged")
             character.inv[1] = Gear.WeaponRandomizer(size=2, type="Ranged")
@@ -602,7 +604,7 @@ class ScreenManagement(ScreenManager):
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", 6, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", 7, character)
             Gear.RandomItem(self.cur, 8, character)
-            Gear.CellInit(screen=self.ids.loadout, num=9, character=character)
+            Gear.CellInit(cur=self.cur, screen=self.ids.loadout, character=character)
 
     def Info(self, name):
         if name == "INS":
@@ -940,7 +942,7 @@ class ScreenManagement(ScreenManager):
                       size_hint=(None, None), size=(410, 200))
 
         b1.bind(on_release=popup.dismiss)
-        b1.bind(on_release=partial(Screens.ResetAll, self, character))
+        b1.bind(on_release=partial(Screens.ResetAll, self))
         b3.bind(on_release=popup.dismiss)
         b3.bind(on_release=partial(Screens.ResetStats, self, character))
         b4.bind(on_release=popup.dismiss)
@@ -962,12 +964,12 @@ class ScreenManagement(ScreenManager):
         b1.bind(on_release=popup.dismiss)
         popup.open()
 
-    def RandomCharacter(self, lvl):
+    def RandomCharacter(self, lvl, screen, character):
         self.nextscreen("title", "character")
-        Random.RandomEnemy(lvl, self.character, self.cur)
-        self.DeckAndGearInit(self.ids.character, self.character)
-        Screens.ResetAll(self, self.character, self)
-        self.CharScreenUpdate(self.ids.character, self.character)
+        Random.RandomCharacter(lvl, character, self.cur)
+        self.character.cardsLeft = Cards.FetchDeck(self)
+        Screens.ResetAll(self, self)
+        self.CharScreenUpdate(screen, character)
 
     class TitleScreen(Screen):
         pass

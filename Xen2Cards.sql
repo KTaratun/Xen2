@@ -374,7 +374,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Sunder Attack', 'Force', 'Disable', 'Combat', 'Aggressive', 'Base Class', 
-        'Deal 6 Defensive Armor and 1 Aggressive Armor DMG and DR cannot be applied.'
+        'Deal 6 light Armor and 1 heavy Armor DMG and DR cannot be applied.'
     );
     
     insert into cards

@@ -1,10 +1,13 @@
+import Cards
+import Screens
 from random import randint
 from random import shuffle
 from functools import partial
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-import Cards
+from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
 
 def AtkRando(atk):
     ligMedHea = [0, 0, 0]
@@ -58,148 +61,99 @@ def WeaponRandomizer(size, type):
 def GetGear(cur, query, index, character):
     cur.execute(query)
     fetch = cur.fetchone()
-    character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[7])
+    character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[4], fetch[5], fetch[7])
 
-def CellInit(screen, num, character):
-    if num > 0:
-        screen.ids.cellOne.text = str(character.inv[0].name)
-        for i in range(1, int(screen.ids.cellOne.name) + 1):
-            screen.ids.cellOne.unbind_uid('on_release', i)
-        screen.ids.cellOne.name = str(screen.ids.cellOne.fbind('on_release', partial(CellPopup, character.inv[0])))
-    else:
-        screen.ids.cellOne.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellOne.name) + 1):
-            screen.ids.cellOne.unbind_uid('on_release', i)
-    if num > 1:
-        screen.ids.cellTwo.text = str(character.inv[1].name)
-        for i in range(1, int(screen.ids.cellTwo.name) + 1):
-            screen.ids.cellTwo.unbind_uid('on_release', i)
-        screen.ids.cellTwo.name = str(screen.ids.cellTwo.fbind('on_release', partial(CellPopup, character.inv[1])))
-    else:
-        screen.ids.cellTwo.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellTwo.name) + 1):
-            screen.ids.cellTwo.unbind_uid('on_release', i)
-    if num > 2:
-        screen.ids.cellThree.text = str(character.inv[2].name)
-        for i in range(1, int(screen.ids.cellThree.name) + 1):
-            screen.ids.cellThree.unbind_uid('on_release', i)
-        screen.ids.cellThree.name = str(screen.ids.cellThree.fbind('on_release', partial(CellPopup, character.inv[2])))
-    else:
-        screen.ids.cellThree.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellThree.name) + 1):
-            screen.ids.cellThree.unbind_uid('on_release', i)
-    if num > 3:
-        screen.ids.cellFour.text = str(character.inv[3].name)
-        for i in range(1, int(screen.ids.cellFour.name) + 1):
-            screen.ids.cellFour.unbind_uid('on_release', i)
-        screen.ids.cellFour.name = str(screen.ids.cellFour.fbind('on_release', partial(CellPopup, character.inv[3])))
-    else:
-        screen.ids.cellFour.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellFour.name) + 1):
-            screen.ids.cellFour.unbind_uid('on_release', i)
-    if num > 4:
-        screen.ids.cellFive.text = str(character.inv[4].name)
-        for i in range(1, int(screen.ids.cellFive.name) + 1):
-            screen.ids.cellFive.unbind_uid('on_release', i)
-        screen.ids.cellFive.name = str(screen.ids.cellFive.fbind('on_release', partial(CellPopup, character.inv[4])))
-    else:
-        screen.ids.cellFive.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellFive.name) + 1):
-            screen.ids.cellFive.unbind_uid('on_release', i)
-    if num > 5:
-        screen.ids.cellSix.text = str(character.inv[5].name)
-        for i in range(1, int(screen.ids.cellSix.name) + 1):
-            screen.ids.cellSix.unbind_uid('on_release', i)
-        screen.ids.cellSix.name = str(screen.ids.cellSix.fbind('on_release', partial(CellPopup, character.inv[5])))
-    else:
-        screen.ids.cellSix.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellSix.name) + 1):
-            screen.ids.cellSix.unbind_uid('on_release', i)
-    if num > 6:
-        screen.ids.cellSeven.text = str(character.inv[6].name)
-        for i in range(1, int(screen.ids.cellSeven.name) + 1):
-            screen.ids.cellSeven.unbind_uid('on_release', i)
-        screen.ids.cellSeven.name = str(screen.ids.cellSeven.fbind('on_release', partial(CellPopup, character.inv[6])))
-    else:
-        screen.ids.cellSeven.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellSeven.name) + 1):
-            screen.ids.cellSeven.unbind_uid('on_release', i)
-    if num > 7:
-        screen.ids.cellEight.text = str(character.inv[7].name)
-        for i in range(1, int(screen.ids.cellEight.name) + 1):
-            screen.ids.cellEight.unbind_uid('on_release', i)
-        screen.ids.cellEight.name = str(screen.ids.cellEight.fbind('on_release', partial(CellPopup, character.inv[7])))
-    else:
-        screen.ids.cellEight.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellEight.name) + 1):
-            screen.ids.cellEight.unbind_uid('on_release', i)
-    if num > 8:
-        screen.ids.cellNine.text = str(character.inv[8].name)
-        for i in range(1, int(screen.ids.cellNine.name) + 1):
-            screen.ids.cellNine.unbind_uid('on_release', i)
-        screen.ids.cellNine.name = str(screen.ids.cellNine.fbind('on_release', partial(CellPopup, character.inv[8])))
-    else:
-        screen.ids.cellNine.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellNine.name) + 1):
-            screen.ids.cellNine.unbind_uid('on_release', i)
-    if num > 9:
-        screen.ids.cellTen.text = str(character.inv[9].name)
-        for i in range(1, int(screen.ids.cellTen.name) + 1):
-            screen.ids.cellTen.unbind_uid('on_release', i)
-        screen.ids.cellTen.name = str(screen.ids.cellTen.fbind('on_release', partial(CellPopup, character.inv[9])))
-    else:
-        screen.ids.cellTen.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellTen.name) + 1):
-            screen.ids.cellTen.unbind_uid('on_release', i)
-    if num > 10:
-        screen.ids.cellEleven.text = str(character.inv[10].name)
-        for i in range(1, int(screen.ids.cellEleven.name) + 1):
-            screen.ids.cellEleven.unbind_uid('on_release', i)
-        screen.ids.cellEleven.name = str(screen.ids.cellEleven.fbind('on_release', partial(CellPopup, character.inv[10])))
-    else:
-        screen.ids.cellEleven.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellEleven.name) + 1):
-            screen.ids.cellEleven.unbind_uid('on_release', i)
-    if num > 11:
-        screen.ids.cellTwelve.text = str(character.inv[11].name)
-        for i in range(1, int(screen.ids.cellTwelve.name) + 1):
-            screen.ids.cellTwelve.unbind_uid('on_release', i)
-        screen.ids.cellTwelve.name = str(screen.ids.cellTwelve.fbind('on_release', partial(CellPopup, character.inv[11])))
-    else:
-        screen.ids.cellTwelve.text = "EMPTY"
-        for i in range(1, int(screen.ids.cellTwelve.name) + 1):
-            screen.ids.cellTwelve.unbind_uid('on_release', i)
+def CellInit(cur, screen, character):
+    #why the hell does this prevent layered popups on button two when reentering the character
+    #screen.ids.cellTwo = Button(name="0", text="bar", size_hint=(.15, .1), pos_hint={"x": .85, "center_y": .95})
+
+    cells = [screen.ids.cellOne, screen.ids.cellTwo, screen.ids.cellThree, screen.ids.cellFour,
+             screen.ids.cellFive, screen.ids.cellSix, screen.ids.cellSeven, screen.ids.cellEight,
+             screen.ids.cellNine, screen.ids.cellTen, screen.ids.cellEleven, screen.ids.cellTwelve]
+
+    for i in range(0, 12):
+        if character.inv[i] != 0:
+            print(character.inv[i].name)
+            cells[i].text = str(character.inv[i].name)
+            for j in range(1, int(cells[i].name) + 1):
+                cells[i].unbind_uid('on_release', j)
+            cells[i].name = str(cells[i].fbind('on_release', partial(CellPopup, character.inv[i], screen, character, cur)))
+        else:
+            for j in range(1, int(cells[i].name) + 1):
+                cells[i].unbind_uid('on_release', j)
+            cells[i].name = str(cells[i].fbind('on_release', partial(AddGearPopup, i, character, cur, screen)))
 
     character.lightArmor = 0
     character.heavyArmor = 0
-    for i in range(0, num - 1):
-        if character.inv[i].name == "Light Armor":
-            character.lightArmor += 3
-        elif character.inv[i].name == "Heavy Armor":
+    for i in range(0, 12):
+        if character.inv[i] != 0 and character.inv[i].name == "Light Armor":
+            character.lightArmor += int(character.inv[i].quality)
+        elif character.inv[i] != 0 and character.inv[i].name == "Heavy Armor":
             character.heavyArmor += 1
 
-def CellPopup(gear, button):
+        screen.ids.lArmVal.text = str(character.lightArmor)
+        screen.ids.hArmVal.text = str(character.heavyArmor)
+#def CellPopup(gear, button):
+#    name = Cards.Text("name", gear.name)
+#    type = Cards.Text("type", gear.type + " - Size " + str(gear.size))
+#    text = Cards.Text("text", gear.definition)
+#
+#    if gear.type == "Melee" or gear.type == "Ranged":
+#        border = Image(source="WeaponCard.png", size=(800, 800), allow_stretch=True)
+#        border.add_widget(Label(text=str(gear.attack[0]), pos=(250, 17), font_size=20, color=(0, 0, 0, 1)))
+#        border.add_widget(Label(text=str(gear.attack[1]), pos=(324, 17), font_size=20, color=(0, 0, 0, 1)))
+#        border.add_widget(Label(text=str(gear.attack[2]), pos=(397, 17), font_size=20, color=(0, 0, 0, 1)))
+#        border.add_widget(Label(text=gear.damage, pos=(482, 17), font_size=20, color=(0, 0, 0, 1)))
+#    else:
+#        border = Image(source="GearCard.png", size=(800, 800), allow_stretch=True)
+#        border.add_widget(Label(text=str(gear.quality), pos=(487, 17), font_size=20, color=(0, 0, 0, 1)))
+#
+#    border.add_widget(Image(texture=name, pos=(275, 392), size=(220, 220), allow_stretch=True))
+#    border.add_widget(Image(texture=type, pos=(275, 363), size=(220, 220), allow_stretch=True))
+#    border.add_widget(Image(texture=text, pos=(255, 8), size=(290, 290), allow_stretch=True))
+#
+#    popup = Popup(title='Card Viewer',
+#                  content=border,
+#                  size_hint=(None, None), size=(410, 580))
+#    popup.open()
+
+def CellPopup(gear, screen, character, cur, button):
+    fL = FloatLayout()
     name = Cards.Text("name", gear.name)
     type = Cards.Text("type", gear.type + " - Size " + str(gear.size))
     text = Cards.Text("text", gear.definition)
 
     if gear.type == "Melee" or gear.type == "Ranged":
-        border = Image(source="WeaponCard.png", size=(800, 800), allow_stretch=True)
-        border.add_widget(Label(text=str(gear.attack[0]), pos=(250, 17), font_size=20, color=(0, 0, 0, 1)))
-        border.add_widget(Label(text=str(gear.attack[1]), pos=(324, 17), font_size=20, color=(0, 0, 0, 1)))
-        border.add_widget(Label(text=str(gear.attack[2]), pos=(397, 17), font_size=20, color=(0, 0, 0, 1)))
-        border.add_widget(Label(text=gear.damage, pos=(482, 17), font_size=20, color=(0, 0, 0, 1)))
+        border = Image(source="WeaponCard.png", size_hint=(.85, .85), pos_hint={"center_x": .5, "y": .13}, allow_stretch=True)
+        border.add_widget(Label(text=str(gear.attack[0]), pos=(265, 78), font_size=16, color=(0, 0, 0, 1)))
+        border.add_widget(Label(text=str(gear.attack[1]), pos=(329, 78), font_size=16, color=(0, 0, 0, 1)))
+        border.add_widget(Label(text=str(gear.attack[2]), pos=(389, 78), font_size=16, color=(0, 0, 0, 1)))
+        border.add_widget(Label(text=gear.damage, pos=(460, 78), font_size=16, color=(0, 0, 0, 1)))
     else:
-        border = Image(source="GearCard.png", size=(800, 800), allow_stretch=True)
-        border.add_widget(Label(text=str(gear.quality), pos=(487, 17), font_size=20, color=(0, 0, 0, 1)))
+        border = Image(source="GearCard.png", size_hint=(.85, .85), pos_hint={"center_x": .5, "y": .13}, allow_stretch=True)
+        border.add_widget(Label(text=str(gear.quality), pos=(468, 78), font_size=16, color=(0, 0, 0, 1)))
 
-    border.add_widget(Image(texture=name, pos=(275, 392), size=(220, 220), allow_stretch=True))
-    border.add_widget(Image(texture=type, pos=(275, 363), size=(220, 220), allow_stretch=True))
-    border.add_widget(Image(texture=text, pos=(255, 8), size=(290, 290), allow_stretch=True))
+    border.add_widget(Image(texture=name, pos=(295, 388), size=(220, 220), allow_stretch=True))
+    border.add_widget(Image(texture=type, pos=(295, 363), size=(220, 220), allow_stretch=True))
+    border.add_widget(Image(texture=text, pos=(278, 80), size=(250, 250), allow_stretch=True))
+
+    b4 = Button(size_hint=(.25, .1), pos_hint={"center_x": .2, "y": .012}, text="Discard")
+    fL.add_widget(border)
+    fL.add_widget(b4)
 
     popup = Popup(title='Card Viewer',
-                  content=border,
+                  content=fL,
                   size_hint=(None, None), size=(410, 580))
+
+    #gear.type == "Melee" or gear.type == "Ranged":
+    if True:
+        b2 = Button(size_hint=(.25, .1), pos_hint={"center_x": .5, "y": .012}, text="QLT -")
+        b3 = Button(size_hint=(.25, .1), pos_hint={"center_x": .8, "y": .012}, text="QLT +")
+        fL.add_widget(b2)
+        fL.add_widget(b3)
+        b2.bind(on_release=partial(Screens.MinusVal, gear, border.children[3], screen, character))
+        b3.bind(on_release=partial(Screens.PlusVal, gear, border.children[3], screen, character))
+    b4.bind(on_release=partial(DiscardPopup, gear, screen, popup, character, cur))
     popup.open()
 
 def RandomItem(cur, index, character):
@@ -222,14 +176,64 @@ def RandomItem(cur, index, character):
             nam = "Ranged"
         character.inv[index] = WeaponRandomizer(ran, nam)
     else:
-        character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[7])
+        character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[4], fetch[5], fetch[7])
+
+def DiscardGear(gear, screen, prevPop, character, cur, notUsed):
+    cells = [screen.ids.cellOne, screen.ids.cellTwo, screen.ids.cellThree, screen.ids.cellFour,
+             screen.ids.cellFive, screen.ids.cellSix, screen.ids.cellSeven, screen.ids.cellEight,
+             screen.ids.cellNine, screen.ids.cellTen, screen.ids.cellEleven, screen.ids.cellTwelve]
+
+    index = character.inv.index(gear)
+    character.inv[index] = 0
+    print(character.inv[index])
+    for i in range(1, int(cells[index].name) + 1):
+        cells[index].unbind_uid('on_release', i)
+    cells[index].text = "EMPTY"
+    CellInit(cur, screen, character)
+    prevPop.dismiss()
+
+def DiscardPopup(gear, screen, prevPopup, character, cur, notUsed):
+    b = FloatLayout()
+    l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Are you sure you want to discard")
+    b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Discard")
+    b.add_widget(l)
+    b.add_widget(b1)
+
+    popup = Popup(title='Discard Gear',
+                  content=b,
+                  size_hint=(None, None), size=(410, 200))
+
+    b1.bind(on_press=partial(DiscardGear, gear, screen, prevPopup, character, cur))
+    b1.bind(on_release=popup.dismiss)
+    popup.open()
+
+def AddGearPopup(index, character, cur, screen, notUsed):
+    b = FloatLayout()
+    l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Add random gear?")
+    b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Add")
+    b.add_widget(l)
+    b.add_widget(b1)
+
+    popup = Popup(title='Add Gear',
+                  content=b,
+                  size_hint=(None, None), size=(410, 200))
+
+    b1.bind(on_press=partial(AddGear, index, character, cur, screen))
+    b1.bind(on_release=popup.dismiss)
+    popup.open()
+
+def AddGear(index, character, cur, screen, notUsed):
+    RandomItem(cur, index, character)
+    CellInit(cur, screen, character)
 
 class Gear:
-    def __init__(self, name, type, size, quality, definition):
+    def __init__(self, name, type, size, quality, min, max, definition):
         self.name = name
         self.type = type
         self.size = size
         self.quality = quality
+        self.min = min
+        self.max = max
         self.definition = definition
 
 class Weapon(Gear):

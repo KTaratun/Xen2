@@ -91,9 +91,9 @@ def NameSave(screen, nam, character, button):
     else:
         screen.ids.fin.disabled = True
 
-def ResetAll(main, character, notUsed):
-    ResetStats(main, character, notUsed)
-    ResetDeck(main, character, notUsed)
+def ResetAll(main, notUsed):
+    ResetStats(main, main.character, notUsed)
+    ResetDeck(main, main.character, notUsed)
 
 def ResetStats(self, character, notUsed):
     self.CharScreenUpdate(self.ids.character, character)
@@ -136,7 +136,7 @@ def ResetStats(self, character, notUsed):
     character.tempLiquid = character.Liquid
     self.ids.character.ids.Liq.color = (0, 0, 0, 1)
 
-    Gear.CellInit(self.ids.character, len(character.inv) - 1, character)
+    Gear.CellInit(self.cur, self.ids.character, character)
 
 def ResetDeck(self, character, notUsed):
     self.cardId = 0
@@ -157,3 +157,19 @@ def DeleteChar(main, button, notUsed):
     main.path.close()
     main.CharSelectUpdate()
     button.disabled = True
+
+def PlusVal(gear, label, screen, character, notUsed):
+    if gear.quality < gear.max:
+        gear.quality += 1
+        label.text = str(gear.quality)
+
+        if gear.name == "Light Armor":
+            screen.ids.lArmVal.text = str(character.lightArmor + 1)
+
+def MinusVal(gear, label, screen, character, notUsed):
+    if gear.quality > gear.min:
+        gear.quality -= 1
+        label.text = str(gear.quality)
+
+        if gear.name == "Light Armor":
+            screen.ids.lArmVal.text = str(character.lightArmor - 1)
