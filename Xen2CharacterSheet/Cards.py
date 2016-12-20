@@ -1,7 +1,9 @@
+import Random
 from kivy.uix.label import CoreLabel
-from kivy.graphics import Rectangle
+from kivy.uix.button import Button
 from kivy.uix.image import Image
 from kivy.uix.popup import Popup
+from random import randint
 from functools import partial
 
 def InitialDeck(character):
@@ -57,7 +59,7 @@ def Text(type, string):
         siz = len(modString)
         for b in range(0, 38 - siz):
             modString += " "
-        name = CoreLabel(text=modString, color=(0, 0, 0, 1))
+        name = CoreLabel(text=modString, color=(0, 0, 0, 1), bold=True)
         name.refresh()
         return name.texture
     elif (type == "text"):
@@ -122,23 +124,6 @@ def Text(type, string):
         text.refresh()
         return text.texture
 
-def Resizing(screen, grp):
-    # Resize in card viewer. Only works on the canvas method of displaying cards
-    # screen: Which screen to modify
-    # grp: The group associated to the card which is being resized
-    mult = 2.5
-    pos = (440, 85)
-    screen.canvas.get_group(str(grp))[1].size = (screen.canvas.get_group(str(grp))[1].size[0] * mult, screen.canvas.get_group(str(grp))[1].size[1] * mult)
-    screen.canvas.get_group(str(grp))[1].pos = pos
-    screen.canvas.get_group(str(grp))[3].size = (screen.canvas.get_group(str(grp))[3].size[0] * mult, screen.canvas.get_group(str(grp))[3].size[1] * mult)
-    screen.canvas.get_group(str(grp))[3].pos = (pos[0] + 7.2 * mult, pos[1] + 155 * mult)
-    screen.canvas.get_group(str(grp))[5].size = (screen.canvas.get_group(str(grp))[5].size[0] * mult, screen.canvas.get_group(str(grp))[5].size[1] * mult)
-    screen.canvas.get_group(str(grp))[5].pos = (pos[0] + 22 * mult, pos[1] + 162 * mult)
-    screen.canvas.get_group(str(grp))[7].size = (screen.canvas.get_group(str(grp))[7].size[0] * mult, screen.canvas.get_group(str(grp))[7].size[1] * mult)
-    screen.canvas.get_group(str(grp))[7].pos = (pos[0] + 22 * mult, pos[1] + 152.5 * mult)
-    screen.canvas.get_group(str(grp))[9].size = (screen.canvas.get_group(str(grp))[9].size[0] * mult, screen.canvas.get_group(str(grp))[9].size[1] * mult)
-    screen.canvas.get_group(str(grp))[9].pos = (pos[0] + 16 * mult, pos[1] + 24 * mult)
-
 def BindCardPos(self, card, sys):
     #For grabbing and moving cards
     if sys.x > 150 and sys.y < 240:
@@ -160,56 +145,18 @@ def FetchDeck(main):
         cards.append(main.cur.fetchone())
     return cards
 
-def LoadCardCanvas(data, screen, group, pos, mult):
+def LoadCard(main, screen, data, card, pos, mult):
     #Used to grab data of specified card from currently loaded deck
+    if screen.name == "character":
+        card.bind(on_touch_move=partial(BindCardPos, main))
+    card.bind(on_touch_down=partial(CardSelect, main, screen))
+    card.name = str(data[0])
+    card.add_widget(Image(pos=pos, size=(182 * mult,280 * mult)))
+    card.add_widget(Image(x=pos[0] + 9 * mult, y=pos[1] + 229 * mult, size=(20 * mult,20 * mult)))
+    card.add_widget(Image(x=pos[0] + 30 * mult, y=pos[1] + 239 * mult, size=((card.size[0] * 1.2) * mult, (card.size[1] * .16) * mult)))
+    card.add_widget(Image(x=pos[0] + 30 * mult, y=pos[1] + 225 * mult, size=((card.size[0] * 1.2) * mult, (card.size[1] * .16) * mult)))
+    card.add_widget(Image(x=pos[0] + 21 * mult, y=pos[1] + 49.5 * mult, size=((card.size[0] * 1.42) * mult, (card.size[1] * .545) * mult)))
 
-    name = Text(type="name", string=data[1])
-    type = Text(type="type", string=data[4] + '-' + data[5])
-    text = Text(type="text", string=data[6])
-
-    if data[5] == "Defensive":
-        src = "LightCard.png"
-    elif data[5] == "Tactical":
-        src = "MediumCard.png"
-    elif data[5] == "Aggressive":
-        src = "HeavyCard.png"
-    else:
-        src = "ActionCard.png"
-
-    if data[2] == "Instinct":
-        element = "Zephyr.png"
-    elif data[2] == "Tech":
-        element = "Spark.png"
-    elif data[2] == "Force":
-        element = "Heat.png"
-    elif data[2] == "Vitality":
-        element = "Mineral.png"
-    elif data[2] == "Psyche":
-        element = "Void.png"
-    elif data[2] == "Mind":
-        element = "Liquid.png"
-
-    size = (130 * mult, 180 * mult)
-    border = Rectangle(group=str(group), pos=pos, size=size, source=src)
-    screen.canvas.add(border)
-    screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .1, border.size[1] * .072), pos=(border.pos[0] + 7.2 * mult, border.pos[1] + 155 * mult), source=element))
-    screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .6, border.size[1] * .05), pos=(border.pos[0] + 24 * mult, border .pos[1] + 162 * mult), texture=name))
-    screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .64, border.size[1] * .05), pos=(border.pos[0] + 24 * mult, border.pos[1] + 152.5 * mult), texture=type))
-    screen.canvas.add(Rectangle(group=str(group), size=(border.size[0] * .76, border.size[1] * .22), pos=(border.pos[0] + 16 * mult, border.pos[1] + 24 * mult), texture=text))
-    screen.canvas.add(Rectangle(group=str(group), pos=(5000, 5000), size=size, source="SelectedBorder.png"))
-
-def LoadCard(main, data, card):
-    #Used to grab data of specified card from currently loaded deck
-    card.bind(on_touch_move=partial(BindCardPos, main))
-    card.bind(on_touch_down=partial(CardSelect, main))
-    size = (620, -20)
-    card.add_widget(Image(pos=size, size=(182,280)))
-    card.add_widget(Image(x=size[0] + 9, y=size[1] + 229, size=(20,20)))
-    card.add_widget(Image(x=size[0] + 30, y=size[1] + 239, size=(card.size[0] * 1.2, card.size[1] * .16)))
-    card.add_widget(Image(x=size[0] + 30, y=size[1] + 225, size=(card.size[0] * 1.2, card.size[1] * .16)))
-    card.add_widget(Image(x=size[0] + 21, y=size[1] + 49.5, size=(card.size[0] * 1.42, card.size[1] * .545)))
-
-    print(data)
     card.children[2].texture = Text(type="name", string=data[1])
     card.children[1].texture = Text(type="type", string=data[4] + '-' + data[5])
     card.children[0].texture = Text(type="text", string=data[6])
@@ -236,20 +183,31 @@ def LoadCard(main, data, card):
     elif data[2] == "Mind":
         card.children[3].source = "Liquid.png"
 
-def CardSelect(main, card, sys):
+def CardSelect(main, screen, card, sys):
     #Used for reordering cards in hand and highlighting selected card
     if sys.x > card.x and sys.x < card.x + card.size[0] and sys.y > card.y and sys.y < card.y + card.size[1]:
-        if sys.button == "left":
-            if sys.is_double_tap:
+        if sys.button == "left" and screen.name != "cards":
+            if sys.is_double_tap and screen.name == "character":
                 BringCardToFront(main.ids.character.ids.fL, card)
-            if main.selected.pos != [0,1]: #Doing a weird check because I don't know how else to check if not initialized
-                main.selected.children[4].color = (1, 1, 1, 1)
-                main.selected.children[3].color = (1, 1, 1, 1)
 
-            card.children[4].color = (.7, .7, 1, 1)
-            card.children[3].color = (.7, .7, 1, 1)
-            main.selected = card
-            main.ids.character.ids.discard.disabled = False
+            if sys.x > 420:
+                if main.newSelected.pos != [0,1]:
+                    main.newSelected.children[4].color = (1, 1, 1, 1)
+                    main.newSelected.children[3].color = (1, 1, 1, 1)
+
+                card.children[4].color = (1, .7, .7, 1)
+                card.children[3].color = (1, .7, .7, 1)
+                main.newSelected = card
+            else:
+                if main.selected.pos != [0,1]: #Doing a weird check because I don't know how else to check if not initialized
+                    main.selected.children[4].color = (1, 1, 1, 1)
+                    main.selected.children[3].color = (1, 1, 1, 1)
+
+                card.children[4].color = (.7, .7, 1, 1)
+                card.children[3].color = (.7, .7, 1, 1)
+                main.selected = card
+            if screen.name =="character":
+                screen.ids.discard.disabled = False
         elif sys.button == "right":
             CloseUp(card)
 
@@ -267,3 +225,30 @@ def CloseUp(card):
                   content=border,
                   size_hint=(None, None), size=(410, 580))
     popup.open()
+
+def NewCards(main, quality):
+    main.cur.execute("SELECT COUNT(*) FROM cards")
+    num = main.cur.fetchone()
+
+    for i in range(0, quality):
+        ran = randint(1, int(num[0]))
+        main.boostInd.append(ran)
+        query = "SELECT * FROM cards WHERE cardId = %s"
+        main.cur.execute(query, (str(ran)))
+        main.booster.append(main.cur.fetchone())
+        main.boosterCards.append(0)
+
+    NewCardPlacement(main)
+
+def NewCardPlacement(main):
+    mlt = 1.2
+    for i in range(0, len(main.booster)):
+        pos = (430 + i * 35, 224 - i * 50)
+        xMlt = 1.184 + .097 * i
+        yMlt =  8.22 - 1.63 * i
+        print(xMlt)
+        print(yMlt)
+        card = Button(name=str(30 + i), pos_hint={"x": xMlt, "y": yMlt}, size_hint=(.47 * mlt, 8 * mlt))
+        LoadCard(main, main.ids.booster, main.booster[i], card, pos, mlt)
+        main.boosterCards[i] = (card)
+        main.ids.booster.ids.fL.add_widget(card)

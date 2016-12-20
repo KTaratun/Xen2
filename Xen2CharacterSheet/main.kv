@@ -40,6 +40,10 @@ ScreenManagement:
 		id: character
 		name: "character"
 		manager: sManager
+	BoosterScreen:
+		id: booster
+		name: "booster"
+		manager: sManager
 	
 <Label>:
 	pos_hint: {"center_x": .5, "center_y": .85}
@@ -71,12 +75,12 @@ ScreenManagement:
 			root.parent.CharSelectUpdate()
 			root.parent.nextscreen(last="title", next="charSelect")
 		text: "Player"
-		pos_hint: {"center_x": .5, "center_y": .55}
+		pos_hint: {"center_x": .5, "center_y": .6}
 		size_hint: 0.5, 0.2
 	Button:
-		on_release: app.root.RandomCharacter(12, app.root.ids.character, app.root.character)
+		on_release: app.root.RandomCharacter("12.0", app.root.ids.character, app.root.character)
 		text: "Game Master"
-		pos_hint: {"center_x": .5, "center_y": .25}
+		pos_hint: {"center_x": .5, "center_y": .3}
 		size_hint: 0.5, 0.2
 		
 <CharacterSelectScreen>
@@ -247,25 +251,8 @@ ScreenManagement:
 	Label: 
 		pos_hint: {"center_x": .5, "center_y": .95}
 		text: "Character Creation: Deck"
-	Button:
-		id: previous
-		text: "<-"
-		size_hint: .15, .1
-		pos_hint: {"center_x": .4, "center_y": .08}
-		on_release:
-			app.root.num -= 1
-			app.root.deckStuff(cards=self)
-	Button:
-		id: next
-		text: "->"
-		size_hint: .15, .1
-		pos_hint: {"center_x": .6, "center_y": .08}
-		on_release:
-			app.root.num += 1
-			app.root.deckStuff(cards=self)
 	FloatLayout:
 		id: fL
-		pos: (280, 0)
 		size_hint: (.46, .05)
 		
 <CharacterStatsScreen>
@@ -964,7 +951,7 @@ ScreenManagement:
 		pos_hint: {"x": .38, "y": .95}
 		text_size: self.size
 	Label:
-		id: healVal
+		id: HPVal
 		color: 0, 0, 0, 1
 		font_size: 25
 		pos_hint: {"x": .485, "y": .95}
@@ -1058,7 +1045,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 	Button:
-		id: Mov
+		id: MovVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1082,7 +1069,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 	Button:
-		id: Ran
+		id: RanVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1106,7 +1093,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 	Button:
-		id: Dam
+		id: DamVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1130,7 +1117,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 	Button:
-		id: Inv
+		id: InvVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1154,7 +1141,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 	Button:
-		id: Mas
+		id: MasVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1178,7 +1165,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 	Button:
-		id: Int
+		id: IntVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1359,11 +1346,16 @@ ScreenManagement:
 		font_size: 25
 		pos_hint: {"x": 0, "y": .9}
 		text_size: self.size
-	Label:
+	Button:
 		id: lvlVal
 		font_size: 25
 		pos_hint: {"x": .09, "y": .9}
+		size_hint: (.08, .05)
+		color: 1, 1, 1, 1
+		background_color: (0, 0, 0, 0)
 		text_size: self.size
+		on_release:
+			app.root.LevelUpPopup()
 	Label:
 		id: health
 		text: "Health: "
@@ -1371,7 +1363,7 @@ ScreenManagement:
 		pos_hint: {"x": .38, "y": .95}
 		text_size: self.size
 	Button:
-		id: healVal
+		id: HPVal
 		color: 0, 0, 0, 1
 		font_size: 25
 		pos_hint: {"x": .49, "y": .95}
@@ -1379,7 +1371,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempHealth = app.root.ChangeVal(button=healVal, orig=app.root.character.health, temp=app.root.character.tempHealth)
+			app.root.character.tempHealth = app.root.ChangeVal(button=self, orig=app.root.character.health, temp=app.root.character.tempHealth)
 	Label:
 		id: lArmor
 		text: "L Armor: "
@@ -1404,14 +1396,14 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: inventory
-		text: "Inventory: "
+		text: "INV: "
 		font_size: 25
 		pos_hint: {"x": 0, "y": .85}
 		text_size: self.size
 	Label:
 		id: invVal
 		font_size: 25
-		pos_hint: {"x": .135, "y": .85}
+		pos_hint: {"x": .07, "y": .85}
 		text_size: self.size
 	Image:
 		id: cS
@@ -1461,6 +1453,7 @@ ScreenManagement:
 		text_size: self.size
 	Button:
 		id: Ins
+		name: "Ins"
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1470,7 +1463,7 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempInstinct = app.root.ChangeVal(button=Ins, orig=app.root.character.Instinct, temp=app.root.character.tempInstinct)
 	Button:
-		id: Mov
+		id: MovVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1478,7 +1471,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempMovement = app.root.ChangeVal(button=Mov, orig=app.root.character.Movement, temp=app.root.character.tempMovement)
+			app.root.character.tempMovement = app.root.ChangeVal(button=self, orig=app.root.character.Movement, temp=app.root.character.tempMovement)
 	Button:
 		id: Zep
 		text: "0"
@@ -1491,6 +1484,7 @@ ScreenManagement:
 			app.root.character.tempZephyr = app.root.ChangeVal(button=Zep, orig=app.root.character.Zephyr, temp=app.root.character.tempZephyr)
 	Button:
 		id: Tec
+		name: "Tec"
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1500,7 +1494,7 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempTech = app.root.ChangeVal(button=Tec, orig=app.root.character.Tech, temp=app.root.character.tempTech)
 	Button:
-		id: Ran
+		id: RanVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1508,7 +1502,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempRange = app.root.ChangeVal(button=Ran, orig=app.root.character.Range, temp=app.root.character.tempRange)
+			app.root.character.tempRange = app.root.ChangeVal(button=self, orig=app.root.character.Range, temp=app.root.character.tempRange)
 	Button:
 		id: Spa
 		text: "0"
@@ -1521,6 +1515,7 @@ ScreenManagement:
 			app.root.character.tempSpark = app.root.ChangeVal(button=Spa, orig=app.root.character.Spark, temp=app.root.character.tempSpark)
 	Button:
 		id: For
+		name: "For"
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1530,7 +1525,7 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempForce = app.root.ChangeVal(button=For, orig=app.root.character.Force, temp=app.root.character.tempForce)
 	Button:
-		id: Dam
+		id: DamVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1538,7 +1533,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempBrutality = app.root.ChangeVal(button=Dam, orig=app.root.character.Brutality, temp=app.root.character.tempBrutality)
+			app.root.character.tempBrutality = app.root.ChangeVal(button=self, orig=app.root.character.Brutality, temp=app.root.character.tempBrutality)
 	Button:
 		id: Hea
 		text: "0"
@@ -1551,6 +1546,7 @@ ScreenManagement:
 			app.root.character.tempHeat = app.root.ChangeVal(button=Hea, orig=app.root.character.Heat, temp=app.root.character.tempHeat)
 	Button:
 		id: Vit
+		name: "Vit"
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1560,7 +1556,7 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempVitality = app.root.ChangeVal(button=Vit, orig=app.root.character.Vitality, temp=app.root.character.tempVitality)
 	Button:
-		id: Inv
+		id: InvVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1568,7 +1564,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempInventory = app.root.ChangeVal(button=Inv, orig=app.root.character.Inventory, temp=app.root.character.tempInventory)
+			app.root.character.tempInventory = app.root.ChangeVal(button=self, orig=app.root.character.Inventory, temp=app.root.character.tempInventory)
 	Button:
 		id: Mine
 		text: "0"
@@ -1581,6 +1577,7 @@ ScreenManagement:
 			app.root.character.tempMineral = app.root.ChangeVal(button=Mine, orig=app.root.character.Mineral, temp=app.root.character.tempMineral)
 	Button:
 		id: Psy
+		name: "Psy"
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1590,7 +1587,7 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempPsyche = app.root.ChangeVal(button=Psy, orig=app.root.character.Psyche, temp=app.root.character.tempPsyche)
 	Button:
-		id: Mas
+		id: MasVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1598,7 +1595,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempMastery = app.root.ChangeVal(button=Mas, orig=app.root.character.Mastery, temp=app.root.character.tempMastery)
+			app.root.character.tempMastery = app.root.ChangeVal(button=self, orig=app.root.character.Mastery, temp=app.root.character.tempMastery)
 	Button:
 		id: Voi
 		text: "0"
@@ -1611,6 +1608,7 @@ ScreenManagement:
 			app.root.character.tempVoid = app.root.ChangeVal(button=Voi, orig=app.root.character.Void, temp=app.root.character.tempVoid)
 	Button:
 		id: Mind
+		name: "Mind"
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1620,7 +1618,7 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempMind = app.root.ChangeVal(button=Mind, orig=app.root.character.Mind, temp=app.root.character.tempMind)
 	Button:
-		id: Int
+		id: IntVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1628,7 +1626,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempIntellect = app.root.ChangeVal(button=Int, orig=app.root.character.Intellect, temp=app.root.character.tempIntellect)
+			app.root.character.tempIntellect = app.root.ChangeVal(button=self, orig=app.root.character.Intellect, temp=app.root.character.tempIntellect)
 	Button:
 		id: Liq
 		text: "0"
@@ -1714,7 +1712,8 @@ ScreenManagement:
 		text: "Manage"
 		size_hint: .15, .1
 		pos_hint: {"center_x": .1, "center_y": .3}
-		#on_release: app.root.current = root.parent.backStack.pop()
+		on_release: 
+			app.root.nextscreen("character", "manage")
 	Button:
 		id: reset
 		text: "Reset"
@@ -1811,4 +1810,19 @@ ScreenManagement:
 	FloatLayout:
 		id: fL
 		pos: (280, 0)
+		size_hint: (.46, .05)
+		
+<BoosterScreen>
+	Label: 
+		pos_hint: {"center_x": .5, "center_y": .95}
+		text: "Booster Pack"
+	Button:
+		id: trade
+		text: "Swap"
+		size_hint: .15, .1
+		pos_hint: {"center_x": .5, "center_y": .08}
+		on_release: 
+			app.root.Swap()
+	FloatLayout:
+		id: fL
 		size_hint: (.46, .05)

@@ -4,7 +4,8 @@ from random import randint
 def RandomCharacter(lvl, character, cur):
     character.name = RandomName()
     character.lvl = lvl
-    stats = RandomStats(lvl)
+    l = lvl.split(".")
+    stats = RandomStats(int(l[0]))
     RandomBloodType(character)
 
     character.Instinct = stats[0]
@@ -26,7 +27,6 @@ def RandomCharacter(lvl, character, cur):
     character.Intellect = 3 + stats[5]
 
     RandomInventory(cur, character)
-    print(character.inv)
     ele = RandomElements(character)
 
     character.Zephyr = ele[0]

@@ -305,7 +305,9 @@ def ResetCharge(images, fL, main, sys):
     if len(fL.children) > 7:
         fL.remove_widget(fL.children[0])
 
-def ChargeUpdate(main, index, images, fL, character, sys):
+    main.ids.character.ids.charge.color = (1, 1, 1, 1)
+
+def ChargeUpdate(main, index, images, fL, character, button):
     if index != -1:
         if images[index].color == [1, 1, 1, 0.3]:
             images[index].color = (1, 1, 1, 1)
@@ -343,3 +345,7 @@ def ChargeUpdate(main, index, images, fL, character, sys):
             fL.remove_widget(fL.children[0])
 
         fL.add_widget(card)
+
+        main.ids.character.ids.charge.color = (.1, .8, 1, 1)
+    else:
+        main.ids.character.ids.charge.color = (1, 1, 1, 1)

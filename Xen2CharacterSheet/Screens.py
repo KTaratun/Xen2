@@ -8,6 +8,7 @@ def StatLabelUpdate(screen, stat, lab, character):
         screen.ids.MovVal.text = str(character.Movement)
     elif lab.name == "Tec":
         character.Range = 3 + stat
+        print(screen.ids.RanVal.text)
         screen.ids.RanVal.text = str(character.Range)
     elif lab.name == "For":
         character.Brutality = stat * 2
@@ -32,22 +33,22 @@ def CharStats(screen):
 
     screen.ids.cS.pos_hint = {"center_x": .5 + posX, "center_y": .65 + posY}
     screen.ids.Ins.pos_hint = {"x": .29 + posX, "y": .74 + posY}
-    screen.ids.Mov.pos_hint = {"x": .33 + posX, "y": .74 + posY}
+    screen.ids.MovVal.pos_hint = {"x": .33 + posX, "y": .74 + posY}
     screen.ids.Zep.pos_hint = {"x": .389 + posX, "y": .67 + posY}
     screen.ids.Tec.pos_hint = {"x": .465 + posX, "y": .88 + posY}
-    screen.ids.Ran.pos_hint = {"x": .515 + posX, "y": .88 + posY}
+    screen.ids.RanVal.pos_hint = {"x": .515 + posX, "y": .88 + posY}
     screen.ids.Spa.pos_hint = {"x": .493 + posX, "y": .7455 + posY}
     screen.ids.For.pos_hint = {"x": .65 + posX, "y": .74 + posY}
-    screen.ids.Dam.pos_hint = {"x": .69 + posX, "y": .74 + posY}
+    screen.ids.DamVal.pos_hint = {"x": .69 + posX, "y": .74 + posY}
     screen.ids.Hea.pos_hint = {"x": .5955 + posX, "y": .67 + posY}
     screen.ids.Vit.pos_hint = {"x": .65 + posX, "y": .465 + posY}
-    screen.ids.Inv.pos_hint = {"x": .69 + posX, "y": .465 + posY}
+    screen.ids.InvVal.pos_hint = {"x": .69 + posX, "y": .465 + posY}
     screen.ids.Mine.pos_hint = {"x": .5955 + posX, "y": .512 + posY}
     screen.ids.Psy.pos_hint = {"x": .47 + posX, "y": .325 + posY}
-    screen.ids.Mas.pos_hint = {"x": .515 + posX, "y": .325 + posY}
+    screen.ids.MasVal.pos_hint = {"x": .515 + posX, "y": .325 + posY}
     screen.ids.Voi.pos_hint = {"x": .493 + posX, "y": .43 + posY}
     screen.ids.Mind.pos_hint = {"x": .29 + posX, "y": .465 + posY}
-    screen.ids.Int.pos_hint = {"x": .33 + posX, "y": .465 + posY}
+    screen.ids.IntVal.pos_hint = {"x": .33 + posX, "y": .465 + posY}
     screen.ids.Liq.pos_hint = {"x": .389 + posX, "y": .512 + posY}
     screen.ids.insInfo.pos_hint = {"x": .279 + posX, "y": .79 + posY}
     screen.ids.tecInfo.pos_hint = {"x": .458 + posX, "y": .93 + posY}
@@ -98,7 +99,7 @@ def ResetAll(main, notUsed):
 def ResetStats(self, character, notUsed):
     self.CharScreenUpdate(self.ids.character, character)
 
-    self.ids.character.ids.healVal.color=(0, 0, 0, 1)
+    self.ids.character.ids.HPVal.color=(0, 0, 0, 1)
     character.tempHealth = character.health
     self.ids.character.ids.Ins.color = (0, 0, 0, 1)
     character.tempTech = character.Tech
@@ -112,17 +113,17 @@ def ResetStats(self, character, notUsed):
     character.tempMind = character.Mind
     self.ids.character.ids.Mind.color = (0, 0, 0, 1)
     character.tempMovement = character.Movement
-    self.ids.character.ids.Mov.color = (0, 0, 0, 1)
+    self.ids.character.ids.MovVal.color = (0, 0, 0, 1)
     character.tempRange = character.Range
-    self.ids.character.ids.Ran.color = (0, 0, 0, 1)
+    self.ids.character.ids.RanVal.color = (0, 0, 0, 1)
     character.tempBrutality = character.Brutality
-    self.ids.character.ids.Dam.color = (0, 0, 0, 1)
+    self.ids.character.ids.DamVal.color = (0, 0, 0, 1)
     character.tempInventory = character.Inventory
-    self.ids.character.ids.Inv.color = (0, 0, 0, 1)
+    self.ids.character.ids.InvVal.color = (0, 0, 0, 1)
     character.tempMastery = character.Mastery
-    self.ids.character.ids.Mas.color = (0, 0, 0, 1)
+    self.ids.character.ids.MasVal.color = (0, 0, 0, 1)
     character.tempIntellect = character.Intellect
-    self.ids.character.ids.Int.color = (0, 0, 0, 1)
+    self.ids.character.ids.IntVal.color = (0, 0, 0, 1)
     character.tempZephyr = character.Zephyr
     self.ids.character.ids.Zep.color = (0, 0, 0, 1)
     character.tempSpark = character.Spark
@@ -136,7 +137,7 @@ def ResetStats(self, character, notUsed):
     character.tempLiquid = character.Liquid
     self.ids.character.ids.Liq.color = (0, 0, 0, 1)
 
-    Gear.CellInit(self.cur, self.ids.character, character)
+    Gear.CellInit(self, self.ids.character, character)
 
 def ResetDeck(self, character, notUsed):
     self.cardId = 0
@@ -158,18 +159,73 @@ def DeleteChar(main, button, notUsed):
     main.CharSelectUpdate()
     button.disabled = True
 
-def PlusVal(gear, label, screen, character, notUsed):
-    if gear.quality < gear.max:
-        gear.quality += 1
-        label.text = str(gear.quality)
+def CalcInv(character, label):
+    size = 0
+    for i in range(0, len(character.inv)):
+        if (character.inv[i] != 0):
+            size += int(character.inv[i].size)
 
-        if gear.name == "Light Armor":
-            screen.ids.lArmVal.text = str(character.lightArmor + 1)
+    label.text = str(size)
 
-def MinusVal(gear, label, screen, character, notUsed):
-    if gear.quality > gear.min:
-        gear.quality -= 1
-        label.text = str(gear.quality)
+    if size > character.Inventory:
+        label.color = (1, 0, 0, 1)
+    else:
+        label.color = (1, 1, 1, 1)
 
-        if gear.name == "Light Armor":
-            screen.ids.lArmVal.text = str(character.lightArmor - 1)
+def LevelUp(character, screen, main, notUsed):
+    sp = character.lvl.split(".")
+    exp = int(sp[1]) - 10
+    lvl = int(sp[0]) + 1
+    character.lvl = str(lvl) + "." + str(exp)
+    screen.ids.lvlVal.text = character.lvl
+    if exp < 10:
+        screen.ids.lvlVal.color = (1, 1, 1, 1)
+
+    main.colors = [screen.ids.Ins.color, screen.ids.Tec.color, screen.ids.For.color,
+                   screen.ids.Vit.color, screen.ids.Psy.color, screen.ids.Mind.color]
+
+    screen.ids.Ins.color = (0, 1, 0, 1)
+    screen.ids.Tec.color = (0, 1, 0, 1)
+    screen.ids.For.color = (0, 1, 0, 1)
+    screen.ids.Vit.color = (0, 1, 0, 1)
+    screen.ids.Psy.color = (0, 1, 0, 1)
+    screen.ids.Mind.color = (0, 1, 0, 1)
+
+def LvlUpdate(orig, temp, button, main):
+    orig += 1
+    temp += 1
+    main.ids.character.ids.Ins.color = main.colors[0]
+    main.ids.character.ids.Tec.color = main.colors[1]
+    main.ids.character.ids.For.color = main.colors[2]
+    main.ids.character.ids.Vit.color = main.colors[3]
+    main.ids.character.ids.Psy.color = main.colors[4]
+    main.ids.character.ids.Mind.color = main.colors[5]
+
+    if button.name == "Ins":
+        main.character.Instinct = str(orig)
+        StatLabelUpdate(main.ids.character, orig, main.ids.character.ids.Ins, main.character)
+    elif button.name == "Tec":
+        main.character.Tech = str(orig)
+        StatLabelUpdate(main.ids.character, orig, main.ids.character.ids.Tec, main.character)
+    elif button.name == "For":
+        main.character.Force = str(orig)
+        StatLabelUpdate(main.ids.character, orig, main.ids.character.ids.For, main.character)
+    elif button.name == "Vit":
+        main.character.Vitality = str(orig)
+        StatLabelUpdate(main.ids.character, orig, main.ids.character.ids.Vit, main.character)
+    elif button.name == "Psy":
+        main.character.Psyche = str(orig)
+        StatLabelUpdate(main.ids.character, orig, main.ids.character.ids.Psy, main.character)
+    elif button.name == "Mind":
+        main.character.Mind = str(orig)
+        StatLabelUpdate(main.ids.character, orig, main.ids.character.ids.Mind, main.character)
+
+    #find a way to permanantly update orig
+    if temp > orig:
+        button.color = (0, .25, 1, 1)
+    elif temp < orig:
+        button.color = (1, 0, 0, 1)
+    else:
+        button.color = (0, 0, 0, 1)
+    button.text = str(temp)
+    return temp

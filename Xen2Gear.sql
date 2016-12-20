@@ -92,14 +92,14 @@ create table Gear(
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'EXP', 'Other', 1, 4, 12, 1,
+		'EXP', 'Other', 1, 1, 1, 1,
         'Gain x EXP equal to its quality.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Skill Pack', 'Other', 1, 1, 4, 3,
+		'Skill Pack', 'Other', 1, 2, 5, 3,
         'Receive x cards equal to its quality.'
     );
     

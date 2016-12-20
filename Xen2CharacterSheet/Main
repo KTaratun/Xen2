@@ -28,13 +28,15 @@ class ScreenManagement(ScreenManager):
 
     class Character:
         name = ""
-        lvl = 12
+        lvl = "12.0"
         health = 16
         lightArmor = 0
         heavyArmor = 0
         bloodType = ""
         bTStats = [0, 0, 0, 0, 0, 0]
         inv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        Right = Gear.Gear(0, 0, 0, 0, 0, 0, 0)
+        Left = Gear.Gear(0, 0, 0, 0, 0, 0, 0)
 
         Instinct = 0
         Tech = 0
@@ -98,9 +100,13 @@ class ScreenManagement(ScreenManager):
     cPos = .2
     global path
     delete = ""
-    num = 0
+    colors = []
+    booster = []
+    boostInd = []
+    boosterCards = []
 
     selected = Button(pos=(0, 1))
+    newSelected = Button(pos=(0, 1))
     cardId = 0
 
     character = Character()
@@ -221,42 +227,45 @@ class ScreenManagement(ScreenManager):
     def deckStuff(self, screen, starter):
         # Sets up initial deck from the class select screen
         # screen: The current screen to update
+        fL = screen.ids.fL
 
         if starter == True:
             Cards.InitialDeck(self.character)
 
-        for i in range(0, 31):
-            screen.canvas.remove_group(str(i))
+        if len(fL.children) > 0:
+            for i in range(0, 30):
+                fL.remove_widget(fL.children[0])
 
         fetch = Cards.FetchDeck(self)
 
         col = 0
+        butCol = 0
         mult = 1
         # Sets up positions for each card
         for j in range(0, 30):
 
             if j == 10 or j == 20:
                 col = 0
+                butCol = 0
 
             if j < 10:
                 pos = (18, 355 - col)
+                butPoshint = {"x": .057, "y": 12.3 - butCol}
             elif j < 20:
                 pos = (18 + 135 * mult, 355 - col)
+                butPoshint = {"x": .42, "y": 12.3 - butCol}
             elif j < 30:
                 pos = (18 + 135 * mult * 2, 355 - col)
+                butPoshint = {"x": .79, "y": 12.3 - butCol}
 
             col += 30
+            butCol += 1
 
             # Loads card data from the fetch into canvas items
-            Cards.LoadCardCanvas(fetch[j], self.ids.cards, j, pos, mult)
-
-        if self.num < 0:
-            self.num = 0
-        elif self.num > 29:
-            self.num = 29
-
-        # Enlarges current card selection
-        Cards.Resizing(screen, self.num)
+            mlt = .7
+            card = Button(name=str(j), pos_hint=butPoshint, size_hint=(.47 * mlt, 8 * mlt), background_color=(0, 0, 0, 0))
+            Cards.LoadCard(self, screen, fetch[j], card, pos, mlt)
+            fL.add_widget(card)
 
     def ElementPage(self, screen, character):
         if character.TempPsy == character.Psyche:
@@ -292,7 +301,7 @@ class ScreenManagement(ScreenManager):
 
     def SaveData(self, character):
         self.path.write(character.name + ',')
-        self.path.write(str(character.lvl) + ',')
+        self.path.write(character.lvl + ',')
         self.path.write(str(character.health) + ',')
         self.path.write(str(character.lightArmor) + ',')
         self.path.write(str(character.heavyArmor) + "\n")
@@ -346,7 +355,7 @@ class ScreenManagement(ScreenManager):
             parse.append(row)
 
         character.name = parse[0][0]
-        character.lvl = int(parse[0][1])
+        character.lvl = parse[0][1]
         character.health = int(parse[0][2])
         character.lightArmor = int(parse[0][3])
         character.heavyArmor = int(parse[0][4])
@@ -463,27 +472,28 @@ class ScreenManagement(ScreenManager):
     def CharScreenUpdate(self, screen, character):
         Screens.CharStats(screen)
         screen.ids.nameVal.text = character.name
-        screen.ids.lvlVal.text = str(character.lvl)
-        screen.ids.healVal.text = str(character.health)
+        screen.ids.lvlVal.text = character.lvl
+        screen.ids.HPVal.text = str(character.health)
         screen.ids.lArmVal.text = str(character.lightArmor)
         screen.ids.hArmVal.text = str(character.heavyArmor)
+        Screens.CalcInv(character, screen.ids.invVal)
         screen.ids.Ins.text = str(character.Instinct)
-        screen.ids.Mov.text = str(character.Movement)
+        screen.ids.MovVal.text = str(character.Movement)
         screen.ids.Zep.text = str(character.Zephyr)
         screen.ids.Tec.text = str(character.Tech)
-        screen.ids.Ran.text = str(character.Range)
+        screen.ids.RanVal.text = str(character.Range)
         screen.ids.Spa.text = str(character.Spark)
         screen.ids.For.text = str(character.Force)
-        screen.ids.Dam.text = str(character.Brutality)
+        screen.ids.DamVal.text = str(character.Brutality)
         screen.ids.Hea.text = str(character.Heat)
         screen.ids.Vit.text = str(character.Vitality)
-        screen.ids.Inv.text = str(character.Inventory)
+        screen.ids.InvVal.text = str(character.Inventory)
         screen.ids.Mine.text = str(character.Mineral)
         screen.ids.Psy.text = str(character.Psyche)
-        screen.ids.Mas.text = str(character.Mastery)
+        screen.ids.MasVal.text = str(character.Mastery)
         screen.ids.Voi.text = str(character.Void)
         screen.ids.Mind.text = str(character.Mind)
-        screen.ids.Int.text = str(character.Intellect)
+        screen.ids.IntVal.text = str(character.Intellect)
         screen.ids.Liq.text = str(character.Liquid)
         screen.ids.blood.text = str(character.bloodType)
         Screens.BloodStuff(screen, character)
@@ -492,7 +502,7 @@ class ScreenManagement(ScreenManager):
     def DeckAndGearInit(self, screen, character):
         #Sets deck equal to the received data of FetchDeck
         self.character.cardsLeft = Cards.FetchDeck(self)
-        Gear.CellInit(self.cur, screen, character)
+        Gear.CellInit(self, screen, character)
 
     def DrawCard(self, character):
         #Loads and adds a card from deck to hand
@@ -502,7 +512,7 @@ class ScreenManagement(ScreenManager):
         num = randint(0, len(character.cardsLeft) - 1)
         #pos = [uniform(.94, 1), uniform(.94, 1)]
         card = Button(name=str(num), pos_hint={"x": 1, "y": 1}, size_hint=(.47, 8), background_color=(0, 0, 0, 0))
-        Cards.LoadCard(self, character.cardsLeft[num], card)
+        Cards.LoadCard(self, self.ids.character, character.cardsLeft[num], card, (620, -20), 1)
         self.cardId += 1
         self.ids.character.ids.fL.add_widget(card)
         character.cardsLeft.pop(num)
@@ -540,16 +550,61 @@ class ScreenManagement(ScreenManager):
         if (len(character.discard) < 1):
             self.ids.character.ids.undo.disabled = True
 
-    def ChangeVal(self, button, orig, temp):
+    def ChangeVal(self, orig, temp, button):
         #Temporarily change values of stats while playing.
+        #I need to seriously clean this up
+        if button.color == [0, 1, 0, 1]:
+            return Screens.LvlUpdate(orig, temp, button, self)
         if button.last_touch.button == "left":
-            temp = int(temp) + 1
-            button.text = str(temp)
+            if len(button.name) == 1:
+                temp[int(button.name)] = temp[int(button.name)] + 1
+                if temp[int(button.name)] > int(orig):
+                    button.color = (0, .25, 1, 1)
+                elif temp[int(button.name)] < int(orig):
+                    button.color = (1, 0, 0, 1)
+                else:
+                    button.color = (0, 0, 0, 1)
+                button.text = str(temp[int(button.name)])
+                return
+            elif button.name == 'item':
+                temp.quality += 1
+                if temp.quality > int(orig):
+                    button.color = (0, .25, 1, 1)
+                elif temp.quality < int(orig):
+                    button.color = (1, 0, 0, 1)
+                else:
+                    button.color = (0, 0, 0, 1)
+                button.text = str(temp.quality)
+                return
+            else:
+                temp = int(temp) + 1
+                button.text = str(temp)
         elif button.last_touch.button == "right":
-            temp = int(temp) - 1
+            if len(button.name) == 1:
+                temp[int(button.name)] = temp[int(button.name)] - 1
+                if temp[int(button.name)] > int(orig):
+                    button.color = (0, .25, 1, 1)
+                elif temp[int(button.name)] < int(orig):
+                    button.color = (1, 0, 0, 1)
+                else:
+                    button.color = (0, 0, 0, 1)
+                button.text = str(temp[int(button.name)])
+                return
+            elif button.name == 'item':
+                temp.quality -= 1
+                if temp.quality > int(orig):
+                    button.color = (0, .25, 1, 1)
+                elif temp.quality < int(orig):
+                    button.color = (1, 0, 0, 1)
+                else:
+                    button.color = (0, 0, 0, 1)
+                button.text = str(temp.quality)
+                return
+            else:
+                temp = int(temp) - 1
             button.text = str(temp)
         if temp > int(orig):
-            button.color = (0, 0, 1, 1)
+            button.color = (0, .25, 1, 1)
         elif temp < int(orig):
             button.color = (1, 0, 0, 1)
         else:
@@ -585,7 +640,7 @@ class ScreenManagement(ScreenManager):
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'First Aid'", 8, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'First Aid'", 9, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Purifier'", 10, character)
-            Gear.CellInit(cur=self.cur, screen=self.ids.loadout, character=character)
+            Gear.CellInit(main=self, screen=self.ids.loadout, character=character)
         elif load == "tN":
             character.inv[0] = Gear.WeaponRandomizer(size=4, type="Melee")
             character.inv[1] = Gear.WeaponRandomizer(size=2, type="Melee")
@@ -593,7 +648,7 @@ class ScreenManagement(ScreenManager):
                 Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Heavy Armor'", i + 2, character)
             for i in range(0, 4):
                 Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", i + 4, character)
-            Gear.CellInit(cur=self.cur, screen=self.ids.loadout, character=character)
+            Gear.CellInit(main=self, screen=self.ids.loadout, character=character)
         elif load == "lL":
             character.inv[0] = Gear.WeaponRandomizer(size=4, type="Ranged")
             character.inv[1] = Gear.WeaponRandomizer(size=2, type="Ranged")
@@ -604,7 +659,7 @@ class ScreenManagement(ScreenManager):
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", 6, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Light Armor'", 7, character)
             Gear.RandomItem(self.cur, 8, character)
-            Gear.CellInit(cur=self.cur, screen=self.ids.loadout, character=character)
+            Gear.CellInit(main=self, screen=self.ids.loadout, character=character)
 
     def Info(self, name):
         if name == "INS":
@@ -971,6 +1026,48 @@ class ScreenManagement(ScreenManager):
         Screens.ResetAll(self, self)
         self.CharScreenUpdate(screen, character)
 
+    def LevelUpPopup(self):
+        b = FloatLayout()
+        sp = self.character.lvl.split(".")
+
+        popup = Popup(title='Level Up',
+                      content=b,
+                      size_hint=(None, None), size=(410, 200))
+
+        if int(sp[1]) > 99:
+            text = "Level up?"
+            b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="LVL")
+            b.add_widget(b1)
+            b1.bind(on_release=popup.dismiss)
+            b1.bind(on_press=partial(Screens.LevelUp, self.character, self.ids.character, self))
+        else:
+            text = "Don't have enough EXP."
+
+        l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text=text)
+        b.add_widget(l)
+
+        popup.open()
+
+    def Swap(self):
+        # Disgusting code
+        cards = []
+        for i in range(len(self.booster), 30 + len(self.booster)):
+            cards.append(self.ids.booster.ids.fL.children[i])
+
+        cards.reverse()
+
+        selInd = cards.index(self.selected)
+        newInd = self.boosterCards.index(self.newSelected)
+        self.character.deck[selInd], self.boostInd[newInd] = self.boostInd[newInd], self.character.deck[selInd]
+
+        query = "SELECT * FROM cards WHERE cardId = %s"
+        self.cur.execute(query, (cards[selInd].name))
+        self.booster[newInd] = (self.cur.fetchone())
+
+        Screens.ResetDeck(self, self.character, 0)
+        self.deckStuff(self.ids.booster, False)
+        Cards.NewCardPlacement(self)
+
     class TitleScreen(Screen):
         pass
 
@@ -996,6 +1093,9 @@ class ScreenManagement(ScreenManager):
         pass
 
     class CharacterScreen(Screen):
+        pass
+
+    class BoosterScreen(Screen):
         pass
 
 presentation = Builder.load_file("main.kv")

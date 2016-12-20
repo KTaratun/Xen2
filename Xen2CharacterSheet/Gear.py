@@ -63,10 +63,7 @@ def GetGear(cur, query, index, character):
     fetch = cur.fetchone()
     character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[4], fetch[5], fetch[7])
 
-def CellInit(cur, screen, character):
-    #why the hell does this prevent layered popups on button two when reentering the character
-    #screen.ids.cellTwo = Button(name="0", text="bar", size_hint=(.15, .1), pos_hint={"x": .85, "center_y": .95})
-
+def CellInit(main, screen, character):
     cells = [screen.ids.cellOne, screen.ids.cellTwo, screen.ids.cellThree, screen.ids.cellFour,
              screen.ids.cellFive, screen.ids.cellSix, screen.ids.cellSeven, screen.ids.cellEight,
              screen.ids.cellNine, screen.ids.cellTen, screen.ids.cellEleven, screen.ids.cellTwelve]
@@ -77,11 +74,11 @@ def CellInit(cur, screen, character):
             cells[i].text = str(character.inv[i].name)
             for j in range(1, int(cells[i].name) + 1):
                 cells[i].unbind_uid('on_release', j)
-            cells[i].name = str(cells[i].fbind('on_release', partial(CellPopup, character.inv[i], screen, character, cur)))
+            cells[i].name = str(cells[i].fbind('on_release', partial(CellPopup, character.inv[i], screen, character, main)))
         else:
             for j in range(1, int(cells[i].name) + 1):
                 cells[i].unbind_uid('on_release', j)
-            cells[i].name = str(cells[i].fbind('on_release', partial(AddGearPopup, i, character, cur, screen)))
+            cells[i].name = str(cells[i].fbind('on_release', partial(AddGearPopup, i, character, main, screen)))
 
     character.lightArmor = 0
     character.heavyArmor = 0
@@ -117,7 +114,7 @@ def CellInit(cur, screen, character):
 #                  size_hint=(None, None), size=(410, 580))
 #    popup.open()
 
-def CellPopup(gear, screen, character, cur, button):
+def CellPopup(gear, screen, character, main, button):
     fL = FloatLayout()
     name = Cards.Text("name", gear.name)
     type = Cards.Text("type", gear.type + " - Size " + str(gear.size))
@@ -125,19 +122,15 @@ def CellPopup(gear, screen, character, cur, button):
 
     if gear.type == "Melee" or gear.type == "Ranged":
         border = Image(source="WeaponCard.png", size_hint=(.85, .85), pos_hint={"center_x": .5, "y": .13}, allow_stretch=True)
-        border.add_widget(Label(text=str(gear.attack[0]), pos=(265, 78), font_size=16, color=(0, 0, 0, 1)))
-        border.add_widget(Label(text=str(gear.attack[1]), pos=(329, 78), font_size=16, color=(0, 0, 0, 1)))
-        border.add_widget(Label(text=str(gear.attack[2]), pos=(389, 78), font_size=16, color=(0, 0, 0, 1)))
         border.add_widget(Label(text=gear.damage, pos=(460, 78), font_size=16, color=(0, 0, 0, 1)))
     else:
         border = Image(source="GearCard.png", size_hint=(.85, .85), pos_hint={"center_x": .5, "y": .13}, allow_stretch=True)
-        border.add_widget(Label(text=str(gear.quality), pos=(468, 78), font_size=16, color=(0, 0, 0, 1)))
 
     border.add_widget(Image(texture=name, pos=(295, 388), size=(220, 220), allow_stretch=True))
     border.add_widget(Image(texture=type, pos=(295, 363), size=(220, 220), allow_stretch=True))
     border.add_widget(Image(texture=text, pos=(278, 80), size=(250, 250), allow_stretch=True))
 
-    b4 = Button(size_hint=(.25, .1), pos_hint={"center_x": .2, "y": .012}, text="Discard")
+    b4 = Button(size_hint=(.4, .1), pos_hint={"center_x": .27, "y": .012}, text="Discard")
     fL.add_widget(border)
     fL.add_widget(b4)
 
@@ -145,15 +138,31 @@ def CellPopup(gear, screen, character, cur, button):
                   content=fL,
                   size_hint=(None, None), size=(410, 580))
 
-    #gear.type == "Melee" or gear.type == "Ranged":
-    if True:
-        b2 = Button(size_hint=(.25, .1), pos_hint={"center_x": .5, "y": .012}, text="QLT -")
-        b3 = Button(size_hint=(.25, .1), pos_hint={"center_x": .8, "y": .012}, text="QLT +")
+    if gear.type == "Melee" or gear.type == "Ranged":
+        b2 = Button(name="0", text=str(gear.attack[0]), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .28, "y": .195}, background_color=(0, 0, 0, 0))
+        b3 = Button(name="1", text=str(gear.attack[1]), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .44, "y": .195}, background_color=(0, 0, 0, 0))
+        b1 = Button(name="2", text=str(gear.attack[2]), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .6, "y": .195}, background_color=(0, 0, 0, 0))
+        b5 = Button(size_hint=(.4, .1), pos_hint={"center_x": .73, "y": .012}, text="Equip")
         fL.add_widget(b2)
         fL.add_widget(b3)
-        b2.bind(on_release=partial(Screens.MinusVal, gear, border.children[3], screen, character))
-        b3.bind(on_release=partial(Screens.PlusVal, gear, border.children[3], screen, character))
-    b4.bind(on_release=partial(DiscardPopup, gear, screen, popup, character, cur))
+        fL.add_widget(b1)
+        fL.add_widget(b5)
+        lgt = gear.attack[0]
+        med = gear.attack[1]
+        hvy = gear.attack[2]
+        b2.bind(on_release=partial(main.ChangeVal, lgt, gear.attack))
+        b3.bind(on_release=partial(main.ChangeVal, med, gear.attack))
+        b1.bind(on_release=partial(main.ChangeVal, hvy, gear.attack))
+        b5.bind(on_release=partial(EquipPopup, gear, character, screen, button))
+    else:
+        b2 = Button(name="item", text=str(gear.quality), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .81, "y": .195}, background_color=(0, 0, 0, 0))
+        b5 = Button(size_hint=(.4, .1), pos_hint={"center_x": .73, "y": .012}, text="Use")
+        fL.add_widget(b2)
+        fL.add_widget(b5)
+        qlt = gear.quality
+        b2.bind(on_release=partial(main.ChangeVal, qlt, gear))
+        b5.bind(on_release=partial(UsePopup, gear, screen, popup, character, main))
+    b4.bind(on_release=partial(DiscardPopup, gear, screen, popup, character, main))
     popup.open()
 
 def RandomItem(cur, index, character):
@@ -178,7 +187,7 @@ def RandomItem(cur, index, character):
     else:
         character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[4], fetch[5], fetch[7])
 
-def DiscardGear(gear, screen, prevPop, character, cur, notUsed):
+def DiscardGear(gear, screen, prevPop, character, main, notUsed):
     cells = [screen.ids.cellOne, screen.ids.cellTwo, screen.ids.cellThree, screen.ids.cellFour,
              screen.ids.cellFive, screen.ids.cellSix, screen.ids.cellSeven, screen.ids.cellEight,
              screen.ids.cellNine, screen.ids.cellTen, screen.ids.cellEleven, screen.ids.cellTwelve]
@@ -189,10 +198,11 @@ def DiscardGear(gear, screen, prevPop, character, cur, notUsed):
     for i in range(1, int(cells[index].name) + 1):
         cells[index].unbind_uid('on_release', i)
     cells[index].text = "EMPTY"
-    CellInit(cur, screen, character)
+    CellInit(main, screen, character)
+    Screens.CalcInv(character, screen.ids.invVal)
     prevPop.dismiss()
 
-def DiscardPopup(gear, screen, prevPopup, character, cur, notUsed):
+def DiscardPopup(gear, screen, prevPopup, character, main, notUsed):
     b = FloatLayout()
     l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Are you sure you want to discard")
     b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Discard")
@@ -203,11 +213,11 @@ def DiscardPopup(gear, screen, prevPopup, character, cur, notUsed):
                   content=b,
                   size_hint=(None, None), size=(410, 200))
 
-    b1.bind(on_press=partial(DiscardGear, gear, screen, prevPopup, character, cur))
+    b1.bind(on_press=partial(DiscardGear, gear, screen, prevPopup, character, main))
     b1.bind(on_release=popup.dismiss)
     popup.open()
 
-def AddGearPopup(index, character, cur, screen, notUsed):
+def AddGearPopup(index, character, main, screen, notUsed):
     b = FloatLayout()
     l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Add random gear?")
     b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Add")
@@ -218,13 +228,119 @@ def AddGearPopup(index, character, cur, screen, notUsed):
                   content=b,
                   size_hint=(None, None), size=(410, 200))
 
-    b1.bind(on_press=partial(AddGear, index, character, cur, screen))
+    b1.bind(on_press=partial(AddGear, index, character, main, screen))
     b1.bind(on_release=popup.dismiss)
     popup.open()
 
-def AddGear(index, character, cur, screen, notUsed):
-    RandomItem(cur, index, character)
-    CellInit(cur, screen, character)
+def AddGear(index, character, main, screen, notUsed):
+    RandomItem(main.cur, index, character)
+    Screens.CalcInv(character, screen.ids.invVal)
+    CellInit(main, screen, character)
+
+def UsePopup(gear, screen, prevPopup, character, main, notUsed):
+    b = FloatLayout()
+    l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Use " + gear.name + "?")
+    b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Use")
+    b.add_widget(l)
+    b.add_widget(b1)
+
+    popup = Popup(title='Use Item',
+                  content=b,
+                  size_hint=(None, None), size=(410, 200))
+
+    b1.bind(on_press=partial(UseItem, gear, screen, prevPopup, character, main))
+    b1.bind(on_release=popup.dismiss)
+    popup.open()
+
+def UseItem(gear, screen, prevPopup, character, main, button):
+    if gear.name == "First Aid":
+        character.tempHealth += gear.quality
+        if character.tempHealth >= character.health:
+            character.tempHealth = character.health
+            screen.ids.healVal.color = (0, 0, 0, 1)
+        else:
+            screen.ids.healVal.color = (1, 0, 0, 1)
+        screen.ids.healVal.text = str(character.tempHealth)
+    elif gear.name == "EXP":
+        sp = character.lvl.split(".")
+        num = int(sp[1])
+        num += gear.quality
+        character.lvl = sp[0] + "." + str(num)
+        screen.ids.lvlVal.text = character.lvl
+        if num > 9:
+            screen.ids.lvlVal.color = (0, .25, 1, 1)
+    elif gear.name == "Skill Pack":
+        GetCards(gear.quality, main)
+        Cards.NewCards(main, gear.quality)
+
+    DiscardGear(gear, screen, prevPopup, character, main, button)
+
+def EquipPopup(gear, character, screen, prevButton, button):
+    b = FloatLayout()
+    l = Label(font_size=25, pos_hint={"center_x": .5, "y": .35}, text="Which Hand?")
+    b1 = Button(size_hint=(.3, .25), pos_hint={"center_x": .5, "y": .08}, text="Equip")
+    b2 = Button(name="Right", text="RIGHT", size_hint=(.4, .25), pos_hint={"center_x": .75, "y": .42})
+    b3 = Button(name="Left", text="LEFT", size_hint=(.4, .25), pos_hint={"center_x": .25, "y": .42})
+    if character.Right.name != 0:
+        b2.text = character.Right.name
+    if character.Left.name != 0:
+        b3.text = character.Left.name
+    b2.bind(on_release=partial(EquipSelect, b3))
+    b3.bind(on_release=partial(EquipSelect, b2))
+    b.add_widget(l)
+    b.add_widget(b1)
+    b.add_widget(b2)
+    b.add_widget(b3)
+
+    popup = Popup(title='Equip',
+                  content=b,
+                  size_hint=(None, None), size=(410, 250))
+
+    b1.bind(on_press=partial(EquipConfirm, b3, gear, character, screen, prevButton))
+    b1.bind(on_release=popup.dismiss)
+    popup.open()
+
+def EquipSelect(deselected, selected):
+    if selected.name == "Left":
+        selected.color = (0, 1, 0, 1)
+    else:
+        selected.color = (1, 0, 1, 1)
+    deselected.color = (1, 1, 1, 1)
+
+def EquipConfirm(left, gear, character, screen, prevButton, button):
+    cells = [screen.ids.cellOne, screen.ids.cellTwo, screen.ids.cellThree, screen.ids.cellFour,
+             screen.ids.cellFive, screen.ids.cellSix, screen.ids.cellSeven, screen.ids.cellEight,
+             screen.ids.cellNine, screen.ids.cellTen, screen.ids.cellEleven, screen.ids.cellTwelve]
+
+    hand = ""
+    if left.color == [0, 1, 0, 1]:
+        character.Left = gear
+        hand = "left"
+        if character.Right == character.Left:
+            character.Right = Gear(0, 0, 0, 0, 0, 0, 0)
+    else:
+        character.Right = gear
+        hand = "right"
+        if character.Left == character.Right:
+            character.Left = Gear(0, 0, 0, 0, 0, 0, 0)
+
+    for i in range(0, len(character.inv)):
+        if hand == "left":
+            if cells[i].color == [0, 1, 0, 1]:
+                cells[i].color = (1, 1, 1, 1)
+        else:
+            if cells[i].color == [1, 0, 1, 1]:
+                cells[i].color = (1, 1, 1, 1)
+
+    if hand == "left":
+        prevButton.color = (0, 1, 0, 1)
+    else:
+        prevButton.color = (1, 0, 1, 1)
+
+def GetCards(quality, main):
+    main.num = 0
+    main.deckStuff(main.ids.booster, False)
+    main.nextscreen("character", "booster")
 
 class Gear:
     def __init__(self, name, type, size, quality, min, max, definition):
