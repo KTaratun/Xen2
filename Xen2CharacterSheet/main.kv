@@ -46,7 +46,7 @@ ScreenManagement:
 		manager: sManager
 	
 <Label>:
-	pos_hint: {"center_x": .5, "center_y": .85}
+	pos_hint: {"center_x": .5, "center_y": .9}
 	font_size: 40
 	
 <Button>:
@@ -72,16 +72,19 @@ ScreenManagement:
 		text: "Xen2 Alpha"
 	Button:
 		on_release: 
+			app.root.ids.character.ids.save.disabled = False
 			root.parent.CharSelectUpdate()
 			root.parent.nextscreen(last="title", next="charSelect")
 		text: "Player"
-		pos_hint: {"center_x": .5, "center_y": .6}
+		pos_hint: {"center_x": .5, "center_y": .62}
 		size_hint: 0.5, 0.2
 	Button:
-		on_release: app.root.RandomCharacter("12.0", app.root.ids.character, app.root.character)
 		text: "Game Master"
-		pos_hint: {"center_x": .5, "center_y": .3}
+		pos_hint: {"center_x": .5, "center_y": .32}
 		size_hint: 0.5, 0.2
+		on_release: 
+			app.root.ids.character.ids.save.disabled = True
+			app.root.RandoEnemyPopup()
 		
 <CharacterSelectScreen>
 	Label:
@@ -251,6 +254,14 @@ ScreenManagement:
 	Label: 
 		pos_hint: {"center_x": .5, "center_y": .95}
 		text: "Character Creation: Deck"
+	Button:
+		id: help
+		name: "help"
+		text: "?"
+		size_hint: .04, .06
+		pos_hint: {"x": .9, "y": .9}
+		on_release:
+			app.root.Info("CARDS")
 	FloatLayout:
 		id: fL
 		size_hint: (.46, .05)
@@ -493,7 +504,12 @@ ScreenManagement:
 	Label:
 		id: TotVal
 		text: "12"
-		pos_hint: {"center_x": .5, "center_y": .075}
+		pos_hint: {"center_x": .55, "center_y": .075}
+		font_size: 45
+	Label:
+		id: Tot
+		text: "Total: "
+		pos_hint: {"center_x": .45, "center_y": .075}
 		font_size: 45
 	Button:
 		id: InsHelp
@@ -725,7 +741,7 @@ ScreenManagement:
 		size_hint: .2, .1
 		font_size: 35
 		on_release: 
-			app.root.ElementList()
+			app.root.ElementList(0)
 	Label:
 		id: bT
 		text: "none"
@@ -772,12 +788,29 @@ ScreenManagement:
 	Label:
 		id: ElTotVal
 		text: "2"
-		pos_hint: {"center_x": .55, "center_y": .075}
+		pos_hint: {"center_x": .39, "center_y": .075}
+	Label:
+		id: ElTotal
+		text: "Total:"
+		pos_hint: {"center_x": .3, "center_y": .075}
 	Label:
 		id: MasTot
 		text: "1"
 		color: 1, 0, 0, 1
-		pos_hint: {"center_x": .45, "center_y": .075}
+		pos_hint: {"center_x": .75, "center_y": .075}
+	Label:
+		id: MasTotal
+		text: "Mastery:"
+		color: 1, 0, 0, 1
+		pos_hint: {"center_x": .63, "center_y": .075}
+	Button:
+		id: help
+		name: "help"
+		text: "?"
+		size_hint: .04, .06
+		pos_hint: {"x": .9, "y": .9}
+		on_release:
+			app.root.Info("ELEMENTS")
 	Button:
 		id: next
 		text: "Next"
@@ -978,21 +1011,21 @@ ScreenManagement:
 		font_size: 25
 		pos_hint: {"x": .51, "y": .85}
 		text_size: self.size
+	Image:
+		id: cS
+		source: "CharStats.png"
+		size_hint: .7, .7
 	Label:
 		id: inventory
-		text: "Inventory: "
+		text: "INV: "
 		font_size: 25
 		pos_hint: {"x": 0, "y": .85}
 		text_size: self.size
 	Label:
 		id: invVal
 		font_size: 25
-		pos_hint: {"x": .135, "y": .85}
+		pos_hint: {"x": .07, "y": .85}
 		text_size: self.size
-	Image:
-		id: cS
-		source: "CharStats.png"
-		size_hint: .7, .7
 	Label:
 		id: blood
 		text: "BLLLAAAD"
@@ -1706,14 +1739,15 @@ ScreenManagement:
 		font_size: 30
 		disabled: True
 		on_release: 
-			app.root.Undo(character)
+			app.root.Undo(app.root.character)
 	Button:
-		id: manage
-		text: "Manage"
+		id: save
+		text: "Save"
 		size_hint: .15, .1
 		pos_hint: {"center_x": .1, "center_y": .3}
 		on_release: 
-			app.root.nextscreen("character", "manage")
+			app.root.path = open(app.root.path.name, "w")
+			app.root.SaveData(app.root.character)
 	Button:
 		id: reset
 		text: "Reset"

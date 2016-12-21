@@ -17,9 +17,13 @@ def AtkRando(atk):
         ligMedHea[i] += var
     ligMedHea[2] = atk
     shuffle(ligMedHea)
+    for i in range(0, 3):
+        ligMedHea.append(ligMedHea[i])
     return ligMedHea
 
 def DmgRando(dmg):
+    dmg /= 2
+    dmg = int(round(dmg + .1))
     min = randint(0, dmg)
     max = (dmg * 2) - min
     string = str(min) + "-" + str(max)
@@ -78,18 +82,21 @@ def CellInit(main, screen, character):
         else:
             for j in range(1, int(cells[i].name) + 1):
                 cells[i].unbind_uid('on_release', j)
-            cells[i].name = str(cells[i].fbind('on_release', partial(AddGearPopup, i, character, main, screen)))
+            cells[i].text = "EMPTY"
+            if screen.name != "loadout" or screen.name != "confirm":
+                cells[i].name = str(cells[i].fbind('on_release', partial(AddGearPopup, i, character, main, screen)))
 
-    character.lightArmor = 0
-    character.heavyArmor = 0
-    for i in range(0, 12):
-        if character.inv[i] != 0 and character.inv[i].name == "Light Armor":
-            character.lightArmor += int(character.inv[i].quality)
-        elif character.inv[i] != 0 and character.inv[i].name == "Heavy Armor":
-            character.heavyArmor += 1
+    if screen.name == "character":
+        character.lightArmor = 0
+        character.heavyArmor = 0
+        for i in range(0, 12):
+            if character.inv[i] != 0 and character.inv[i].name == "Light Armor":
+                character.lightArmor += int(character.inv[i].quality)
+            elif character.inv[i] != 0 and character.inv[i].name == "Heavy Armor":
+                character.heavyArmor += 1
 
-        screen.ids.lArmVal.text = str(character.lightArmor)
-        screen.ids.hArmVal.text = str(character.heavyArmor)
+            screen.ids.lArmVal.text = str(character.lightArmor)
+            screen.ids.hArmVal.text = str(character.heavyArmor)
 #def CellPopup(gear, button):
 #    name = Cards.Text("name", gear.name)
 #    type = Cards.Text("type", gear.type + " - Size " + str(gear.size))
@@ -139,20 +146,23 @@ def CellPopup(gear, screen, character, main, button):
                   size_hint=(None, None), size=(410, 580))
 
     if gear.type == "Melee" or gear.type == "Ranged":
-        b2 = Button(name="0", text=str(gear.attack[0]), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .28, "y": .195}, background_color=(0, 0, 0, 0))
-        b3 = Button(name="1", text=str(gear.attack[1]), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .44, "y": .195}, background_color=(0, 0, 0, 0))
-        b1 = Button(name="2", text=str(gear.attack[2]), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .6, "y": .195}, background_color=(0, 0, 0, 0))
+        if gear.attack[0] < gear.attack[3]: color = (1, 0, 0, 1)
+        else: color = (0, 0, 0, 1)
+        b2 = Button(name="0", text=str(gear.attack[0]), size_hint=(.05, .02), color=color, pos_hint={"center_x": .28, "y": .195}, background_color=(0, 0, 0, 0))
+        if gear.attack[1] < gear.attack[4]: color = (1, 0, 0, 1)
+        else: color = (0, 0, 0, 1)
+        b3 = Button(name="1", text=str(gear.attack[1]), size_hint=(.05, .02), color=color, pos_hint={"center_x": .44, "y": .195}, background_color=(0, 0, 0, 0))
+        if gear.attack[2] < gear.attack[5]: color = (1, 0, 0, 1)
+        else: color = (0, 0, 0, 1)
+        b1 = Button(name="2", text=str(gear.attack[2]), size_hint=(.05, .02), color=color, pos_hint={"center_x": .6, "y": .195}, background_color=(0, 0, 0, 0))
         b5 = Button(size_hint=(.4, .1), pos_hint={"center_x": .73, "y": .012}, text="Equip")
         fL.add_widget(b2)
         fL.add_widget(b3)
         fL.add_widget(b1)
         fL.add_widget(b5)
-        lgt = gear.attack[0]
-        med = gear.attack[1]
-        hvy = gear.attack[2]
-        b2.bind(on_release=partial(main.ChangeVal, lgt, gear.attack))
-        b3.bind(on_release=partial(main.ChangeVal, med, gear.attack))
-        b1.bind(on_release=partial(main.ChangeVal, hvy, gear.attack))
+        b2.bind(on_release=partial(Screens.WeaponPlusMinus, gear.attack, gear.attack))
+        b3.bind(on_release=partial(Screens.WeaponPlusMinus, gear.attack, gear.attack))
+        b1.bind(on_release=partial(Screens.WeaponPlusMinus, gear.attack, gear.attack))
         b5.bind(on_release=partial(EquipPopup, gear, character, screen, button))
     else:
         b2 = Button(name="item", text=str(gear.quality), size_hint=(.05, .02), color=(0, 0, 0, 1), pos_hint={"center_x": .81, "y": .195}, background_color=(0, 0, 0, 0))
@@ -160,9 +170,14 @@ def CellPopup(gear, screen, character, main, button):
         fL.add_widget(b2)
         fL.add_widget(b5)
         qlt = gear.quality
-        b2.bind(on_release=partial(main.ChangeVal, qlt, gear))
+        b2.bind(on_release=partial(Screens.WeaponPlusMinus, qlt, gear))
         b5.bind(on_release=partial(UsePopup, gear, screen, popup, character, main))
     b4.bind(on_release=partial(DiscardPopup, gear, screen, popup, character, main))
+
+    if screen.name == "loadout" or screen.name == "confirm":
+        b4.disabled = True
+        b5.disabled = True
+
     popup.open()
 
 def RandomItem(cur, index, character):
@@ -219,20 +234,23 @@ def DiscardPopup(gear, screen, prevPopup, character, main, notUsed):
 
 def AddGearPopup(index, character, main, screen, notUsed):
     b = FloatLayout()
-    l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Add random gear?")
-    b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Add")
+    l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Add gear?")
+    b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .3, "y": .13}, text="Random")
+    b2 = Button(size_hint=(.3, .3), pos_hint={"center_x": .7, "y": .13}, text="By name", disabled=True)
     b.add_widget(l)
     b.add_widget(b1)
+    b.add_widget(b2)
 
     popup = Popup(title='Add Gear',
                   content=b,
                   size_hint=(None, None), size=(410, 200))
 
-    b1.bind(on_press=partial(AddGear, index, character, main, screen))
+    b1.bind(on_press=partial(AddRandomGear, index, character, main, screen))
     b1.bind(on_release=popup.dismiss)
+    #b2.bind(on_press=partial(AddSpecificGear))
     popup.open()
 
-def AddGear(index, character, main, screen, notUsed):
+def AddRandomGear(index, character, main, screen, notUsed):
     RandomItem(main.cur, index, character)
     Screens.CalcInv(character, screen.ids.invVal)
     CellInit(main, screen, character)

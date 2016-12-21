@@ -11,10 +11,10 @@ def StatLabelUpdate(screen, stat, lab, character):
         print(screen.ids.RanVal.text)
         screen.ids.RanVal.text = str(character.Range)
     elif lab.name == "For":
-        character.Brutality = stat * 2
+        character.Brutality = stat
         screen.ids.DamVal.text = str(character.Brutality)
     elif lab.name == "Vit":
-        character.health = 16 + stat * 2
+        character.health = 8 + stat
         character.Inventory = 6 + stat * 2
         screen.ids.HPVal.text = str(character.health)
         screen.ids.InvVal.text = str(character.Inventory)
@@ -152,12 +152,20 @@ def ResetDeck(self, character, notUsed):
     self.ids.character.ids.drawMax.disabled = False
     self.character.cardsLeft = Cards.FetchDeck(self)
 
-def DeleteChar(main, button, notUsed):
+def DeleteChar(main, button):
     main.path.close()
     main.path = open(main.delete, "w")
     main.path.close()
     main.CharSelectUpdate()
-    button.disabled = True
+    main.ids.charSelect.ids.delete.disabled = True
+    main.ids.charSelect.ids.next.disabled = True
+
+    main.ids.charSelect.ids.one.color = (1, 1, 1, 1)
+    main.ids.charSelect.ids.two.color = (1, 1, 1, 1)
+    main.ids.charSelect.ids.three.color = (1, 1, 1, 1)
+    main.ids.charSelect.ids.four.color = (1, 1, 1, 1)
+    main.ids.charSelect.ids.five.color = (1, 1, 1, 1)
+    main.ids.charSelect.ids.six.color = (1, 1, 1, 1)
 
 def CalcInv(character, label):
     size = 0
@@ -220,7 +228,6 @@ def LvlUpdate(orig, temp, button, main):
         main.character.Mind = str(orig)
         StatLabelUpdate(main.ids.character, orig, main.ids.character.ids.Mind, main.character)
 
-    #find a way to permanantly update orig
     if temp > orig:
         button.color = (0, .25, 1, 1)
     elif temp < orig:
@@ -229,3 +236,47 @@ def LvlUpdate(orig, temp, button, main):
         button.color = (0, 0, 0, 1)
     button.text = str(temp)
     return temp
+
+def WeaponPlusMinus(orig, temp, button):
+    if button.last_touch.button == "left":
+        if len(button.name) == 1 and temp[int(button.name)] < orig[int(button.name) + 3]:
+            temp[int(button.name)] += 1
+            if temp[int(button.name)] > int(orig[int(button.name) + 3]):
+                button.color = (0, .25, 1, 1)
+            elif temp[int(button.name)] < int(orig[int(button.name) + 3]):
+                button.color = (1, 0, 0, 1)
+            else:
+                button.color = (0, 0, 0, 1)
+            button.text = str(temp[int(button.name)])
+            return
+        elif button.name == "item" and temp.quality < temp.max:
+            temp.quality += 1
+            if temp.quality > int(orig):
+                button.color = (0, .25, 1, 1)
+            elif temp.quality < int(orig):
+                button.color = (1, 0, 0, 1)
+            else:
+                button.color = (0, 0, 0, 1)
+            button.text = str(temp.quality)
+            return
+    elif button.last_touch.button == "right":
+        if len(button.name) == 1 and temp[int(button.name)] > 0:
+            temp[int(button.name)] -= 1
+            if temp[int(button.name)] > int(orig[int(button.name) + 3]):
+                button.color = (0, .25, 1, 1)
+            elif temp[int(button.name)] < int(orig[int(button.name) + 3]):
+                button.color = (1, 0, 0, 1)
+            else:
+                button.color = (0, 0, 0, 1)
+            button.text = str(temp[int(button.name)])
+            return
+        elif button.name == "item" and temp.quality > temp.min:
+            temp.quality -= 1
+            if temp.quality > int(orig):
+                button.color = (0, .25, 1, 1)
+            elif temp.quality < int(orig):
+                button.color = (1, 0, 0, 1)
+            else:
+                button.color = (0, 0, 0, 1)
+            button.text = str(temp.quality)
+            return

@@ -29,7 +29,7 @@ class ScreenManagement(ScreenManager):
     class Character:
         name = ""
         lvl = "12.0"
-        health = 16
+        health = 8
         lightArmor = 0
         heavyArmor = 0
         bloodType = ""
@@ -332,18 +332,24 @@ class ScreenManagement(ScreenManager):
             self.path.write(str(character.bTStats[i]) + ",")
         self.path.write(str(character.bTStats[5]) + "\n")
 
-        self.path.write(str(character.deck))
-        self.path.write("\n" + str(len(character.inv)) + "\n")
+        self.path.write(str(character.deck) + "\n")
 
-        for i in range(0, len(character.inv) - 1):
-            if character.inv[i].type == "Melee" or character.inv[i].type == "Ranged":
-                self.path.write(character.inv[i].name + "," + character.inv[i].type + "," + str(character.inv[i].size)
-                                + "," + str(character.inv[i].attack[0]) + "," + str(character.inv[i].attack[1]) + "," +
-                                str(character.inv[i].attack[2]) + "," + str(character.inv[i].damage) + "," + character.inv[i].definition + "\n")
-            else:
-                self.path.write(character.inv[i].name + "," + character.inv[i].type + "," + str(character.inv[i].size)
-                                + "," + str(character.inv[i].quality) + "," + str(character.inv[i].min) + "," +
-                                str(character.inv[i].max) + "," + character.inv[i].definition + "\n")
+        invNum = 0
+        for i in range(0, 12):
+            if character.inv[i] != 0:
+                invNum += 1
+        self.path.write(str(invNum) + "\n")
+
+        for i in range(0, 12):
+            if character.inv[i] != 0:
+                if character.inv[i].type == "Melee" or character.inv[i].type == "Ranged":
+                    self.path.write(character.inv[i].name + "," + character.inv[i].type + "," + str(character.inv[i].size)
+                                    + "," + str(character.inv[i].attack[0]) + "," + str(character.inv[i].attack[1]) + "," +
+                                    str(character.inv[i].attack[2]) + "," + str(character.inv[i].damage) + "," + character.inv[i].definition + "\n")
+                else:
+                    self.path.write(character.inv[i].name + "," + character.inv[i].type + "," + str(character.inv[i].size)
+                                    + "," + str(character.inv[i].quality) + "," + str(character.inv[i].min) + "," +
+                                    str(character.inv[i].max) + "," + character.inv[i].definition + "\n")
 
         self.path.close()
 
@@ -416,7 +422,7 @@ class ScreenManagement(ScreenManager):
 
         character.deck = temp
 
-        for i in range(0, int(parse[6][0]) - 1):
+        for i in range(0, int(parse[6][0])):
             if parse[i + 7][1] == "Melee" or parse[i + 7][1] == "Ranged":
                 character.inv[i] = Gear.Weapon(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2],
                                           [parse[i + 7][3], parse[i + 7][4], parse[i + 7][5]], parse[i + 7][6])
@@ -473,6 +479,9 @@ class ScreenManagement(ScreenManager):
         Screens.CharStats(screen)
         screen.ids.nameVal.text = character.name
         screen.ids.lvlVal.text = character.lvl
+        sp = character.lvl.split(".")
+        if int(sp[1]) > 9:
+            screen.ids.lvlVal.color = (0, .25, 1, 1)
         screen.ids.HPVal.text = str(character.health)
         screen.ids.lArmVal.text = str(character.lightArmor)
         screen.ids.hArmVal.text = str(character.heavyArmor)
@@ -556,52 +565,10 @@ class ScreenManagement(ScreenManager):
         if button.color == [0, 1, 0, 1]:
             return Screens.LvlUpdate(orig, temp, button, self)
         if button.last_touch.button == "left":
-            if len(button.name) == 1:
-                temp[int(button.name)] = temp[int(button.name)] + 1
-                if temp[int(button.name)] > int(orig):
-                    button.color = (0, .25, 1, 1)
-                elif temp[int(button.name)] < int(orig):
-                    button.color = (1, 0, 0, 1)
-                else:
-                    button.color = (0, 0, 0, 1)
-                button.text = str(temp[int(button.name)])
-                return
-            elif button.name == 'item':
-                temp.quality += 1
-                if temp.quality > int(orig):
-                    button.color = (0, .25, 1, 1)
-                elif temp.quality < int(orig):
-                    button.color = (1, 0, 0, 1)
-                else:
-                    button.color = (0, 0, 0, 1)
-                button.text = str(temp.quality)
-                return
-            else:
-                temp = int(temp) + 1
-                button.text = str(temp)
+            temp = int(temp) + 1
+            button.text = str(temp)
         elif button.last_touch.button == "right":
-            if len(button.name) == 1:
-                temp[int(button.name)] = temp[int(button.name)] - 1
-                if temp[int(button.name)] > int(orig):
-                    button.color = (0, .25, 1, 1)
-                elif temp[int(button.name)] < int(orig):
-                    button.color = (1, 0, 0, 1)
-                else:
-                    button.color = (0, 0, 0, 1)
-                button.text = str(temp[int(button.name)])
-                return
-            elif button.name == 'item':
-                temp.quality -= 1
-                if temp.quality > int(orig):
-                    button.color = (0, .25, 1, 1)
-                elif temp.quality < int(orig):
-                    button.color = (1, 0, 0, 1)
-                else:
-                    button.color = (0, 0, 0, 1)
-                button.text = str(temp.quality)
-                return
-            else:
-                temp = int(temp) - 1
+            temp = int(temp) - 1
             button.text = str(temp)
         if temp > int(orig):
             button.color = (0, .25, 1, 1)
@@ -631,6 +598,7 @@ class ScreenManagement(ScreenManager):
         popup.open()
 
     def LoadoutRandomizer(self, load, character):
+        character.inv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         if load == "sF":
             character.inv[0] = Gear.Weapon(name="Shield", type="Melee", size=2, attack=Gear.AtkRando(8), damage=Gear.DmgRando(6))
             for i in range(0, 4):
@@ -673,7 +641,7 @@ class ScreenManagement(ScreenManager):
             size=(410, 300)
             title = "Tech - Range"
         elif name == "FOR":
-            lab = Label(text="Your Force is applied to strength checks\nand when overpowering opponents.\n\nAdd your Damage bonus to each\nsuccessful attack",
+            lab = Label(text="Your Force is applied to strength checks\nand equipping weapons.\n\nAdd your Damage bonus to each\nsuccessful attack",
                         font_size=20, pos_hint={"x": .5, "y": .2})
             size=(410, 300)
             title = "Force - Damage"
@@ -714,6 +682,31 @@ class ScreenManagement(ScreenManager):
                         font_size=20, pos_hint={"x": .5, "y": 0})
             size=(460, 600)
             title="Negotiations"
+        elif name == "CARDS":
+            lab = Label(text="Your class determines your initial deck of cards which can be later modified\n"
+                             "through finding booster packs. Each class comes with a deck of 30 cards. 5\n"
+                             "Defensive, 5 Tactical, 5 Aggressive, 6 Reaction, 6 Action, 3 Full-Round.\n"
+                             "Defensive, Tactical and Aggresive cards are combat cards. When a player\n"
+                             "initiates combat with another, both players reveal a combat card from their\n"
+                             "hands simultaneously then roll for the attack. Depending on the combat cards\n"
+                             "used a player may get additional bonuses added to their roll in the form of\n"
+                             "priority.\n\nDefensive combat fends off aggressive, tactical bypasses defensive,\n"
+                             "and aggressive overpowers tactical.\n\nReactions can be played any time in which "
+                             "it's specific conditions are met.\nActions are played only on the player's turn, "
+                             "and Full-Rounds are the same as\nactions, but must be the only thing performed "
+                             "during the turn.",
+                        font_size=20, pos_hint={"x": .5, "y": .03})
+            size=(750, 500)
+            title = "Deck"
+        elif name == "ELEMENTS":
+            lab = Label(text="All of the spells within Xen2 Alpha are made up of different combinations\n"
+                        "of 6 base elements. Depending on your Psyche, you will have a higher total\nnumber "
+                        "of elements and higher Mastery. Your Mastery is equal to the number\nof different "
+                        "elements that you have access to.\n\nYour blood type dictates which elemental bonuses "
+                        "and penalties towards\nspecific base elements your character receives.",
+                        font_size=20, pos_hint={"x": .5, "y": .05})
+            size=(750, 300)
+            title = "Elements"
 
         popup = Popup(title=title,
                       content=lab,
@@ -1004,7 +997,7 @@ class ScreenManagement(ScreenManager):
         b4.bind(on_release=partial(Screens.ResetDeck, self, character))
         popup.open()
 
-    def DeletePopup(self, button):
+    def DeletePopup(self):
         b = FloatLayout()
         l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Are you sure you want to delete?")
         b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Delete")
@@ -1015,14 +1008,17 @@ class ScreenManagement(ScreenManager):
                       content=b,
                       size_hint=(None, None), size=(410, 200))
 
-        b1.bind(on_press=partial(Screens.DeleteChar, self, button))
+        b1.bind(on_press=partial(Screens.DeleteChar, self))
         b1.bind(on_release=popup.dismiss)
         popup.open()
 
-    def RandomCharacter(self, lvl, screen, character):
+    #move this
+    def RandomCharacter(self, lvl, screen, character, notUsed):
+        lvl = lvl.text + ".0"
         self.nextscreen("title", "character")
+        character.inv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         Random.RandomCharacter(lvl, character, self.cur)
-        self.character.cardsLeft = Cards.FetchDeck(self)
+        character.cardsLeft = Cards.FetchDeck(self)
         Screens.ResetAll(self, self)
         self.CharScreenUpdate(screen, character)
 
@@ -1067,6 +1063,27 @@ class ScreenManagement(ScreenManager):
         Screens.ResetDeck(self, self.character, 0)
         self.deckStuff(self.ids.booster, False)
         Cards.NewCardPlacement(self)
+
+    def RandoEnemyPopup(self):
+        b = FloatLayout()
+        t = TextInput(size_hint=(.18, .38), font_size=30, pos_hint={"center_x": .7, "y": .55})
+        b1 = Button(size_hint=(.4, .4), pos_hint={"center_x": .73, "y": .04}, text="Confirm")
+        b2 = Button(size_hint=(.4, .4), pos_hint={"center_x": .27, "y": .04}, text="Cancel")
+        l = Label(font_size=28, pos_hint={"center_x": .36, "y": .23}, text="What level?")
+        b.add_widget(l)
+        b.add_widget(t)
+        b.add_widget(b1)
+        b.add_widget(b2)
+
+        popup = Popup(title='Random Enemy',
+                      content=b,
+                      size_hint=(None, None), size=(410, 200),
+                      auto_dismiss=False)
+
+        b1.bind(on_release=popup.dismiss)
+        b1.bind(on_release=partial(self.RandomCharacter, t, self.ids.character, self.character))
+        b2.bind(on_release=popup.dismiss)
+        popup.open()
 
     class TitleScreen(Screen):
         pass

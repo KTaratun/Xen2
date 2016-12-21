@@ -29,8 +29,8 @@ create table Gear(
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Light Armor', 'Armor', 1, 1, 3, 5,
-        'Adds up to 3 to your Light Armor.'
+		'Light Armor', 'Armor', 1, 1, 2, 5,
+        'Adds up to 2 to your Light Armor.'
     );
     
     insert into gear
@@ -43,7 +43,7 @@ create table Gear(
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'First Aid', 'Healing', 1, 3, 8, 5,
+		'First Aid', 'Healing', 1, 2, 4, 5,
         'Heals health equal to its quality to one adjacent target.'
     );
     
@@ -64,7 +64,7 @@ create table Gear(
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Grenade', 'Damage', 1, 8, 14, 4,
+		'Grenade', 'Damage', 1, 4, 7, 4,
         'R:1, deals damage to all within the blast radius that fails an Instinct check.'
     );
     

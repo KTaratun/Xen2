@@ -16,8 +16,8 @@ def RandomCharacter(lvl, character, cur):
     character.Mind = stats[5]
     character.Movement = 3 + stats[0]
     character.Range = 3 + stats[1]
-    character.Brutality = stats[2] * 2
-    character.health = stats[3] * 2 + 16
+    character.Brutality = stats[2]
+    character.health = stats[3] + 8
     character.Inventory = stats[3] * 2 + 6
     if stats[4] == 0:
         character.ElTotal = 2
@@ -37,6 +37,7 @@ def RandomCharacter(lvl, character, cur):
     character.Liquid = ele[5]
 
     character.deck = RandomDeck(cur)
+    print(character.deck)
 
 def RandomName():
     size = randint(3, 8)
@@ -54,8 +55,12 @@ def RandomName():
 
 def RandomStats(lvl):
     stats = [0, 0, 0, 0, 0, 0]
-    for i in range(0, lvl):
-        stats[randint(0, 5)] += 1
+    run = lvl
+    while run != 0:
+        ran = randint(0, 5)
+        if stats[ran] + 1 < 6:
+            stats[ran] += 1
+            run -= 1
     return stats
 
 def RandomBloodType(character):

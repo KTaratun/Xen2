@@ -58,43 +58,43 @@ create table Cards(
      insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Stamina Attack', 'Instinct', 'Stamina', 'Combat', 'Defensive', 'Base Class', 
-        'Opponent loses 2 Stamina and unless you lose priority, return this card to your hand.'
+		'Reactive Attack', 'Instinct', 'Stamina', 'Combat', 'Defensive', 'Base Class', 
+        'Return all reactions used to your hand after combat and gain 2 stamina.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Reactive Attack', 'Instinct', 'Stamina', 'Combat', 'Tactical', 'Base Class', 
-        'Return all reactions used to your hand after combat and gain 2 stamina.'
+		'Stamina Attack', 'Instinct', 'Stamina', 'Combat', 'Tactical', 'Base Class', 
+        'Opponent loses 1 Stamina and unless you lose priority, return this card to your hand.'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Winding Attack', 'Instinct', 'Stamina', 'Combat', 'Aggressive', 'Base Class', 
-        'Opponent loses 4 stamina.'
+        'Opponent loses 3 stamina.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Gut Shot', 'Instinct', 'Stamina', 'Reaction', 'Hit', 'Base Class', 
-        'Opponent loses 3 additional Stamina.'
+        'Opponent loses 2 additional Stamina.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Cool Down', 'Instinct', 'Stamina', 'Half-Round', 'Movement Mod', 'Base Class', 
-        'Gain 1 Stamina for each space moved.'
+		'Cool Down', 'Instinct', 'Stamina', 'Half-Round', 'Standard', 'Base Class', 
+        'Gain 4 Stamina.'
     );
 
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Non-Lethal', 'Instinct', 'Stamina', 'Full-Round', 'Stance', 'Base Class', 
-        'All successful actions on opponent deal an additional 2 Stamina damage.'
+        'All successful actions on opponent deal an additional 1  stamina DMG and heal 1 stamina.'
     );
     
     
@@ -145,7 +145,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Mod Attack', 'Tech', 'Items', 'Combat', 'Defensive', 'Base Class', 
-        'You can use an item before combat.'
+        'You can use an item before combat without discarding it.'
     );
     
     insert into cards
@@ -166,21 +166,21 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Utilize', 'Tech', 'Items', 'Reaction', 'Item Use', 'Base Class', 
-        'Item gains +3 effectiveness and you can use it on any ally within range.'
+        'Item gains +1 effectiveness and you can use it on any ally within range.'
     ); 
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Craft', 'Tech', 'Items', 'Half-Round', 'Standard', 'Base Class', 
-        'Construct a random item. 1: Deal 6 DMG. 2: Heal 6 Health. 3: +2 Bonus. 4: -2 Penalty. 5: Draw 2. 6: Discard 2.'
+        'Construct a random item. 1: Deal 2 DMG. 2: Heal 2 Health. 3: +2 Bonus. 4: -2 Penalty. 5: Draw 2. 6: Discard 2.'
     );
 
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Administer', 'Tech', 'Items', 'Full-Round', 'Standard', 'Base Class', 
-        'You can use any number of items from your inventory and any allies within range and keep them afterward.'
+        'You can use an item from your inventory and any other players within range.'
     );
     
     
@@ -209,7 +209,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Optimize', 'Tech', 'Tech', 'Reaction', 'Tech Hit', 'Base Class', 
-        'Tech attack within range receives +3 or -3 to effectiveness.'
+        'Tech attack within range receives +2 or -2 to effectiveness.'
     ); 
     
     insert into cards
@@ -288,7 +288,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Dynamic Attack', 'Force', 'Priority', 'Combat', 'Aggressive', 'Base Class', 
-        'Discard any cards to receive bonuses. Light: 2 Stamina DMG. Medium: +2 Bonus. Heavy: Gain +4 DMG.'
+        'Discard any cards to receive bonuses. Light: 3 Stamina DMG. Medium: +3 Bonus. Heavy: Gain +3 DMG.'
     );
     
     insert into cards
@@ -317,28 +317,28 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Steady Attack', 'Force', 'Damage', 'Combat', 'Defensive', 'Base Class', 
-        'Deal 3 damage before the attack as long as you didn''t lose priority.'
+        'Deal 1 damage before the attack as long as you didn''t lose priority.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Bleed Attack', 'Force', 'Damage', 'Combat', 'Tactical', 'Base Class', 
-        'Deal 2 DMG over 4 turns (Counts as status effect).'
+        'Deal 1 DMG over 4 turns (Counts as status effect).'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Devastating Attack', 'Force', 'Damage', 'Combat', 'Aggressive', 'Base Class', 
-        'Deal + 6 DMG for the attack.'
+        'Deal + 3 DMG for the attack.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Exert', 'Force', 'Damage', 'Reaction', 'Combat', 'Base Class', 
-        'Deal an additional +5 DMG on hit.'
+        'Deal an additional +2 DMG on hit.'
     ); 
     
     insert into cards
@@ -352,7 +352,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Lethal', 'Force', 'Damage', 'Full-Round', 'Stance', 'Base Class', 
-        'Gain +3 Damage on all hits.'
+        'Gain +1 Damage on all hits and gain an additional 1 for each combat card discarded.'
     );
     
     
@@ -374,21 +374,21 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Sunder Attack', 'Force', 'Disable', 'Combat', 'Aggressive', 'Base Class', 
-        'Deal 6 light Armor and 1 heavy Armor DMG and DR cannot be applied.'
+        'Deal 3 light Armor and 1 heavy Armor DMG and DR cannot be applied.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Crush', 'Force', 'Disable', 'Reaction', 'Opponent Defense', 'Base Class', 
-        'Cancel all effects of any defensive cards used by opponent and discard them.'
+        'If opponent used a combat card in defense, they discard it before checking for priority.'
     ); 
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Cripple', 'Force', 'Disable', 'Half-Round', 'Attack Mod', 'Base Class', 
-        'Opponent receives penalty depending on which speed they were hit on. Light: -1 Move. Medium: -1 Range. Heavy: -2 DMG.'
+        'Opponent receives penalty depending on which speed they were hit on. Light: -1 Move. Medium: -1 Range. Heavy: -1 DMG.'
     );
 
 	insert into cards
@@ -445,15 +445,15 @@ create table Cards(
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Vigilant Attack', 'Vitality', 'Defense', 'Combat', 'Defensive', 'Base Class', 
-        'Gain +7 DR for the attack.'
+		'Bolster Attack', 'Vitality', 'Defense', 'Combat', 'Tactical', 'Base Class', 
+        'Gain 1 heavy armor.'
     );
     
     insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
-		'Bolster Attack', 'Vitality', 'Defense', 'Combat', 'Tactical', 'Base Class', 
-        'Gain 1 heavy armor.'
+		'Vigilant Attack', 'Vitality', 'Defense', 'Combat', 'Defensive', 'Base Class', 
+        'Gain +4 DR for the attack and opponent loses 4 DR.'
     );
     
 	insert into cards
@@ -481,7 +481,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Fortified', 'Vitality', 'Defense', 'Full-Round', 'Stance', 'Base Class', 
-        'Gain 1 light armor every time you use a Combat card.'
+        'Gain 1 light armor every time you leave combat without taking health DMG.'
     );
     
     
@@ -489,7 +489,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Curative Attack', 'Vitality', 'Health', 'Combat', 'Defensive', 'Base Class', 
-        'Gain 3 Health regardless of who wins. If you were to be downed from this attack, stay prevent it and gain 3 Health.'
+        'Gain 1 Health regardless of who wins. If you were to be downed from this attack, stay prevent it and gain 1 Health.'
     );
     
     insert into cards
@@ -524,7 +524,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Restore', 'Vitality', 'Health', 'Full-Round', 'Standard', 'Base Class', 
-        'Revive downed target with +10 Health.'
+        'Revive downed target with +2 Health.'
     );
     
     
@@ -539,14 +539,14 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Charge Psi', 'Psyche', 'Creation', 'Combat', 'Tactical', 'Base Class', 
-        'You can add 2 Charges after the attack.'
+        'You can equip up to a level 2 charge after the attack.'
     );
     
 	insert into cards
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Enhanced Psi', 'Psyche', 'Creation', 'Combat', 'Aggressive', 'Base Class', 
-        'For each. ZEP: +2 Stamina DMG. SPA: -1 RNG 1 turn. HEA: +3 DMG. MIN: +4 Health. VOI: +1 Bonus. LIQ: Discard 1 Card.'
+        'For each. ZEP: +2 Stamina DMG. SPA: -1 RNG 1 turn. HEA: +2 DMG. MIN: +2 Health. VOI: +1 Bonus. LIQ: Discard 1 Card.'
     );
     
     insert into cards
@@ -689,7 +689,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Scan', 'Mind', 'Card Draw', 'Half-Round', 'Standard', 'Base Class', 
-        'Look at target opponents hand within sight and discard a card from it.'
+        'Look at target opponents hand within sight and discard a card from it. That player then draws a card.'
     );
 
 	insert into cards

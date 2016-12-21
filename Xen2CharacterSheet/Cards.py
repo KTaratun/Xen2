@@ -190,7 +190,7 @@ def CardSelect(main, screen, card, sys):
             if sys.is_double_tap and screen.name == "character":
                 BringCardToFront(main.ids.character.ids.fL, card)
 
-            if sys.x > 420:
+            if sys.x > 420 and screen.name == "booster":
                 if main.newSelected.pos != [0,1]:
                     main.newSelected.children[4].color = (1, 1, 1, 1)
                     main.newSelected.children[3].color = (1, 1, 1, 1)
