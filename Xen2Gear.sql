@@ -71,14 +71,14 @@ create table Gear(
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Ammo', 'Other', 1, 1, 6, 5,
-        'Ammo. Up to 6 per stack.'
+		'Ammo', 'Other', 1, 1, 3, 5,
+        'Ammo. Up to 3 per stack.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Element', 'Other', 1, 1, 5, 5,
+		'Element', 'Other', 1, 1, 3, 5,
         'Receive x elements of one type equal to its quality.'
     );
     

@@ -467,7 +467,7 @@ create table Cards(
     (cardName, cardClass, cardSet, cardType, cardSubType, cardSystem, cardText
     ) values (
 		'Defense', 'Vitality', 'Defense', 'Reaction', 'Hit', 'Base Class', 
-        'Gain an additional +4 DR.'
+        'Gain an additional +2 DR.'
     ); 
     
     insert into cards

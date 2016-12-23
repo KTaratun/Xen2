@@ -150,7 +150,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .5, "center_y": .08}
 		disabled: True
 		on_release:
-			app.root.DeletePopup(self)
+			app.root.DeletePopup()
 	Button:
 		id: next
 		text: "Select"
@@ -471,7 +471,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: HPVal
-		text: "16"
+		text: "10"
 		pos_hint: {"x": .7, "y": .39}
 		font_size: 45
 		text_size: self.size
@@ -1255,7 +1255,7 @@ ScreenManagement:
 		size_hint: .15, .1
 		pos_hint: {"center_x": .42, "center_y": .08}
 		on_release: 
-			app.root.ElementList()
+			app.root.ElementList(0)
 	Button:
 		id: negotiations
 		text: "Negotiations"
@@ -1707,39 +1707,46 @@ ScreenManagement:
 		on_release:
 			app.root.Info("MIN")
 	Button:
-		id: drawMax
-		text: "Max"
+		id: draw
+		text: "Deck"
 		pos_hint: {"x": .9, "y": .46}
 		size_hint: .1, .1
 		font_size: 30
 		on_release: 
-			app.root.DrawMax(app.root.character)
-	Button:
-		id: draw
-		text: "Draw"
-		pos_hint: {"x": .8, "y": .46}
-		size_hint: .1, .1
-		font_size: 30
-		on_release: 
-			app.root.DrawCard(app.root.character)
+			app.root.DrawCardPopup()
 	Button:
 		id: discard
 		text: "Discard"
-		pos_hint: {"x": .66, "y": .46}
+		pos_hint: {"x": .76, "y": .46}
 		size_hint: .14, .1
 		font_size: 30
 		disabled: True
 		on_release: 
-			app.root.Discard(card=app.root.selected, character=app.root.character)
-	Button:
-		id: undo
-		text: "Undo"
-		pos_hint: {"x": .56, "y": .46}
-		size_hint: .1, .1
-		font_size: 30
-		disabled: True
-		on_release: 
-			app.root.Undo(app.root.character)
+			app.root.DiscardPopup()
+	Label:
+		id: deckLab
+		text: "Stamina:"
+		pos_hint: {"x": .545, "y": .49}
+		size_hint: .14, .1
+		font_size: 25
+	Label:
+		id: deckVal
+		text: "30"
+		pos_hint: {"x": .63, "y": .49}
+		size_hint: .14, .1
+		font_size: 25
+	Label:
+		id: discLab
+		text: "Discard:"
+		pos_hint: {"x": .55, "y": .43}
+		size_hint: .14, .1
+		font_size: 25
+	Label:
+		id: discVal
+		text: "0"
+		pos_hint: {"x": .63, "y": .43}
+		size_hint: .14, .1
+		font_size: 25
 	Button:
 		id: save
 		text: "Save"

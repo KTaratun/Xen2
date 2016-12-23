@@ -4,7 +4,6 @@ import Cards
 import Screens
 import Elements
 import Random
-from random import randint
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -29,7 +28,7 @@ class ScreenManagement(ScreenManager):
     class Character:
         name = ""
         lvl = "12.0"
-        health = 8
+        health = 10
         lightArmor = 0
         heavyArmor = 0
         bloodType = ""
@@ -238,6 +237,9 @@ class ScreenManagement(ScreenManager):
 
         fetch = Cards.FetchDeck(self)
 
+        fetch = Cards.Sorting(fetch, self.character.deck)
+        print(self.character.deck)
+
         col = 0
         butCol = 0
         mult = 1
@@ -274,10 +276,7 @@ class ScreenManagement(ScreenManager):
         character.TempPsy = character.Psyche
         character.Mastery = character.Psyche + 1
         character.MasTot = character.Mastery
-        if character.Psyche == 0:
-            character.ElTotal = 2
-        else:
-            character.ElTotal = character.Psyche * 4
+        character.ElTotal = character.Mastery * 3
         screen.ids.ElTotVal.text = str(character.ElTotal)
         screen.ids.MasTot.text = str(character.Mastery)
         screen.ids.ZepVal.text = str(0)
@@ -513,52 +512,6 @@ class ScreenManagement(ScreenManager):
         self.character.cardsLeft = Cards.FetchDeck(self)
         Gear.CellInit(self, screen, character)
 
-    def DrawCard(self, character):
-        #Loads and adds a card from deck to hand
-        if len(character.cardsLeft) == 0:
-            return
-
-        num = randint(0, len(character.cardsLeft) - 1)
-        #pos = [uniform(.94, 1), uniform(.94, 1)]
-        card = Button(name=str(num), pos_hint={"x": 1, "y": 1}, size_hint=(.47, 8), background_color=(0, 0, 0, 0))
-        Cards.LoadCard(self, self.ids.character, character.cardsLeft[num], card, (620, -20), 1)
-        self.cardId += 1
-        self.ids.character.ids.fL.add_widget(card)
-        character.cardsLeft.pop(num)
-        character.hand.append(card)
-
-        if len(character.cardsLeft) == 0:
-            self.ids.character.ids.draw.disabled = True
-            self.ids.character.ids.drawMax.disabled = True
-
-    def DrawMax(self, character):
-        #Draw up to max hand size
-        while len(character.hand) < int(character.Intellect):
-            self.DrawCard(character)
-
-    def Discard(self, card, character):
-        for i in range(0, len(character.hand)):
-            if character.hand[i].name == card.name:
-                card.children[4].color = (1, 1, 1, 1)
-                card.children[3].color = (1, 1, 1, 1)
-                character.hand.remove(card)
-
-                self.ids.character.ids.fL.remove_widget(card)
-                character.discard.append(card)
-                self.ids.character.ids.undo.disabled = False
-                self.ids.character.ids.discard.disabled = True
-                break
-
-    def Undo(self, character):
-        if (len(self.character.discard) < 1):
-            return
-        last = character.discard.pop()
-        character.hand.append(last)
-        self.ids.character.ids.fL.add_widget(last)
-
-        if (len(character.discard) < 1):
-            self.ids.character.ids.undo.disabled = True
-
     def ChangeVal(self, orig, temp, button):
         #Temporarily change values of stats while playing.
         #I need to seriously clean this up
@@ -619,7 +572,7 @@ class ScreenManagement(ScreenManager):
             Gear.CellInit(main=self, screen=self.ids.loadout, character=character)
         elif load == "lL":
             character.inv[0] = Gear.WeaponRandomizer(size=4, type="Ranged")
-            character.inv[1] = Gear.WeaponRandomizer(size=2, type="Ranged")
+            character.inv[1] = Gear.WeaponRandomizer(size=2, type="Melee")
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Ammo'", 2, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Ammo'", 3, character)
             Gear.GetGear(self.cur, "SELECT * FROM gear WHERE gearName = 'Grenade'", 4, character)
@@ -1055,6 +1008,7 @@ class ScreenManagement(ScreenManager):
         selInd = cards.index(self.selected)
         newInd = self.boosterCards.index(self.newSelected)
         self.character.deck[selInd], self.boostInd[newInd] = self.boostInd[newInd], self.character.deck[selInd]
+        #Cards.Sorting(self.)
 
         query = "SELECT * FROM cards WHERE cardId = %s"
         self.cur.execute(query, (cards[selInd].name))
@@ -1083,6 +1037,58 @@ class ScreenManagement(ScreenManager):
         b1.bind(on_release=popup.dismiss)
         b1.bind(on_release=partial(self.RandomCharacter, t, self.ids.character, self.character))
         b2.bind(on_release=popup.dismiss)
+        popup.open()
+
+    def DrawCardPopup(self):
+        b = FloatLayout()
+        l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Draw Card?")
+        b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .8, "y": .13}, text="Draw")
+        b2 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Max")
+        b3 = Button(size_hint=(.3, .3), pos_hint={"center_x": .2, "y": .13}, text="Search")
+        b.add_widget(l)
+        b.add_widget(b1)
+        b.add_widget(b2)
+        b.add_widget(b3)
+
+        popup = Popup(title='Deck',
+                      content=b,
+                      size_hint=(None, None), size=(410, 200))
+
+        b1.bind(on_press=partial(Cards.DrawCard, self, self.character))
+        b1.bind(on_release=popup.dismiss)
+        b2.bind(on_press=partial(Cards.DrawMax, self, self.character))
+        b2.bind(on_release=popup.dismiss)
+        b3.bind(on_press=partial(Cards.SearchPopup, self, self.character))
+        b3.bind(on_release=popup.dismiss)
+        popup.open()
+
+    def DiscardPopup(self):
+        b = FloatLayout()
+        l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Discard?")
+        b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .8, "y": .13}, text="Discard")
+        b2 = Button(size_hint=(.3, .3), pos_hint={"center_x": .2, "y": .13}, text="Undo")
+        b3 = Button(size_hint=(.3, .3), pos_hint={"center_x": .5, "y": .13}, text="Stamina")
+        b.add_widget(l)
+        b.add_widget(b1)
+        b.add_widget(b2)
+        b.add_widget(b3)
+
+        if len(self.character.discard) < 1:
+            b2.disabled = True
+            b3.disabled = True
+        if self.selected.pos == [0, 1]:
+            b1.disabled = True
+
+        popup = Popup(title='Draw Card',
+                      content=b,
+                      size_hint=(None, None), size=(410, 200))
+
+        b1.bind(on_press=partial(Cards.Discard, self, self.character))
+        b1.bind(on_release=popup.dismiss)
+        b2.bind(on_press=partial(Cards.Undo, self, self.character))
+        b2.bind(on_release=popup.dismiss)
+        b3.bind(on_press=partial(Cards.GainStamina, self, self.character))
+        b3.bind(on_release=popup.dismiss)
         popup.open()
 
     class TitleScreen(Screen):

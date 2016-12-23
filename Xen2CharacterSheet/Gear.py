@@ -330,7 +330,6 @@ def EquipConfirm(left, gear, character, screen, prevButton, button):
              screen.ids.cellFive, screen.ids.cellSix, screen.ids.cellSeven, screen.ids.cellEight,
              screen.ids.cellNine, screen.ids.cellTen, screen.ids.cellEleven, screen.ids.cellTwelve]
 
-    hand = ""
     if left.color == [0, 1, 0, 1]:
         character.Left = gear
         hand = "left"

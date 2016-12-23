@@ -17,13 +17,10 @@ def RandomCharacter(lvl, character, cur):
     character.Movement = 3 + stats[0]
     character.Range = 3 + stats[1]
     character.Brutality = stats[2]
-    character.health = stats[3] + 8
+    character.health = stats[3] + 10
     character.Inventory = stats[3] * 2 + 6
-    if stats[4] == 0:
-        character.ElTotal = 2
-    else:
-        character.ElTotal = stats[4] * 4
     character.Mastery = 1 + stats[4]
+    character.ElTotal = character.Mastery * 3
     character.Intellect = 3 + stats[5]
 
     RandomInventory(cur, character)

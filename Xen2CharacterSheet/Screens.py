@@ -14,13 +14,13 @@ def StatLabelUpdate(screen, stat, lab, character):
         character.Brutality = stat
         screen.ids.DamVal.text = str(character.Brutality)
     elif lab.name == "Vit":
-        character.health = 8 + stat
+        character.health = 10 + stat
         character.Inventory = 6 + stat * 2
         screen.ids.HPVal.text = str(character.health)
         screen.ids.InvVal.text = str(character.Inventory)
     elif lab.name == "Psy":
         character.Mastery = stat + 1
-        character.ElTotal = stat * 4
+        character.ElTotal = stat * 3
         screen.ids.MasVal.text = str(character.Mastery)
     elif lab.name == "Min":
         character.Intellect = 3 + stat
@@ -146,10 +146,8 @@ def ResetDeck(self, character, notUsed):
     character.cardsLeft.clear()
     character.discard.clear()
     self.selected = Button(pos=(0, 1))
-    self.ids.character.ids.undo.disabled = True
     self.ids.character.ids.discard.disabled = True
     self.ids.character.ids.draw.disabled = False
-    self.ids.character.ids.drawMax.disabled = False
     self.character.cardsLeft = Cards.FetchDeck(self)
 
 def DeleteChar(main, button):
