@@ -15,34 +15,6 @@ create table Gear(
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
-		'Melee Weapon', 'Melee', 0, 1, 6, 5,
-        'A random melee weapon with a size rating equal to its quality.'
-    );
-    
-    insert into gear
-    (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
-    ) values (
-		'Ranged Weapon', 'Ranged', 0, 1, 6, 5,
-        'A random melee weapon with a size rating equal to its quality.'
-    );
-    
-    insert into gear
-    (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
-    ) values (
-		'Light Armor', 'Armor', 1, 1, 2, 5,
-        'Adds up to 2 to your Light Armor.'
-    );
-    
-    insert into gear
-    (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
-    ) values (
-		'Heavy Armor', 'Armor', 1, 1, 1, 5,
-        'Adds 1 to your Heavy Armor.'
-    );
-    
-    insert into gear
-    (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
-    ) values (
 		'First Aid', 'Healing', 1, 2, 4, 5,
         'Heals health equal to its quality to one adjacent target.'
     );
@@ -51,7 +23,7 @@ create table Gear(
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Refresher', 'Healing', 1, 0, 0, 4,
-        'Put your discard pile into your deck and draw a card.'
+        'Gain 5 Stamina.'
     );
     
     insert into gear
@@ -79,7 +51,7 @@ create table Gear(
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Element', 'Other', 1, 1, 3, 5,
-        'Receive x elements of one type equal to its quality.'
+        'Receive up to 3 elements of any type equal to its quality.'
     );
     
     insert into gear
@@ -93,14 +65,19 @@ create table Gear(
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'EXP', 'Other', 1, 1, 1, 1,
-        'Gain x EXP equal to its quality.'
+        'Gain 1 EXP.'
     );
     
     insert into gear
     (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
     ) values (
 		'Skill Pack', 'Other', 1, 2, 5, 3,
-        'Receive x cards equal to its quality.'
+        'Receive up to 5 cards equal to its quality.'
     );
     
-    
+	insert into gear
+    (gearName, gearType, gearSize, gearQualityMin, gearQualityMax, gearFindRate, gearDef
+    ) values (
+		'Key', 'Other', 1, 0, 0, 0,
+        'Mission item.'
+    );

@@ -12,10 +12,6 @@ ScreenManagement:
 		id: charSelect
 		name: "charSelect"
 		manager: sManager
-	ClassSelectScreen:
-		id: class
-		name: "class"
-		manager: sManager
 	CardInfoScreen:
 		id: cards
 		name: "cards"
@@ -91,7 +87,8 @@ ScreenManagement:
 		text: "Character Select"
 	Button:
 		id: one
-		pos_hint: {"center_x": .25, "center_y": .7}
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .2, "center_y": .7}
 		on_release: 
 			root.parent.path = open("char1.txt", "w") if self.text == "NEW CHAR" else open("char1.txt", "r")
 			app.root.delete = "char1.txt"
@@ -100,7 +97,8 @@ ScreenManagement:
 			else: delete.disabled = False
 	Button:
 		id: three
-		pos_hint: {"center_x": .25, "center_y": .5}
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .2, "center_y": .55}
 		on_release: 
 			root.parent.path = open("char3.txt", "w") if self.text == "NEW CHAR" else open("char3.txt", "r")
 			app.root.delete = "char3.txt"
@@ -109,7 +107,8 @@ ScreenManagement:
 			else: delete.disabled = False
 	Button:
 		id: five
-		pos_hint: {"center_x": .25, "center_y": .3}
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .2, "center_y": .4}
 		on_release: 
 			root.parent.path = open("char5.txt", "w") if self.text == "NEW CHAR" else open("char5.txt", "r")
 			app.root.delete = "char5.txt"
@@ -117,8 +116,19 @@ ScreenManagement:
 			if self.text == "NEW CHAR": delete.disabled = True
 			else: delete.disabled = False
 	Button:
+		id: seven
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .2, "center_y": .25}
+		on_release: 
+			root.parent.path = open("char7.txt", "w") if self.text == "NEW CHAR" else open("char7.txt", "r")
+			app.root.delete = "char7.txt"
+			app.root.colorUpdate(root, self, app.root.character)
+			if self.text == "NEW CHAR": delete.disabled = True
+			else: delete.disabled = False
+	Button:
 		id: two
-		pos_hint: {"center_x": .75, "center_y": .7}
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .8, "center_y": .7}
 		on_release: 
 			root.parent.path = open("char2.txt", "w") if self.text == "NEW CHAR" else open("char2.txt", "r")
 			app.root.delete = "char2.txt"
@@ -127,7 +137,8 @@ ScreenManagement:
 			else: delete.disabled = False
 	Button:
 		id: four
-		pos_hint: {"center_x": .75, "center_y": .5}
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .8, "center_y": .55}
 		on_release: 
 			root.parent.path = open("char4.txt", "w") if self.text == "NEW CHAR" else open("char4.txt", "r")
 			app.root.delete = "char4.txt"
@@ -136,10 +147,61 @@ ScreenManagement:
 			else: delete.disabled = False
 	Button:
 		id: six
-		pos_hint: {"center_x": .75, "center_y": .3}
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .8, "center_y": .4}
 		on_release: 
 			root.parent.path = open("char6.txt", "w") if self.text == "NEW CHAR" else open("char6.txt", "r")
 			app.root.delete = "char6.txt"
+			app.root.colorUpdate(root, self, app.root.character)
+			if self.text == "NEW CHAR": delete.disabled = True
+			else: delete.disabled = False
+	Button:
+		id: eight
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .8, "center_y": .25}
+		on_release: 
+			root.parent.path = open("char8.txt", "w") if self.text == "NEW CHAR" else open("char8.txt", "r")
+			app.root.delete = "char8.txt"
+			app.root.colorUpdate(root, self, app.root.character)
+			if self.text == "NEW CHAR": delete.disabled = True
+			else: delete.disabled = False
+	Button:
+		id: nine
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .5, "center_y": .7}
+		on_release: 
+			root.parent.path = open("char9.txt", "w") if self.text == "NEW CHAR" else open("char9.txt", "r")
+			app.root.delete = "char9.txt"
+			app.root.colorUpdate(root, self, app.root.character)
+			if self.text == "NEW CHAR": delete.disabled = True
+			else: delete.disabled = False
+	Button:
+		id: ten
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .5, "center_y": .55}
+		on_release: 
+			root.parent.path = open("char10.txt", "w") if self.text == "NEW CHAR" else open("char10.txt", "r")
+			app.root.delete = "char10.txt"
+			app.root.colorUpdate(root, self, app.root.character)
+			if self.text == "NEW CHAR": delete.disabled = True
+			else: delete.disabled = False
+	Button:
+		id: eleven
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .5, "center_y": .4}
+		on_release: 
+			root.parent.path = open("char11.txt", "w") if self.text == "NEW CHAR" else open("char11.txt", "r")
+			app.root.delete = "char11.txt"
+			app.root.colorUpdate(root, self, app.root.character)
+			if self.text == "NEW CHAR": delete.disabled = True
+			else: delete.disabled = False
+	Button:
+		id: twelve
+		size_hint: 0.25, 0.1
+		pos_hint: {"center_x": .5, "center_y": .25}
+		on_release: 
+			root.parent.path = open("char12.txt", "w") if self.text == "NEW CHAR" else open("char12.txt", "r")
+			app.root.delete = "char12.txt"
 			app.root.colorUpdate(root, self, app.root.character)
 			if self.text == "NEW CHAR": delete.disabled = True
 			else: delete.disabled = False
@@ -159,96 +221,11 @@ ScreenManagement:
 		disabled: True
 		on_release:
 			root.parent.backStack.append(root.name)
-			app.root.current = "class" if app.root.character.Class == "NEW CHAR" else app.root.CharInit(app.root.character)
+			app.root.current = "stats" if app.root.character.Class == "NEW CHAR" else app.root.CharInit(app.root.character)
 			if app.root.character.Class == "NEW CHAR": app.root.character = app.root.Character()
 			next.disabled = True
 			delete.disabled = True
 			app.root.colorUpdate(root, self, app.root.character)
-			
-<ClassSelectScreen>:
-	Label:
-		text: "Character Creation: Class"
-	Label:
-		id: desc
-		font_size: 24
-		pos_hint: {"left": 1, "center_y": .335}
-	Button:
-		id: one
-		name: "Scout"
-		text: "Scout"
-		pos_hint: {"center_x": .2, "center_y": .7}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
-			root.ids.desc.text = "Scout characters favor Speed, Board Control and Non-Leathal\nCombat. Their Speed allows them to receive action bonues to\nensure success in combat. They can manipulate players\npositions on the battlefield for greater strategy. Scouts can\nknock players out by removing cards from their decks."
-	Button:
-		id: two
-		name: "Technician"
-		text: "Technician"
-		pos_hint: {"center_x": .5, "center_y": .7}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
-			root.ids.desc.text = "Technicians are proficient with Items, Weapons and Tech\nactions. They can create a variety of items on the spot and\nuse them more effectively. Their prowess with weapons\nallows them to push their weapons to the limits. Technicians\nTech abilities grant them the power to alter the stats of players."
-	Button:
-		id: three
-		name: "Assault"
-		text: "Assault"
-		pos_hint: {"center_x": .8, "center_y": .7}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
-			root.ids.desc.text = "Assault characters slay opponents with disabling effects,\npriority and raw power. Their power can be focused to target\ntheir opponents weak spots. Their attacks have increased\npriority which can grant bonuses in battle. They can down\nenemies faster than other classes with large damage buffs. "
-	Button:
-		id: four
-		name: "Guard"
-		text: "Guard"
-		pos_hint: {"center_x": .2, "center_y": .55}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
-			root.ids.desc.text = "Guards have the most defense, life gain and prevent abilities\nfrom triggering. They can carry the most armor and repair\nit when it starts breaking. They can heal fallen allies, amplify\nhealing abilities and leach life from opponents. They can\nalso cancel abilities and remove status effects from players. "
-	Button:
-		id: five
-		name: "PSI"
-		text: "PSI"
-		pos_hint: {"center_x": .5, "center_y": .55}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
-			root.ids.desc.text = "PSI characters have greater control over artificial magic. They\ncan create additional elements, charge them faster and\nalter currently charged elements in various ways. By sacrificing\naddtional elements, they can boost the effects of their charges. "
-	Button:
-		id: six
-		name: "Arbiter"
-		text: "Arbiter"
-		pos_hint: {"center_x": .8, "center_y": .55}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
-			root.ids.desc.text = "Arbiters dictate the flow of battle through speech. They\nreceive major bonuses while negotiating and can affect\nmultiple targets. Their greater intellect allows them to draw\ncards and force opponents to discard. They can trick\nopponents into moving and attack specific targets. "
-	Button:		
-		id: cardList
-		text: "Deck Info"
-		pos_hint: {"center_x": .5, "center_y": .08}
-		size_hint: 0.25, .1
-		disabled: True
-		on_release:
-			app.root.num = 0
-			root.parent.nextscreen(last="class", next="cards")
-	Button:
-		id: next
-		text: "Next"
-		size_hint: .15, .1
-		pos_hint: {"center_x": .9, "center_y": .08}
-		disabled: True
-		on_release:
-			root.parent.nextscreen(last="class", next="stats")
 			
 <CardInfoScreen>
 	Label: 
@@ -426,7 +403,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: MovVal
-		text: "3"
+		text: "2"
 		pos_hint: {"x": .69, "y": .69}
 		font_size: 45
 		text_size: self.size
@@ -439,7 +416,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: RanVal
-		text: "3"
+		text: "2"
 		pos_hint: {"x": .6, "y": .59}
 		font_size: 45
 		text_size: self.size
@@ -497,7 +474,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: IntVal
-		text: "3"
+		text: "2"
 		pos_hint: {"x": .63, "y": .19}
 		font_size: 45
 		text_size: self.size
@@ -787,7 +764,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: ElTotVal
-		text: "2"
+		text: "3"
 		pos_hint: {"center_x": .39, "center_y": .075}
 	Label:
 		id: ElTotal
@@ -1268,9 +1245,10 @@ ScreenManagement:
 		text: "Deck"
 		size_hint: .15, .1
 		pos_hint: {"center_x": .58, "center_y": .08}
+		disabled: True
 		on_release: 
 			app.root.num = 0
-			app.root.deckStuff(cards=app.root.ids.cards)
+			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
 	Button:
 		id: name
 		text: "Name"
@@ -1747,6 +1725,14 @@ ScreenManagement:
 		pos_hint: {"x": .63, "y": .43}
 		size_hint: .14, .1
 		font_size: 25
+	Button:
+		id: hide
+		text: "Hide"
+		pos_hint: {"x": .93, "y": .557}
+		size_hint: .07, .05
+		font_size: 25
+		on_release:
+			app.root.HideButton(self)
 	Button:
 		id: save
 		text: "Save"

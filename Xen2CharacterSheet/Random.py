@@ -14,14 +14,14 @@ def RandomCharacter(lvl, character, cur):
     character.Vitality = stats[3]
     character.Psyche = stats[4]
     character.Mind = stats[5]
-    character.Movement = 3 + stats[0]
-    character.Range = 3 + stats[1]
+    character.Movement = 2 + stats[0]
+    character.Range = 2 + stats[1]
     character.Brutality = stats[2]
-    character.health = stats[3] + 10
+    character.health = stats[3]*2 + 8
     character.Inventory = stats[3] * 2 + 6
-    character.Mastery = 1 + stats[4]
-    character.ElTotal = character.Mastery * 3
-    character.Intellect = 3 + stats[5]
+    character.Mastery = 2 + stats[4]
+    character.ElTotal = character.Mastery * 2
+    character.Intellect = 2 + stats[5]
 
     RandomInventory(cur, character)
     ele = RandomElements(character)
@@ -55,7 +55,7 @@ def RandomStats(lvl):
     run = lvl
     while run != 0:
         ran = randint(0, 5)
-        if stats[ran] + 1 < 6:
+        if stats[ran] + 1 < 5:
             stats[ran] += 1
             run -= 1
     return stats
@@ -268,17 +268,52 @@ def RandomDeck(cur):
     num = cur.fetchone()
     deck = []
 
-    for i in range(0, 5):
-        deck.append(randint(0, num[0] / 6 - 1) * 6 + 1)
-    for i in range(0, 5):
-        deck.append(randint(0, num[0] / 6 - 1) * 6 + 2)
-    for i in range(0, 5):
-        deck.append(randint(0, num[0] / 6 - 1) * 6 + 3)
-    for i in range(0, 6):
-        deck.append(randint(0, num[0] / 6 - 1) * 6 + 4)
-    for i in range(0, 6):
-        deck.append(randint(0, num[0] / 6 - 1) * 6 + 5)
-    for i in range(0, 3):
-        deck.append(randint(0, num[0] / 6 - 1) * 6 + 6)
+    for i in range(0, 15):
+        ran = randint(0, 15)
+
+        if ran < 10:
+            rarity = 0
+        elif ran < 14:
+            rarity = 1
+        else:
+            rarity = 2
+
+        ran = randint(1, 6)
+        offset = (ran + 2*(ran-1))
+        card = randint(0, (num[0]/36 - 1))
+        card *= 36
+        card += offset
+        card += rarity
+        deck.append(card)
+    for i in range(0, 15):
+        ran = randint(0, 15)
+
+        if ran < 10:
+            rarity = 0
+        elif ran < 14:
+            rarity = 1
+        else:
+            rarity = 2
+
+        ran = randint(1, 6)
+        offset = (ran + 2*(ran-1)) + 18
+        card = randint(0, (num[0]/36 - 1))
+        card *= 36
+        card += offset
+        card += rarity
+        deck.append(card)
+
+    #for i in range(0, 5):
+    #    deck.append(randint(0, num[0] / 6 - 1) * 6 + 1)
+    #for i in range(0, 5):
+    #    deck.append(randint(0, num[0] / 6 - 1) * 6 + 2)
+    #for i in range(0, 5):
+    #    deck.append(randint(0, num[0] / 6 - 1) * 6 + 3)
+    #for i in range(0, 6):
+    #    deck.append(randint(0, num[0] / 6 - 1) * 6 + 4)
+    #for i in range(0, 6):
+    #    deck.append(randint(0, num[0] / 6 - 1) * 6 + 5)
+    #for i in range(0, 3):
+    #    deck.append(randint(0, num[0] / 6 - 1) * 6 + 6)
 
     return deck

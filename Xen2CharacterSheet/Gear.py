@@ -7,6 +7,7 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
+from kivy.uix.textinput import TextInput
 from kivy.uix.floatlayout import FloatLayout
 
 def AtkRando(atk):
@@ -191,16 +192,15 @@ def RandomItem(cur, index, character):
     query = "SELECT * FROM gear WHERE gearId = %s"
     cur.execute(query, var)
     fetch = cur.fetchone()
-    if (fetch[2] == "Melee" or fetch[2] == "Ranged"):
-        ran = randint(fetch[4], fetch[5])
-        typ = randint(0, 1)
-        if typ == 0:
-            nam = "Melee"
-        else:
-            nam = "Ranged"
-        character.inv[index] = WeaponRandomizer(ran, nam)
-    else:
-        character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[4], fetch[5], fetch[7])
+    #if (fetch[2] == "Melee" or fetch[2] == "Ranged"):
+    #    ran = randint(fetch[4], fetch[5])
+    #    typ = randint(0, 1)
+    #    if typ == 0:
+    #        nam = "Melee"
+    #    else:
+    #        nam = "Ranged"
+    #    character.inv[index] = WeaponRandomizer(ran, nam)
+    character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[4], fetch[5], fetch[7])
 
 def DiscardGear(gear, screen, prevPop, character, main, notUsed):
     cells = [screen.ids.cellOne, screen.ids.cellTwo, screen.ids.cellThree, screen.ids.cellFour,
@@ -236,7 +236,7 @@ def AddGearPopup(index, character, main, screen, notUsed):
     b = FloatLayout()
     l = Label(font_size=25, pos_hint={"center_x": .5, "y": .25}, text="Add gear?")
     b1 = Button(size_hint=(.3, .3), pos_hint={"center_x": .3, "y": .13}, text="Random")
-    b2 = Button(size_hint=(.3, .3), pos_hint={"center_x": .7, "y": .13}, text="By name", disabled=True)
+    b2 = Button(size_hint=(.3, .3), pos_hint={"center_x": .7, "y": .13}, text="By name")
     b.add_widget(l)
     b.add_widget(b1)
     b.add_widget(b2)
@@ -247,8 +247,65 @@ def AddGearPopup(index, character, main, screen, notUsed):
 
     b1.bind(on_press=partial(AddRandomGear, index, character, main, screen))
     b1.bind(on_release=popup.dismiss)
-    #b2.bind(on_press=partial(AddSpecificGear))
+    b2.bind(on_press=partial(ByNamePopup, index, main, character, screen))
+    b2.bind(on_release=popup.dismiss)
     popup.open()
+
+def ByNamePopup(index, main, character, screen, notUsed):
+    b = FloatLayout()
+    t = TextInput(size_hint=(.9, .38), font_size=30, pos_hint={"center_x": .5, "y": .55})
+    b1 = Button(size_hint=(.4, .4), pos_hint={"center_x": .73, "y": .04}, text="Add")
+    b2 = Button(size_hint=(.4, .4), pos_hint={"center_x": .27, "y": .04}, text="Cancel")
+    b.add_widget(t)
+    b.add_widget(b1)
+    b.add_widget(b2)
+
+    popup = Popup(title='Add By Name',
+                  content=b,
+                  size_hint=(None, None), size=(410, 200),
+                  auto_dismiss=False)
+
+    b1.bind(on_release=partial(AddByName, index, t, main, character, screen, popup))
+    b2.bind(on_release=popup.dismiss)
+    popup.open()
+
+def AddByName(index, name, main, character, screen, popup, notUsed):
+    query = "SELECT * FROM gear where gearName = %s"
+    main.cur.execute(query, name.text)
+    fetch = main.cur.fetchone()
+    if fetch:
+        if (fetch[2] == "Melee" or fetch[2] == "Ranged"):
+            ran = randint(fetch[4], fetch[5])
+            typ = randint(0, 1)
+            if typ == 0:
+                nam = "Melee"
+            else:
+                nam = "Ranged"
+            character.inv[index] = WeaponRandomizer(ran, nam)
+        else:
+            character.inv[index] = Gear(fetch[1], fetch[2], fetch[3], randint(fetch[4], fetch[5]), fetch[4], fetch[5], fetch[7])
+
+        Screens.CalcInv(character, screen.ids.invVal)
+        CellInit(main, screen, character)
+        popup.dismiss()
+    else:
+        ran = randint(0, 8)
+        if ran == 0:
+            popup.title = "WRONG!"
+        elif ran == 1:
+            popup.title = "You are supposed to enter a name of a valid item."
+        elif ran == 2:
+            popup.title = "Stop breaking my app."
+        elif ran == 3:
+            popup.title = "Ya blew it."
+        elif ran == 4:
+            popup.title = "Seriously, just stop. Go home."
+        elif ran == 5:
+            popup.title = "I really don't like the things you choose to be."
+        elif ran == 6:
+            popup.title = "Can you not?"
+        elif ran == 7:
+            popup.title = "Wow, that almost worked! Not really though."
 
 def AddRandomGear(index, character, main, screen, notUsed):
     RandomItem(main.cur, index, character)

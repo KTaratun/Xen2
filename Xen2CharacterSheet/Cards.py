@@ -149,7 +149,8 @@ def FetchDeck(main):
     for i in range(0, 30):
         query = "SELECT * FROM cards WHERE cardId = %s"
         main.cur.execute(query, (str(main.character.deck[i])))
-        if main.current == "character":
+        print(main.character.deck)
+        if main.current == "character" or main.current == "charSelect":
             card = Button(name=str(i), pos_hint={"x": 1, "y": 1}, size_hint=(.47, 8), background_color=(0, 0, 0, 0))
             LoadCard(main, main.ids.character, main.cur.fetchone(), card, (620, -20), 1)
             cards.append(card)
@@ -162,6 +163,7 @@ def LoadCard(main, screen, data, card, pos, mult):
     if screen.name == "character":
         card.bind(on_touch_move=partial(BindCardPos, main))
     card.bind(on_touch_down=partial(CardSelect, main, screen, Button()))
+    print(data)
     card.name = str(data[0])
     card.add_widget(Image(pos=pos, size=(182 * mult,280 * mult)))
     card.add_widget(Image(x=pos[0] + 9 * mult, y=pos[1] + 229 * mult, size=(20 * mult,20 * mult)))
@@ -169,7 +171,7 @@ def LoadCard(main, screen, data, card, pos, mult):
     card.add_widget(Image(x=pos[0] + 30 * mult, y=pos[1] + 225 * mult, size=((card.size[0] * 1.2) * mult, (card.size[1] * .16) * mult)))
     card.add_widget(Image(x=pos[0] + 21 * mult, y=pos[1] + 49.5 * mult, size=((card.size[0] * 1.42) * mult, (card.size[1] * .545) * mult)))
 
-    card.children[2].texture = Text(type="name", string=data[1])
+    card.children[2].texture = Text(type="name", string=data[1] + " " + data[2][0])
     card.children[1].texture = Text(type="type", string=data[4] + '-' + data[5])
     card.children[0].texture = Text(type="text", string=data[6])
 
@@ -177,22 +179,35 @@ def LoadCard(main, screen, data, card, pos, mult):
         card.children[4].source = "LightCard.png"
     elif data[5] == "Tactical":
         card.children[4].source = "MediumCard.png"
-    elif data[5] == "Aggressive":
+    elif data[5] == "Aggressive" or data[5] == "Attack":
         card.children[4].source = "HeavyCard.png"
     else:
         card.children[4].source = "ActionCard.png"
 
-    if data[2] == "Instinct":
+    #if data[2] == "Instinct":
+    #    card.children[3].source = "Zephyr.png"
+    #elif data[2] == "Tech":
+    #    card.children[3].source = "Spark.png"
+    #elif data[2] == "Force":
+    #    card.children[3].source = "Heat.png"
+    #elif data[2] == "Vitality":
+    #    card.children[3].source = "Mineral.png"
+    #elif data[2] == "Psyche":
+    #    card.children[3].source = "Void.png"
+    #elif data[2] == "Mind":
+    #    card.children[3].source = "Liquid.png"
+
+    if data[3] == "Instinct":
         card.children[3].source = "Zephyr.png"
-    elif data[2] == "Tech":
+    elif data[3] == "Tech":
         card.children[3].source = "Spark.png"
-    elif data[2] == "Force":
+    elif data[3] == "Force":
         card.children[3].source = "Heat.png"
-    elif data[2] == "Vitality":
+    elif data[3] == "Vitality":
         card.children[3].source = "Mineral.png"
-    elif data[2] == "Psyche":
+    elif data[3] == "Psyche":
         card.children[3].source = "Void.png"
-    elif data[2] == "Mind":
+    elif data[3] == "Mind":
         card.children[3].source = "Liquid.png"
 
 def CardSelect(main, screen, forPop, card, sys):
@@ -338,7 +353,7 @@ def SearchPopup(self, character, notUsed):
         self.selected.children[3].color = (1, 1, 1, 1)
     self.selected = Button(pos=(0, 1))
 
-    b1 = Button(size_hint=(.3, .1), pos_hint={"center_x": .5, "y": .01}, text="Draw", disabled=True)
+    b1 = Button(size_hint=(.2, .1), pos_hint={"center_x": .5, "y": .01}, text="Draw", disabled=True)
     b.add_widget(b1)
 
     x = 63

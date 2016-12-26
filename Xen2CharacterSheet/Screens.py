@@ -4,26 +4,26 @@ from kivy.uix.button import Button
 
 def StatLabelUpdate(screen, stat, lab, character):
     if lab.name == "Ins":
-        character.Movement = 3 + stat
+        character.Movement = 2 + stat
         screen.ids.MovVal.text = str(character.Movement)
     elif lab.name == "Tec":
-        character.Range = 3 + stat
+        character.Range = 2 + stat
         print(screen.ids.RanVal.text)
         screen.ids.RanVal.text = str(character.Range)
     elif lab.name == "For":
         character.Brutality = stat
         screen.ids.DamVal.text = str(character.Brutality)
     elif lab.name == "Vit":
-        character.health = 10 + stat
+        character.health = 8 + stat * 2
         character.Inventory = 6 + stat * 2
         screen.ids.HPVal.text = str(character.health)
         screen.ids.InvVal.text = str(character.Inventory)
     elif lab.name == "Psy":
-        character.Mastery = stat + 1
-        character.ElTotal = stat * 3
+        character.Mastery = stat + 2
+        character.ElTotal = stat * 2
         screen.ids.MasVal.text = str(character.Mastery)
     elif lab.name == "Min":
-        character.Intellect = 3 + stat
+        character.Intellect = 2 + stat
         screen.ids.IntVal.text = str(character.Intellect)
 
 def CharStats(screen):
@@ -142,7 +142,7 @@ def ResetStats(self, character, notUsed):
 def ResetDeck(self, character, notUsed):
     self.cardId = 0
     for i in range(0, len(character.hand)):
-        self.Discard(character.hand[0], character)
+        Cards.Discard(character.hand[0], character)
     character.cardsLeft.clear()
     character.discard.clear()
     self.selected = Button(pos=(0, 1))

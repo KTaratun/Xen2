@@ -28,14 +28,14 @@ class ScreenManagement(ScreenManager):
     class Character:
         name = ""
         lvl = "12.0"
-        health = 10
+        health = 8
         lightArmor = 0
         heavyArmor = 0
         bloodType = ""
         bTStats = [0, 0, 0, 0, 0, 0]
-        inv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        Right = Gear.Gear(0, 0, 0, 0, 0, 0, 0)
-        Left = Gear.Gear(0, 0, 0, 0, 0, 0, 0)
+        inv = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        #Right = Gear.Gear(0, 0, 0, 0, 0, 0, 0)
+        #Left = Gear.Gear(0, 0, 0, 0, 0, 0, 0)
 
         Instinct = 0
         Tech = 0
@@ -44,12 +44,12 @@ class ScreenManagement(ScreenManager):
         Psyche = 0
         Mind = 0
 
-        Movement = 3
-        Range = 3
+        Movement = 2
+        Range = 2
         Brutality = 0
         Inventory = 6
-        Mastery = 1
-        Intellect = 3
+        Mastery = 2
+        Intellect = 2
 
         Zephyr = 0
         Spark = 0
@@ -58,7 +58,7 @@ class ScreenManagement(ScreenManager):
         Void = 0
         Liquid = 0
 
-        tempHealth = 0
+        tempHealth = 8
         tempInstinct = 0
         tempTech = 0
         tempForce = 0
@@ -66,12 +66,12 @@ class ScreenManagement(ScreenManager):
         tempPsyche = 0
         tempMind = 0
 
-        tempMovement = 3
-        tempRange = 3
+        tempMovement = 2
+        tempRange = 2
         tempBrutality = 0
         tempInventory = 6
-        tempMastery = 1
-        tempIntellect = 3
+        tempMastery = 2
+        tempIntellect = 2
 
         tempZephyr = 0
         tempSpark = 0
@@ -85,7 +85,7 @@ class ScreenManagement(ScreenManager):
         hand = []
 
         Total = 12
-        MasTot = 1
+        MasTot = 2
         TempPsy = 0
         ElTotal = 2
         Class = ""
@@ -128,7 +128,7 @@ class ScreenManagement(ScreenManager):
         # screen: The screen that contains the next button which will become
         # active when all stat points have been allocated
         total -= 1
-        if total < 0 or stat + 1 > 5:
+        if total < 0 or stat + 1 > 4:
             return stat
         else:
             stat += 1
@@ -214,6 +214,12 @@ class ScreenManagement(ScreenManager):
         screen.ids.four.color = 1, 1, 1, 1
         screen.ids.five.color = 1, 1, 1, 1
         screen.ids.six.color = 1, 1, 1, 1
+        screen.ids.seven.color = 1, 1, 1, 1
+        screen.ids.eight.color = 1, 1, 1, 1
+        screen.ids.nine.color = 1, 1, 1, 1
+        screen.ids.ten.color = 1, 1, 1, 1
+        screen.ids.eleven.color = 1, 1, 1, 1
+        screen.ids.twelve.color = 1, 1, 1, 1
         if screen.name == "charSelect":
             character.Class = curr.text
         if screen.name == "class":
@@ -274,9 +280,11 @@ class ScreenManagement(ScreenManager):
             return
 
         character.TempPsy = character.Psyche
-        character.Mastery = character.Psyche + 1
+        character.Mastery = character.Psyche + 2
         character.MasTot = character.Mastery
-        character.ElTotal = character.Mastery * 3
+        character.ElTotal = character.Mastery * 2
+        print(character.ElTotal)
+        print(character.ElTotal)
         screen.ids.ElTotVal.text = str(character.ElTotal)
         screen.ids.MasTot.text = str(character.Mastery)
         screen.ids.ZepVal.text = str(0)
@@ -424,7 +432,7 @@ class ScreenManagement(ScreenManager):
         for i in range(0, int(parse[6][0])):
             if parse[i + 7][1] == "Melee" or parse[i + 7][1] == "Ranged":
                 character.inv[i] = Gear.Weapon(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2],
-                                          [parse[i + 7][3], parse[i + 7][4], parse[i + 7][5]], parse[i + 7][6])
+                                          [parse[i + 7][3], parse[i + 7][4], parse[i + 7][5], parse[i + 7][3], parse[i + 7][4], parse[i + 7][5]], parse[i + 7][6])
             else:
                 character.inv[i] = Gear.Gear(parse[i + 7][0], parse[i + 7][1], parse[i + 7][2], parse[i + 7][3],
                                         parse[i + 7][4], parse[i + 7][5], parse[i + 7][6])
@@ -926,6 +934,84 @@ class ScreenManagement(ScreenManager):
                 self.ids.charSelect.ids.six.text = "NEW CHAR"
         else:
             self.ids.charSelect.ids.six.text = "NEW CHAR"
+        if os.path.isfile('char7.txt'):
+            path = open("char7.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.seven.text = name
+            else:
+                self.ids.charSelect.ids.seven.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.seven.text = "NEW CHAR"
+        if os.path.isfile('char8.txt'):
+            path = open("char8.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.eight.text = name
+            else:
+                self.ids.charSelect.ids.eight.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.nine.text = "NEW CHAR"
+        if os.path.isfile('char9.txt'):
+            path = open("char9.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.nine.text = name
+            else:
+                self.ids.charSelect.ids.nine.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.nine.text = "NEW CHAR"
+        if os.path.isfile('char10.txt'):
+            path = open("char10.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.ten.text = name
+            else:
+                self.ids.charSelect.ids.ten.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.ten.text = "NEW CHAR"
+        if os.path.isfile('char11.txt'):
+            path = open("char11.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.eleven.text = name
+            else:
+                self.ids.charSelect.ids.eleven.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.eleven.text = "NEW CHAR"
+        if os.path.isfile('char12.txt'):
+            path = open("char12.txt", "r")
+            data = csv.reader(path, delimiter=',')
+            parse = []
+            for row in data:
+                parse.append(row)
+            if len(parse) > 0:
+                name = parse[0][0]
+                self.ids.charSelect.ids.twelve.text = name
+            else:
+                self.ids.charSelect.ids.twelve.text = "NEW CHAR"
+        else:
+            self.ids.charSelect.ids.twelve.text = "NEW CHAR"
 
     def ResetPopup(self, character):
         b = FloatLayout()
@@ -1090,6 +1176,19 @@ class ScreenManagement(ScreenManager):
         b3.bind(on_press=partial(Cards.GainStamina, self, self.character))
         b3.bind(on_release=popup.dismiss)
         popup.open()
+
+    def HideButton(self, button):
+        for i in range(0, len(self.character.hand)):
+            if self.character.hand[i].color == [1, 1, 1, 1]:
+                self.character.hand[i].color = (1, 1, 1, 0)
+                button.color = (1, 1, 0, 1)
+                for j in range(0, len(self.character.hand[i].children)):
+                    self.character.hand[i].children[j].color = (1, 1, 1, 0)
+            else:
+                self.character.hand[i].color = (1, 1, 1, 1)
+                button.color = (1, 1, 1, 1)
+                for j in range(0, len(self.character.hand[i].children)):
+                    self.character.hand[i].children[j].color = (1, 1, 1, 1)
 
     class TitleScreen(Screen):
         pass
