@@ -274,13 +274,9 @@ ScreenManagement:
 		text: "Vitality"
 		pos_hint: {"x": .2, "y": .4}
 		text_size: self.size
-	Label:
-		text: "Inv:"
-		pos_hint: {"x": .43, "y": .4}
-		text_size: self.size
 	Label: 
-		text: "HP:"
-		pos_hint: {"x": .61, "y": .398}
+		text: "Health:"
+		pos_hint: {"x": .43, "y": .4}
 		text_size: self.size
 	Label:
 		text: "Psyche"
@@ -403,7 +399,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: MovVal
-		text: "2"
+		text: "0"
 		pos_hint: {"x": .69, "y": .69}
 		font_size: 45
 		text_size: self.size
@@ -441,15 +437,9 @@ ScreenManagement:
 		font_size: 45
 		text_size: self.size
 	Label:
-		id: InvVal
-		text: "6"
-		pos_hint: {"x": .52, "y": .39}
-		font_size: 45
-		text_size: self.size
-	Label:
 		id: HPVal
-		text: "10"
-		pos_hint: {"x": .7, "y": .39}
+		text: "8"
+		pos_hint: {"x": .6, "y": .39}
 		font_size: 45
 		text_size: self.size
 	Label
@@ -461,7 +451,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: MasVal
-		text: "1"
+		text: "2"
 		pos_hint: {"x": .63, "y": .29}
 		font_size: 45
 		text_size: self.size
@@ -764,7 +754,7 @@ ScreenManagement:
 		text_size: self.size
 	Label:
 		id: ElTotVal
-		text: "3"
+		text: "4"
 		pos_hint: {"center_x": .39, "center_y": .075}
 	Label:
 		id: ElTotal
@@ -772,7 +762,7 @@ ScreenManagement:
 		pos_hint: {"center_x": .3, "center_y": .075}
 	Label:
 		id: MasTot
-		text: "1"
+		text: "2"
 		color: 1, 0, 0, 1
 		pos_hint: {"center_x": .75, "center_y": .075}
 	Label:
@@ -795,141 +785,8 @@ ScreenManagement:
 		pos_hint: {"center_x": .9, "center_y": .08}
 		disabled: True
 		on_release:
-			root.parent.nextscreen(last="elements", next="loadout")
-			
-<LoadoutScreen>
-	Label:
-		text: "Character Creation: Loadout"
-	Button:
-		id: one
-		text: "Safety First"
-		pos_hint: {"center_x": .2, "center_y": .7}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.LoadoutRandomizer("sF", app.root.character)
-	Button:
-		id: two
-		text: "Tooth and Nail"
-		pos_hint: {"center_x": .5, "center_y": .7}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.LoadoutRandomizer("tN", app.root.character)
-	Button:
-		id: three
-		text: "Lock and Load"
-		pos_hint: {"center_x": .8, "center_y": .7}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.LoadoutRandomizer("lL", app.root.character)
-	Button:
-		id: four
-		text: "Chemist"
-		pos_hint: {"center_x": .2, "center_y": .55}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.LoadoutRandomizer("c", app.root.character)
-	Button:
-		id: five
-		text: "Trader"
-		pos_hint: {"center_x": .5, "center_y": .55}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.LoadoutRandomizer("t", app.root.character)
-	Button:
-		id: six
-		text: "Finders Keepers"
-		pos_hint: {"center_x": .8, "center_y": .55}
-		size_hint: 0.25, .1
-		on_release: 
-			app.root.colorUpdate(screen=root, curr=self, character=app.root.character)
-			app.root.LoadoutRandomizer("fK", app.root.character)
-	Button:
-		id: cellOne
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .05, "center_y": .38}
-	Button:
-		id: cellTwo
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .2, "center_y": .38}
-	Button:
-		id: cellThree
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .35, "center_y": .38}
-	Button:
-		id: cellFour
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .5, "center_y": .38}
-	Button:
-		id: cellFive
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .65, "center_y": .38}
-	Button:
-		id: cellSix
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .8, "center_y": .38}
-	Button:
-		id: cellSeven
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .05, "center_y": .26}
-	Button:
-		id: cellEight
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .2, "center_y": .26}
-	Button:
-		id: cellNine
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .35, "center_y": .26}
-	Button:
-		id: cellTen
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .5, "center_y": .26}
-	Button:
-		id: cellEleven
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .65, "center_y": .26}
-	Button:
-		id: cellTwelve
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .8, "center_y": .26}
-	Button:
-		id: next
-		text: "Next"
-		size_hint: .15, .1
-		pos_hint: {"center_x": .9, "center_y": .08}
-		disabled: True
-		on_release:
 			app.root.CharScreenUpdate(app.root.ids.confirm, app.root.character)
-			app.root.DeckAndGearInit(app.root.ids.confirm, app.root.character)
-			root.parent.nextscreen(last="loadout", next="confirm")
+			root.parent.nextscreen(last="elements", next="confirm")
 			
 <ConfirmationScreen>
 	Label:
@@ -947,62 +804,17 @@ ScreenManagement:
 		id: lvl
 		text: "Level: "
 		font_size: 25
-		pos_hint: {"x": 0, "y": .9}
+		pos_hint: {"x": .32, "y": .95}
 		text_size: self.size
 	Label:
 		id: lvlVal
 		font_size: 25
-		pos_hint: {"x": .09, "y": .9}
-		text_size: self.size
-	Label:
-		id: health
-		text: "Health: "
-		font_size: 25
-		pos_hint: {"x": .38, "y": .95}
-		text_size: self.size
-	Label:
-		id: HPVal
-		color: 0, 0, 0, 1
-		font_size: 25
-		pos_hint: {"x": .485, "y": .95}
-		text_size: self.size
-	Label:
-		id: lArmor
-		text: "L Armor: "
-		font_size: 25
-		pos_hint: {"x": .38, "y": .9}
-		text_size: self.size
-	Label:
-		id: lArmVal
-		font_size: 25
-		pos_hint: {"x": .505, "y": .9}
-		text_size: self.size
-	Label:
-		id: hArmor
-		text: "H Armor: "
-		font_size: 25
-		pos_hint: {"x": .38, "y": .85}
-		text_size: self.size
-	Label:
-		id: hArmVal
-		font_size: 25
-		pos_hint: {"x": .51, "y": .85}
+		pos_hint: {"x": .41, "y": .95}
 		text_size: self.size
 	Image:
 		id: cS
 		source: "CharStats.png"
 		size_hint: .7, .7
-	Label:
-		id: inventory
-		text: "INV: "
-		font_size: 25
-		pos_hint: {"x": 0, "y": .85}
-		text_size: self.size
-	Label:
-		id: invVal
-		font_size: 25
-		pos_hint: {"x": .07, "y": .85}
-		text_size: self.size
 	Label:
 		id: blood
 		text: "BLLLAAAD"
@@ -1035,7 +847,7 @@ ScreenManagement:
 		pos_hint: {"x": .3512, "y": .535}
 		text_size: self.size
 	Label:
-		id: psyBlood
+		id: voiBlood
 		color: 0, 0, 0, 1
 		font_size: 40
 		pos_hint: {"x": .248, "y": .456}
@@ -1046,14 +858,6 @@ ScreenManagement:
 		font_size: 40
 		pos_hint: {"x": .1443, "y": .535}
 		text_size: self.size
-	Button:
-		id: Ins
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
 	Button:
 		id: MovVal
 		text: "0"
@@ -1071,15 +875,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 	Button:
-		id: Tec
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-	Button:
-		id: RanVal
+		id: TecVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1088,14 +884,6 @@ ScreenManagement:
 		background_color: (0, 0, 0, 0)
 	Button:
 		id: Spa
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-	Button:
-		id: For
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1118,32 +906,14 @@ ScreenManagement:
 		size_hint: (.027, .05)
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
-	Button:
-		id: Vit
-		text: "0"
+	Label:
+		id: HPVal
 		color: 0, 0, 0, 1
 		font_size: 25
 		size_hint: (.027, .05)
 		text_size: self.size
-		background_color: (0, 0, 0, 0)
-	Button:
-		id: InvVal
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.04, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
 	Button:
 		id: Mine
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-	Button:
-		id: Psy
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1160,14 +930,6 @@ ScreenManagement:
 		background_color: (0, 0, 0, 0)
 	Button:
 		id: Voi
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-	Button:
-		id: Mind
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1245,10 +1007,11 @@ ScreenManagement:
 		text: "Deck"
 		size_hint: .15, .1
 		pos_hint: {"center_x": .58, "center_y": .08}
-		disabled: True
 		on_release: 
 			app.root.num = 0
-			app.root.deckStuff(screen=app.root.ids.cards, starter=True)
+			app.root.RandDeck()
+			root.parent.nextscreen(last="confirm", next="cards")
+			app.root.deckStuff(screen=app.root.ids.cards)
 	Button:
 		id: name
 		text: "Name"
@@ -1320,24 +1083,6 @@ ScreenManagement:
 		text: "EMPTY"
 		size_hint: .15, .1
 		pos_hint: {"x": .85, "center_y": .75}
-	Button:
-		id: cellTen
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .55, "center_y": .65}
-	Button:
-		id: cellEleven
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .7, "center_y": .65}
-	Button:
-		id: cellTwelve
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .85, "center_y": .65}
 			
 <CharacterScreen>
 	Label:
@@ -1355,67 +1100,18 @@ ScreenManagement:
 		id: lvl
 		text: "Level: "
 		font_size: 25
-		pos_hint: {"x": 0, "y": .9}
+		pos_hint: {"x": .32, "y": .95}
 		text_size: self.size
 	Button:
 		id: lvlVal
 		font_size: 25
-		pos_hint: {"x": .09, "y": .9}
+		pos_hint: {"x": .41, "y": .95}
 		size_hint: (.08, .05)
 		color: 1, 1, 1, 1
 		background_color: (0, 0, 0, 0)
 		text_size: self.size
 		on_release:
 			app.root.LevelUpPopup()
-	Label:
-		id: health
-		text: "Health: "
-		font_size: 25
-		pos_hint: {"x": .38, "y": .95}
-		text_size: self.size
-	Button:
-		id: HPVal
-		color: 0, 0, 0, 1
-		font_size: 25
-		pos_hint: {"x": .49, "y": .95}
-		size_hint: (.035, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.character.tempHealth = app.root.ChangeVal(button=self, orig=app.root.character.health, temp=app.root.character.tempHealth)
-	Label:
-		id: lArmor
-		text: "L Armor: "
-		font_size: 25
-		pos_hint: {"x": .38, "y": .9}
-		text_size: self.size
-	Label:
-		id: lArmVal
-		font_size: 25
-		pos_hint: {"x": .505, "y": .9}
-		text_size: self.size
-	Label:
-		id: hArmor
-		text: "H Armor: "
-		font_size: 25
-		pos_hint: {"x": .38, "y": .85}
-		text_size: self.size
-	Label:
-		id: hArmVal
-		font_size: 25
-		pos_hint: {"x": .51, "y": .85}
-		text_size: self.size
-	Label:
-		id: inventory
-		text: "INV: "
-		font_size: 25
-		pos_hint: {"x": 0, "y": .85}
-		text_size: self.size
-	Label:
-		id: invVal
-		font_size: 25
-		pos_hint: {"x": .07, "y": .85}
-		text_size: self.size
 	Image:
 		id: cS
 		source: "CharStats.png"
@@ -1451,7 +1147,7 @@ ScreenManagement:
 		pos_hint: {"x": .3512, "y": .535}
 		text_size: self.size
 	Label:
-		id: psyBlood
+		id: voiBlood
 		color: 0, 0, 0, 1
 		font_size: 40
 		pos_hint: {"x": .248, "y": .456}
@@ -1462,17 +1158,6 @@ ScreenManagement:
 		font_size: 40
 		pos_hint: {"x": .1443, "y": .535}
 		text_size: self.size
-	Button:
-		id: Ins
-		name: "Ins"
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.character.tempInstinct = app.root.ChangeVal(button=Ins, orig=app.root.character.Instinct, temp=app.root.character.tempInstinct)
 	Button:
 		id: MovVal
 		text: "0"
@@ -1494,8 +1179,7 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempZephyr = app.root.ChangeVal(button=Zep, orig=app.root.character.Zephyr, temp=app.root.character.tempZephyr)
 	Button:
-		id: Tec
-		name: "Tec"
+		id: TecVal
 		text: "0"
 		color: 0, 0, 0, 1
 		font_size: 25
@@ -1503,17 +1187,7 @@ ScreenManagement:
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempTech = app.root.ChangeVal(button=Tec, orig=app.root.character.Tech, temp=app.root.character.tempTech)
-	Button:
-		id: RanVal
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.character.tempRange = app.root.ChangeVal(button=self, orig=app.root.character.Range, temp=app.root.character.tempRange)
+			app.root.character.tempTech = app.root.ChangeVal(button=self, orig=app.root.character.Tech, temp=app.root.character.tempTech)
 	Button:
 		id: Spa
 		text: "0"
@@ -1524,17 +1198,6 @@ ScreenManagement:
 		background_color: (0, 0, 0, 0)
 		on_release:
 			app.root.character.tempSpark = app.root.ChangeVal(button=Spa, orig=app.root.character.Spark, temp=app.root.character.tempSpark)
-	Button:
-		id: For
-		name: "For"
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.character.tempForce = app.root.ChangeVal(button=For, orig=app.root.character.Force, temp=app.root.character.tempForce)
 	Button:
 		id: DamVal
 		text: "0"
@@ -1556,26 +1219,15 @@ ScreenManagement:
 		on_release:
 			app.root.character.tempHeat = app.root.ChangeVal(button=Hea, orig=app.root.character.Heat, temp=app.root.character.tempHeat)
 	Button:
-		id: Vit
-		name: "Vit"
-		text: "0"
+		id: HPVal
 		color: 0, 0, 0, 1
 		font_size: 25
-		size_hint: (.027, .05)
+		pos_hint: {"x": .49, "y": .95}
+		size_hint: (.035, .05)
 		text_size: self.size
 		background_color: (0, 0, 0, 0)
 		on_release:
-			app.root.character.tempVitality = app.root.ChangeVal(button=Vit, orig=app.root.character.Vitality, temp=app.root.character.tempVitality)
-	Button:
-		id: InvVal
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.04, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.character.tempInventory = app.root.ChangeVal(button=self, orig=app.root.character.Inventory, temp=app.root.character.tempInventory)
+			app.root.character.tempHealth = app.root.ChangeVal(button=self, orig=app.root.character.health, temp=app.root.character.tempHealth)
 	Button:
 		id: Mine
 		text: "0"
@@ -1586,17 +1238,6 @@ ScreenManagement:
 		background_color: (0, 0, 0, 0)
 		on_release:
 			app.root.character.tempMineral = app.root.ChangeVal(button=Mine, orig=app.root.character.Mineral, temp=app.root.character.tempMineral)
-	Button:
-		id: Psy
-		name: "Psy"
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.character.tempPsyche = app.root.ChangeVal(button=Psy, orig=app.root.character.Psyche, temp=app.root.character.tempPsyche)
 	Button:
 		id: MasVal
 		text: "0"
@@ -1617,17 +1258,6 @@ ScreenManagement:
 		background_color: (0, 0, 0, 0)
 		on_release:
 			app.root.character.tempVoid = app.root.ChangeVal(button=Voi, orig=app.root.character.Void, temp=app.root.character.tempVoid)
-	Button:
-		id: Mind
-		name: "Mind"
-		text: "0"
-		color: 0, 0, 0, 1
-		font_size: 25
-		size_hint: (.027, .05)
-		text_size: self.size
-		background_color: (0, 0, 0, 0)
-		on_release:
-			app.root.character.tempMind = app.root.ChangeVal(button=Mind, orig=app.root.character.Mind, temp=app.root.character.tempMind)
 	Button:
 		id: IntVal
 		text: "0"
@@ -1687,7 +1317,7 @@ ScreenManagement:
 	Button:
 		id: draw
 		text: "Deck"
-		pos_hint: {"x": .9, "y": .46}
+		pos_hint: {"x": .9, "y": .51}
 		size_hint: .1, .1
 		font_size: 30
 		on_release: 
@@ -1695,7 +1325,7 @@ ScreenManagement:
 	Button:
 		id: discard
 		text: "Discard"
-		pos_hint: {"x": .76, "y": .46}
+		pos_hint: {"x": .76, "y": .51}
 		size_hint: .14, .1
 		font_size: 30
 		disabled: True
@@ -1703,32 +1333,32 @@ ScreenManagement:
 			app.root.DiscardPopup()
 	Label:
 		id: deckLab
-		text: "Stamina:"
-		pos_hint: {"x": .545, "y": .49}
+		text: "Deck:"
+		pos_hint: {"x": .545, "y": .54}
 		size_hint: .14, .1
 		font_size: 25
 	Label:
 		id: deckVal
 		text: "30"
-		pos_hint: {"x": .63, "y": .49}
+		pos_hint: {"x": .63, "y": .54}
 		size_hint: .14, .1
 		font_size: 25
 	Label:
 		id: discLab
 		text: "Discard:"
-		pos_hint: {"x": .55, "y": .43}
+		pos_hint: {"x": .55, "y": .48}
 		size_hint: .14, .1
 		font_size: 25
 	Label:
 		id: discVal
 		text: "0"
-		pos_hint: {"x": .63, "y": .43}
+		pos_hint: {"x": .63, "y": .48}
 		size_hint: .14, .1
 		font_size: 25
 	Button:
 		id: hide
 		text: "Hide"
-		pos_hint: {"x": .93, "y": .557}
+		pos_hint: {"x": .93, "y": .6}
 		size_hint: .07, .05
 		font_size: 25
 		on_release:
@@ -1816,24 +1446,6 @@ ScreenManagement:
 		text: "EMPTY"
 		size_hint: .15, .1
 		pos_hint: {"x": .85, "center_y": .75}
-	Button:
-		id: cellTen
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .55, "center_y": .65}
-	Button:
-		id: cellEleven
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .7, "center_y": .65}
-	Button:
-		id: cellTwelve
-		name: "0"
-		text: "EMPTY"
-		size_hint: .15, .1
-		pos_hint: {"x": .85, "center_y": .65}
 	FloatLayout:
 		id: fL
 		pos: (280, 0)

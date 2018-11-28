@@ -14,16 +14,15 @@ def RandomCharacter(lvl, character, cur):
     character.Vitality = stats[3]
     character.Psyche = stats[4]
     character.Mind = stats[5]
-    character.Movement = 2 + stats[0]
+    character.Movement = stats[0]
     character.Range = 2 + stats[1]
     character.Brutality = stats[2]
     character.health = stats[3]*2 + 8
-    character.Inventory = stats[3] * 2 + 6
     character.Mastery = 2 + stats[4]
     character.ElTotal = character.Mastery * 2
     character.Intellect = 2 + stats[5]
 
-    RandomInventory(cur, character)
+    #RandomInventory(cur, character)
     ele = RandomElements(character)
 
     character.Zephyr = ele[0]

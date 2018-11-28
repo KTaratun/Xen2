@@ -4,7 +4,7 @@ from kivy.uix.button import Button
 
 def StatLabelUpdate(screen, stat, lab, character):
     if lab.name == "Ins":
-        character.Movement = 2 + stat
+        character.Movement = stat
         screen.ids.MovVal.text = str(character.Movement)
     elif lab.name == "Tec":
         character.Range = 2 + stat
@@ -15,9 +15,7 @@ def StatLabelUpdate(screen, stat, lab, character):
         screen.ids.DamVal.text = str(character.Brutality)
     elif lab.name == "Vit":
         character.health = 8 + stat * 2
-        character.Inventory = 6 + stat * 2
         screen.ids.HPVal.text = str(character.health)
-        screen.ids.InvVal.text = str(character.Inventory)
     elif lab.name == "Psy":
         character.Mastery = stat + 2
         character.ElTotal = stat * 2
@@ -29,27 +27,27 @@ def StatLabelUpdate(screen, stat, lab, character):
 def CharStats(screen):
     #repositions the stats portion of the character sheet
     posX = -.24
-    posY = -.03
+    posY = -.02
 
     screen.ids.cS.pos_hint = {"center_x": .5 + posX, "center_y": .65 + posY}
-    screen.ids.Ins.pos_hint = {"x": .29 + posX, "y": .74 + posY}
-    screen.ids.MovVal.pos_hint = {"x": .33 + posX, "y": .74 + posY}
+    screen.ids.MovVal.pos_hint = {"x": .31 + posX, "y": .74 + posY}
     screen.ids.Zep.pos_hint = {"x": .389 + posX, "y": .67 + posY}
-    screen.ids.Tec.pos_hint = {"x": .465 + posX, "y": .88 + posY}
-    screen.ids.RanVal.pos_hint = {"x": .515 + posX, "y": .88 + posY}
+    screen.ids.TecVal.pos_hint = {"x": .49 + posX, "y": .88 + posY}
     screen.ids.Spa.pos_hint = {"x": .493 + posX, "y": .7455 + posY}
-    screen.ids.For.pos_hint = {"x": .65 + posX, "y": .74 + posY}
-    screen.ids.DamVal.pos_hint = {"x": .69 + posX, "y": .74 + posY}
+    screen.ids.DamVal.pos_hint = {"x": .67 + posX, "y": .74 + posY}
     screen.ids.Hea.pos_hint = {"x": .5955 + posX, "y": .67 + posY}
-    screen.ids.Vit.pos_hint = {"x": .65 + posX, "y": .465 + posY}
-    screen.ids.InvVal.pos_hint = {"x": .69 + posX, "y": .465 + posY}
+    screen.ids.HPVal.pos_hint = {"x": .67 + posX, "y": .465 + posY}
     screen.ids.Mine.pos_hint = {"x": .5955 + posX, "y": .512 + posY}
-    screen.ids.Psy.pos_hint = {"x": .47 + posX, "y": .325 + posY}
-    screen.ids.MasVal.pos_hint = {"x": .515 + posX, "y": .325 + posY}
+    screen.ids.MasVal.pos_hint = {"x": .49 + posX, "y": .325 + posY}
     screen.ids.Voi.pos_hint = {"x": .493 + posX, "y": .43 + posY}
-    screen.ids.Mind.pos_hint = {"x": .29 + posX, "y": .465 + posY}
-    screen.ids.IntVal.pos_hint = {"x": .33 + posX, "y": .465 + posY}
+    screen.ids.IntVal.pos_hint = {"x": .31 + posX, "y": .465 + posY}
     screen.ids.Liq.pos_hint = {"x": .389 + posX, "y": .512 + posY}
+    screen.ids.zepBlood.pos_hint = {"x": .3845 + posX, "y": .72 + posY}
+    screen.ids.spaBlood.pos_hint = {"x": .488 + posX, "y": .8 + posY}
+    screen.ids.heaBlood.pos_hint = {"x": .59 + posX, "y": .72 + posY}
+    screen.ids.minBlood.pos_hint = {"x": .59 + posX, "y": .565 + posY}
+    screen.ids.voiBlood.pos_hint = {"x": .488 + posX, "y": .485 + posY}
+    screen.ids.liqBlood.pos_hint = {"x": .3845 + posX, "y": .565 + posY}
     screen.ids.insInfo.pos_hint = {"x": .279 + posX, "y": .79 + posY}
     screen.ids.tecInfo.pos_hint = {"x": .458 + posX, "y": .93 + posY}
     screen.ids.forInfo.pos_hint = {"x": .638 + posX, "y": .79 + posY}
@@ -75,9 +73,9 @@ def BloodStuff(screen, character):
         else:
             screen.ids.minBlood.text = "--"
         if character.bTStats[4] == 2:
-            screen.ids.psyBlood.text = "+"
+            screen.ids.voiBlood.text = "+"
         else:
-            screen.ids.psyBlood.text = "--"
+            screen.ids.voiBlood.text = "--"
         if character.bTStats[5] == 2:
             screen.ids.liqBlood.text = "+"
         else:
@@ -101,25 +99,17 @@ def ResetStats(self, character, notUsed):
 
     self.ids.character.ids.HPVal.color=(0, 0, 0, 1)
     character.tempHealth = character.health
-    self.ids.character.ids.Ins.color = (0, 0, 0, 1)
     character.tempTech = character.Tech
-    self.ids.character.ids.Tec.color = (0, 0, 0, 1)
     character.tempForce = character.Force
-    self.ids.character.ids.For.color = (0, 0, 0, 1)
     character.tempVitality = character.Vitality
-    self.ids.character.ids.Vit.color = (0, 0, 0, 1)
     character.tempPsyche = character.Psyche
-    self.ids.character.ids.Psy.color = (0, 0, 0, 1)
     character.tempMind = character.Mind
-    self.ids.character.ids.Mind.color = (0, 0, 0, 1)
     character.tempMovement = character.Movement
     self.ids.character.ids.MovVal.color = (0, 0, 0, 1)
     character.tempRange = character.Range
-    self.ids.character.ids.RanVal.color = (0, 0, 0, 1)
+    self.ids.character.ids.TecVal.color = (0, 0, 0, 1)
     character.tempBrutality = character.Brutality
     self.ids.character.ids.DamVal.color = (0, 0, 0, 1)
-    character.tempInventory = character.Inventory
-    self.ids.character.ids.InvVal.color = (0, 0, 0, 1)
     character.tempMastery = character.Mastery
     self.ids.character.ids.MasVal.color = (0, 0, 0, 1)
     character.tempIntellect = character.Intellect
@@ -164,19 +154,6 @@ def DeleteChar(main, button):
     main.ids.charSelect.ids.four.color = (1, 1, 1, 1)
     main.ids.charSelect.ids.five.color = (1, 1, 1, 1)
     main.ids.charSelect.ids.six.color = (1, 1, 1, 1)
-
-def CalcInv(character, label):
-    size = 0
-    for i in range(0, len(character.inv)):
-        if (character.inv[i] != 0):
-            size += int(character.inv[i].size)
-
-    label.text = str(size)
-
-    if size > character.Inventory:
-        label.color = (1, 0, 0, 1)
-    else:
-        label.color = (1, 1, 1, 1)
 
 def LevelUp(character, screen, main, notUsed):
     sp = character.lvl.split(".")

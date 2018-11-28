@@ -40,7 +40,7 @@ def Sorting(cards, nums):
             deck.append(cards[i])
             nums[len(deck) - 1] = cards[i][0]
     for i in range(0, 30):
-        if cards[i][5] == "Aggressive":
+        if cards[i][5] == "Attack":
             deck.append(cards[i])
             nums[len(deck) - 1] = cards[i][0]
     for i in range(0, 30):
@@ -48,11 +48,7 @@ def Sorting(cards, nums):
             deck.append(cards[i])
             nums[len(deck) - 1] = cards[i][0]
     for i in range(0, 30):
-        if cards[i][4] == "Half-Round":
-            deck.append(cards[i])
-            nums[len(deck) - 1] = cards[i][0]
-    for i in range(0, 30):
-        if cards[i][4] == "Full-Round":
+        if cards[i][4] == "Action":
             deck.append(cards[i])
             nums[len(deck) - 1] = cards[i][0]
     return deck
@@ -257,10 +253,21 @@ def NewCards(main, quality):
     num = main.cur.fetchone()
 
     for i in range(0, quality):
-        ran = randint(1, int(num[0]))
-        main.boostInd.append(ran)
+        ran = randint(0, 15)
+
+        if ran < 10:
+            rarity = 0
+        elif ran < 14:
+            rarity = 1
+        else:
+            rarity = 2
+
+        card = randint(1, (num[0]/3 - 1))
+        card += 2*(ran-1)
+        card += rarity
+        main.boostInd.append(card)
         query = "SELECT * FROM cards WHERE cardId = %s"
-        main.cur.execute(query, (str(ran)))
+        main.cur.execute(query, (str(card)))
         main.booster.append(main.cur.fetchone())
         main.boosterCards.append(0)
 
@@ -355,6 +362,8 @@ def SearchPopup(self, character, notUsed):
 
     b1 = Button(size_hint=(.2, .1), pos_hint={"center_x": .5, "y": .01}, text="Draw", disabled=True)
     b.add_widget(b1)
+
+    character.cardsLeft = FetchDeck(self)
 
     x = 63
     y = 280

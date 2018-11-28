@@ -1,0 +1,77 @@
+BEFORE DECEMBER
+Try to add a few more items
+
+Create Powerpoint Tutorial
+
+Make premade characters
+
+Finish Criticals
+
+Make artifacts that give static bonuses
+
+Make list of random events
+
+Make two sets of cross class cards
+
+Finish card art and print physical cards
+
+Create Rulebook
+
+
+
+
+Finish last 3 loadouts
+
+maybe fix ember
+
+make labels while trying to add charges to preview what kind of effect the combination would have
+
+Make it so each "junk" item gives random stat buffs which comprise your character 
+
+find out why search is not deleting cards from the list
+
+flux doesn't have length listed
+
+maybe change a few of the "for x turns" things into "next hit"
+
+ward attack c has a text issue
+
+rage might be too good
+
+Make diablo like trinket generator with randomly selected prefixes and suffixes
+
+Add more items
+
+make the controls for moving cards smoother
+
+REFACTOR CODE
+
+allow players who chose psyche upon level up to choose which elements to upgrade
+
+Have a way to track status effects on character screen
+
+Add rarity symbols
+
+Maybe allow for players to view all cards discarded
+
+Make help button on gear cards to explain hidden buttons
+
+Make help button on charater sheet to explain how certain hidden buttons work
+
+Ensure that character sheet screen is resize friendly
+
+add merge symbols
+
+Fix the text system
+
+finish main player screen
+
+remove back button from first screen and change back button to main menu on character screen
+
+maybe start using enums?
+
+set up gamemaster
+
+Refactor code in general
+
+Abstract code to different .Py and .Kv files
